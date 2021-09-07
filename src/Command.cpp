@@ -6,6 +6,7 @@
 #include "Command.h"
 #include "AddButtonWindow.h"
 #include <QMessageBox>
+#include <QIcon>
 #include "PortHandler.h"
 
 Command::Command(QString name,cmd_type ctype_in, 
@@ -25,14 +26,18 @@ Command::Command(QString name,cmd_type ctype_in,
     // Set up buttons
     start_button = new QPushButton(name,this);
     start_button->setFixedSize(150,start_button->height());
+    start_button->setIcon(QIcon("../img/start_inactive.img") );
 
-    stop_button  = new QPushButton("Stop",this);
+    stop_button  = new QPushButton("",this);
+    stop_button->setIcon(QIcon("../img/stop.img"));
     stop_button->setFixedSize(40, stop_button->height());
     
-    settings_button = new QPushButton("Settings",this);
+    settings_button = new QPushButton("",this);
+    settings_button->setIcon(QIcon("../img/settings.img"));
     settings_button->setFixedSize(40, settings_button->height());
     
-    del_button = new QPushButton("Delete",this);
+    del_button = new QPushButton("",this);
+    del_button->setIcon(QIcon("../img/delete.img"));
     del_button->setFixedSize(40, del_button->height());
 
     layout->setSizeConstraint(QLayout::SetFixedSize);

@@ -14,6 +14,7 @@ class PortCommSelection : public QWidget{
     Q_OBJECT
     public:
         PortCommSelection(QWidget *parent = 0);
+        bool isOpen();
     
     signals:
         void closed();

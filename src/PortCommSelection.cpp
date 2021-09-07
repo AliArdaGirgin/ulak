@@ -116,3 +116,7 @@ void PortCommSelection::ComboSetIndex(QComboBox *combo, QString text){
     if(index != -1)
         combo->setCurrentIndex(index);
 }
+
+bool PortCommSelection::isOpen(){
+    return port->isOpen();
+}

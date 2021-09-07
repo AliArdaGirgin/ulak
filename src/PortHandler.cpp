@@ -15,7 +15,9 @@ PortHandler::PortHandler(QObject *parent):QObject(parent){
 }
 
 bool PortHandler::commExists(){
-    return current_port == nullptr ? false : true;
+    if( !current_port)
+        return false;
+    return current_port->isOpen();
 }
 
 bool PortHandler::removePort(){

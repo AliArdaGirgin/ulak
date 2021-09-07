@@ -18,6 +18,8 @@
 #include <QFile>
 #include <QMessageBox>
 #include "DataType.h"
+#include <QTimer>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     drawMenu();
@@ -49,6 +51,14 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     connect(cmd_area,     SIGNAL(send(QByteArray&,DataType)),  data_area, SLOT(write(QByteArray&,DataType))    );
     connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  data_area, SLOT(write(QByteArray&,DataType))    );
     connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  cmd_area,  SLOT(dataRead(QByteArray&,DataType)) );
+
+
+    connState = new QLabel("");
+
+
+    timer = new QTimer();
+    connect(timer, SIGNAL(timeout()), this, SLOT(timedout()));
+    timer->start(100);
 }
 
 void MainWindow::portSelect(void){
@@ -169,6 +179,8 @@ void MainWindow::drawMenu(void){
     settings->addAction(port_selection);
     settings->addAction(port_close);
 
+    //menuBar()->setCornerWidget(connState, Qt::TopRightCorner);
+
     QAction *addCommand    = menuBar()->addAction("&Add Command");
     QAction *save_commands = menuBar()->addAction("&Save Commands");
     QAction *load_commands = menuBar()->addAction("&Load Commands");
@@ -182,6 +194,10 @@ void MainWindow::drawMenu(void){
     connect(save_commands, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
     connect(load_commands, SIGNAL(triggered()), this, SLOT(onLoadCommands()));
     connect(clear, SIGNAL(triggered()), this, SLOT(onClear()));
+}
+
+void MainWindow::timedout(){
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){

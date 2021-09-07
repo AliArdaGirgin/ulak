@@ -9,6 +9,8 @@
 #include <QScrollArea>
 #include <QString>
 #include <QCloseEvent>
+#include <QTimer>
+#include <QLabel>
 #include "CommandArea.h"
 #include "DataArea.h"
 #include "PortSelection.h"
@@ -34,6 +36,7 @@ class MainWindow : public QMainWindow{
         void onSaveCommands();
         void onLoadCommands();
         void onClear();
+        void timedout();
     private:
         CommandArea *cmd_area;
         QScrollArea *cmd_scroll;
@@ -42,6 +45,8 @@ class MainWindow : public QMainWindow{
         PortSelection *sel;
         AddButtonWindow *addButton;
         PortHandler *port_handler;
+        QTimer *timer;
+        QLabel *connState;
         void drawMenu(void);
 };
 
