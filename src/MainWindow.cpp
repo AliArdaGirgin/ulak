@@ -52,10 +52,6 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  data_area, SLOT(write(QByteArray&,DataType))    );
     connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  cmd_area,  SLOT(dataRead(QByteArray&,DataType)) );
 
-
-    connState = new QLabel("");
-
-
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(timedout()));
     timer->start(100);
@@ -173,13 +169,18 @@ void MainWindow::onClear(void){
 }
 
 void MainWindow::drawMenu(void){
+    connOn = QIcon("../img/connOn.img");
+    connOff = QIcon("../img/connOff.img");
+    connState = new QPushButton("");
+    connState->setIcon(connOff);
+
     QMenu *settings = menuBar()->addMenu("&Port Settings");
     QAction *port_close = new QAction("&Close Port");
     QAction *port_selection = new QAction("&Port Selection");
     settings->addAction(port_selection);
     settings->addAction(port_close);
 
-    //menuBar()->setCornerWidget(connState, Qt::TopRightCorner);
+    menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
 
     QAction *addCommand    = menuBar()->addAction("&Add Command");
     QAction *save_commands = menuBar()->addAction("&Save Commands");
@@ -197,7 +198,10 @@ void MainWindow::drawMenu(void){
 }
 
 void MainWindow::timedout(){
-
+    if(PortHandler::commExists())
+        connState->setIcon(connOn);
+    else
+        connState->setIcon(connOff);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
