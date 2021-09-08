@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     cmd_scroll->setWidgetResizable(true);
     cmd_scroll->setWidget(cmd_area);
 
-    data_area = new DataArea(port_handler, central);
+    data_area = new DataArea(port_handler,central);
     data_scroll = new QScrollArea(this);
     data_scroll->setWidgetResizable(true);
     data_scroll->setWidget(data_area);
@@ -80,6 +80,12 @@ void MainWindow::onSaveData(void){
 }
 
 void MainWindow::onSaveCommands(void){
+    if(cmd_area->getCommandCount() == 0){
+        QMessageBox *msg = new QMessageBox;
+        msg->setText("No commands to save!");
+        msg->exec();
+        return;
+    }
     QString file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
     if(file_name.isEmpty()){return;}
 
@@ -110,7 +116,7 @@ void MainWindow::onSaveCommands(void){
 }
 
 void MainWindow::onLoadCommands(){
-    QString file_name = QFileDialog::getOpenFileName(this,tr("Open File"),"","Text Files (*.txt)");
+    QString file_name = QFileDialog::getOpenFileName(this,tr("Open File"),"","All Files(*)");
     if(file_name.isEmpty()){return;}
 
     QFile load_file(file_name);
@@ -169,10 +175,11 @@ void MainWindow::onClear(void){
 }
 
 void MainWindow::drawMenu(void){
-    connOn = QIcon("../img/connOn.img");
-    connOff = QIcon("../img/connOff.img");
-    connState = new QPushButton("");
-    connState->setIcon(connOff);
+    connOn = QIcon("../img/connOn.img").pixmap( QSize(16,16) );
+    connOff = QIcon("../img/connOff.img").pixmap( QSize(16,16) );
+    connState = new QLabel("");
+    connState->setPixmap(connOff);
+    connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");
 
     QMenu *settings = menuBar()->addMenu("&Port Settings");
     QAction *port_close = new QAction("&Close Port");
@@ -199,9 +206,9 @@ void MainWindow::drawMenu(void){
 
 void MainWindow::timedout(){
     if(PortHandler::commExists())
-        connState->setIcon(connOn);
+        connState->setPixmap(connOn);
     else
-        connState->setIcon(connOff);
+        connState->setPixmap(connOff);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){

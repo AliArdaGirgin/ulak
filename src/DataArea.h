@@ -25,7 +25,7 @@ class DataArea : public QWidget{
     Q_OBJECT
     public:
         static const int TIMER_RES;
-        DataArea(PortHandler *pHandler, QWidget *parent = 0);
+        DataArea(PortHandler *pHandler,QWidget *parent = 0);
     public slots:
         void write(QByteArray &data_in, DataType dataType);
         void clear();

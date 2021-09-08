@@ -8,14 +8,17 @@
 #include <QTimer>
 #include <QTabWidget>
 #include <QVector>
+#include <QMessageBox>
 #include "DataArea.h"
 #include "PortHandler.h"
 #include "DataType.h"
 #include <string>
 
+
 const int DataArea::TIMER_RES=100; // in ms
 
-DataArea::DataArea(PortHandler *pHandler, QWidget *parent):QWidget(parent),port_handler(pHandler){
+DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
+    QWidget(parent),port_handler(pHandler){
     layout = new QGridLayout();
     tabbed = new QTabWidget();
     ascii  = new QTextEdit();
@@ -91,7 +94,20 @@ void DataArea::clear(){
 }
 
 void DataArea::save(){
-    QString  file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"","Text Files (*.txt)");
+    int dataSize = 0;
+    if(current_index == ascii_index)
+        dataSize = ascii->toPlainText().length();
+    else
+        dataSize = hex->toPlainText().length();
+
+    if(dataSize == 0){
+        QMessageBox *msg = new QMessageBox();
+        msg->setText("No data to save!");
+        msg->exec();
+        return;
+    }
+
+    QString  file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"","All Files(*)");
     if(file_name.isEmpty())
         return;
         

@@ -31,6 +31,7 @@ Command::Command(QString name,cmd_type ctype_in,
     stop_button  = new QPushButton("",this);
     stop_button->setIcon(QIcon("../img/stop.img"));
     stop_button->setFixedSize(40, stop_button->height());
+    stop_button->setEnabled(false);
     
     settings_button = new QPushButton("",this);
     settings_button->setIcon(QIcon("../img/settings.img"));
@@ -88,6 +89,9 @@ void Command::activate(){
     }else{
         current_state  = Command::ACTIVE;
         start_button->setEnabled(false);
+        settings_button->setEnabled(false);
+        del_button->setEnabled(false);
+        stop_button->setEnabled(true);
         periodic_counter = 0;
         delay_counter  = delay/CommandArea::TIMER_RES;
     }
@@ -118,6 +122,9 @@ void Command::dataRead(QByteArray &data){
 void Command::stop(){
     current_state = Command::PASSIVE;
     start_button->setEnabled(true);
+    settings_button->setEnabled(true);
+    del_button->setEnabled(true);
+    stop_button->setEnabled(false);
 }
 
 void Command::settings(){

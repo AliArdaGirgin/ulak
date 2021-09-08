@@ -16,6 +16,7 @@ class CommandArea:public QWidget{
         static const int TIMER_RES;
         CommandArea(PortHandler *pHandler, QWidget *parent = 0);
         QVector<Command*>* getCommands();
+        int getCommandCount();
 
     public slots:
         void addButton(QString name, Command::cmd_type type,

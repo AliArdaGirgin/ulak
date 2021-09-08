@@ -116,3 +116,13 @@ void CommandArea::run(){
 QVector<Command*>* CommandArea::getCommands(){
     return &command_pool;
 }
+
+int CommandArea::getCommandCount(){
+    int total = 0;
+    // Command might be empty
+    for(auto &c:command_pool){
+        if(c!=nullptr)
+            total++;
+    }
+    return total;
+}

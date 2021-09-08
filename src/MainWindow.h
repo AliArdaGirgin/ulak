@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QIcon>
+#include <QPixmap>
 #include "CommandArea.h"
 #include "DataArea.h"
 #include "PortSelection.h"
@@ -47,9 +48,9 @@ class MainWindow : public QMainWindow{
         AddButtonWindow *addButton;
         PortHandler *port_handler;
         QTimer *timer;
-        QPushButton *connState;
-        QIcon connOn;
-        QIcon connOff;
+        QLabel *connState;
+        QPixmap connOn;
+        QPixmap connOff;
         void drawMenu(void);
 };
 
