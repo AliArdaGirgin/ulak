@@ -863,19 +863,21 @@ release/moc_MainWindow.cpp: ../src/MainWindow.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qscrollarea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QString \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QIcon \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QPixmap \
 		../src/CommandArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QVector \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QFormLayout \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qformlayout.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QLayout \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
 		../src/Command.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QObject \
 		../src/DataArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QGridLayout \
@@ -1877,7 +1879,8 @@ release/Command.o: ../src/Command.cpp C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include
 		../src/DataType.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QMessageBox \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qmessagebox.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qdialog.h
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qdialog.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QIcon
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\Command.o ..\src\Command.cpp
 
 release/CommandArea.o: ../src/CommandArea.cpp C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QWidget \
@@ -2158,6 +2161,8 @@ release/DataArea.o: ../src/DataArea.cpp C:/Qt/Qt5.12.11/5.12.11/mingw73_64/inclu
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qtabwidget.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/qicon.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QVector \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QMessageBox \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qmessagebox.h \
 		../src/DataArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QObject \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtSerialPort/QSerialPort \
@@ -2311,19 +2316,21 @@ release/MainWindow.o: ../src/MainWindow.cpp C:/Qt/Qt5.12.11/5.12.11/mingw73_64/i
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QGroupBox \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qgroupbox.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QString \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QIcon \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QPixmap \
 		../src/CommandArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QVector \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QFormLayout \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qformlayout.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QLayout \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
 		../src/Command.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QObject \
 		../src/DataArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QGridLayout \
@@ -3154,19 +3161,21 @@ release/ulak.o: ../src/ulak.cpp C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWid
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qscrollarea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QString \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QCloseEvent \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QIcon \
+		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtGui/QPixmap \
 		../src/CommandArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QWidget \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QVector \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QFormLayout \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qformlayout.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QLayout \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QTimer \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/qbasictimer.h \
 		../src/Command.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QPushButton \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qpushbutton.h \
-		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtCore/QObject \
 		../src/DataArea.h \
 		C:/Qt/Qt5.12.11/5.12.11/mingw73_64/include/QtWidgets/QGridLayout \
