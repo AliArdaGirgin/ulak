@@ -14,8 +14,12 @@
 #include "TabbedText.h"
 #include <limits>
 
-AddButtonWindow::AddButtonWindow(Command *cmd, QWidget *parent):QWidget(parent){
+AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     layout = new QGridLayout();
+
+    // Block input to other windows
+    setWindowFlag(Qt::WindowStaysOnTopHint, true);
+    setWindowModality(Qt::ApplicationModal);
 
     // Validators for delay value
     QIntValidator *delay_valid = new QIntValidator(0,std::numeric_limits<int>::max());
@@ -170,7 +174,7 @@ ReadTriggerWidget::ReadTriggerWidget(QWidget *parent):QWidget(parent){
     layout->setSpacing(0);
     layout->setMargin(0);  
     name = new QLabel("Read Data          ");
-    text = new TabbedText();
+    text = new TabbedText(this);
     layout->addWidget(name,0,0,Qt::AlignTop);
     layout->addWidget(text,0,1);
     setLayout(layout);

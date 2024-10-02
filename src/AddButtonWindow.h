@@ -65,7 +65,7 @@ class ReadTriggerWidget:public QWidget{
 class AddButtonWindow:public QWidget{
     Q_OBJECT
     public:
-        AddButtonWindow(Command *cmd=0, QWidget *parent=0);
+        AddButtonWindow(QWidget *parent=0, Command *cmd =0);
     signals:
         void onButtonAdded(QString name, Command::cmd_type cmd, 
                            QByteArray data, QByteArray linefeed, int delay, int period=0,

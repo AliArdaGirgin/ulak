@@ -12,7 +12,7 @@
 class TabbedText : public QTabWidget{
     Q_OBJECT
     public:
-        TabbedText(QWidget *parent = 0, bool read_only_in=false);
+        TabbedText(QWidget *parent);
         bool isDataEmpty();
         QByteArray getData();
         void setData(QByteArray data_in);
@@ -23,10 +23,6 @@ class TabbedText : public QTabWidget{
 
     private:
         QByteArray data;
-        int prev;
-        int index_hex;
-        int index_ascii;
-        bool read_only;
 };
 
 #endif

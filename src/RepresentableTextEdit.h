@@ -2,35 +2,43 @@
 #define REPRESENTABLE_TEXT_EDIT
 
 #include <QWidget>
-#include <QTextEdit>
 #include <QObject>
 #include <QByteArray>
 #include <QChar>
 #include <QKeyEvent>
+#include <QTextEdit>
+#include <map>
 
 class IRepresantableTextEdit : public QTextEdit{
     public:
-        IRepresantableTextEdit(QWidget *parent = 0, bool read_only_in = false);
-        virtual void setData(QByteArray &data) = 0;
-        virtual QByteArray getData() = 0;
+    IRepresantableTextEdit(QWidget *parent, QByteArray& data_):QTextEdit(parent), data(data_){}
+        virtual void keyPressEvent(QKeyEvent *event) = 0;
+        virtual void update() = 0;
+    protected:
+        QByteArray& data;
 };
 
 class AsciiText : public IRepresantableTextEdit{
+    Q_OBJECT
     public:
-        AsciiText(QWidget *parent = 0, bool read_only_in = false);
-        void setData(QByteArray &data);
-        QByteArray getData();
+        AsciiText(QWidget *parent, QByteArray& data_): IRepresantableTextEdit(parent, data_){}
+        void keyPressEvent(QKeyEvent* event) override;
+        void update() override;
 };
 
 class HexText : public IRepresantableTextEdit{
     Q_OBJECT
     public:
-        HexText(QWidget *parent = 0, bool read_only_in = false);
-        void setData(QByteArray &data);
-        QByteArray getData();
-        void keyPressEvent(QKeyEvent *event);
+        HexText(QWidget *parent, QByteArray& data_): IRepresantableTextEdit(parent, data_){}
+        void keyPressEvent(QKeyEvent *event) override;
+        void update() override;
     private:
-        int last_index;
+        void updateData(const std::string& str);
+        const std::map<char, unsigned char> hexCharToByte{
+            {'0', 0x0}, {'1', 0x1}, {'2', 0x2}, {'3', 0x3}, {'4', 0x4}, {'5', 0x5},
+            {'6', 0x6}, {'7', 0x7}, {'8', 0x8}, {'9', 0x9}, {'A', 0xA}, {'B', 0xB},
+            {'C', 0xC}, {'D', 0xD}, {'E', 0xE}, {'F', 0xF}
+        };
 };
 
 #endif
