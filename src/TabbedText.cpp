@@ -18,7 +18,7 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
 }
 
 void TabbedText::tabbedChanged(int index_in){
-    static_cast<IRepresantableTextEdit*>(widget(index_in))->update();
+    static_cast<IRepresantableTextEdit*>(widget(index_in))->clear();
 }
 
 bool TabbedText::isDataEmpty(){
@@ -31,6 +31,7 @@ QByteArray TabbedText::getData(){
 
 void TabbedText::setData(QByteArray data_in){
     data = data_in;
+    static_cast<IRepresantableTextEdit*>(currentWidget())->update();
 }
 
 void TabbedText::clearText(){
@@ -42,3 +43,6 @@ void TabbedText::addData(QByteArray &data_in){
     data.append(data_in);
 }
 
+void TabbedText::update(){
+    static_cast<IRepresantableTextEdit*>(currentWidget())->update();
+}

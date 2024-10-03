@@ -12,7 +12,6 @@
 #include "DataArea.h"
 #include "PortHandler.h"
 #include "DataType.h"
-#include <string>
 
 
 const int DataArea::TIMER_RES=100; // in ms

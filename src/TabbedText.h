@@ -17,6 +17,7 @@ class TabbedText : public QTabWidget{
         QByteArray getData();
         void setData(QByteArray data_in);
         void addData(QByteArray &data_in);
+        void update();
     public slots:
         void tabbedChanged(int index_in);
         void clearText();

@@ -15,16 +15,18 @@
 #include <limits>
 
 AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
-    layout = new QGridLayout();
 
+    setWindowTitle("Add Command");
     // Block input to other windows
-    setWindowFlag(Qt::WindowStaysOnTopHint, true);
     setWindowModality(Qt::ApplicationModal);
+    // Always on top of main window
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 
     // Validators for delay value
     QIntValidator *delay_valid = new QIntValidator(0,std::numeric_limits<int>::max());
 
     // Different command types require different input widgets
+    // use stack widget to change visibility of different parameters
     stacked_widget = new StackedWidget();
     QWidget *stacked = new QWidget(this);
     periodic_widget = new PeriodicWidget(this);
@@ -60,6 +62,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     if(cmd) setInitials(cmd);
 
     // Layout, stack widget changes size
+    layout = new QGridLayout();
     layout->setSizeConstraint(QLayout::SetFixedSize);
     layout->addWidget(name_label,0,0,Qt::AlignTop);
     layout->addWidget(name_text,0,1);
@@ -121,6 +124,7 @@ void AddButtonWindow::buttonAdded(){
 void AddButtonWindow::setInitials(Command *cmd){
     name_text->setText(cmd->getName());
     data_tabbedText->setData(cmd->getData());
+    data_tabbedText->update();
     linefeed->setLineEnd(cmd->getLineFeed());
     delay_text->setText(QString::number(cmd->getDelay()));
     switch(cmd->getCommandType()){
@@ -151,7 +155,6 @@ PeriodicWidget::PeriodicWidget(QWidget *parent):QWidget(parent){
     period_valid->setBottom(5);
     QGridLayout *layout = new QGridLayout();
     layout->setSpacing(0);
-    layout->setMargin(0);
     name = new QLabel("Period(ms)          ");
     text = new QLineEdit("100");
     text->setValidator(period_valid);
@@ -172,7 +175,6 @@ void PeriodicWidget::setPeriod(int delay_in){
 ReadTriggerWidget::ReadTriggerWidget(QWidget *parent):QWidget(parent){
     QGridLayout *layout = new QGridLayout();
     layout->setSpacing(0);
-    layout->setMargin(0);  
     name = new QLabel("Read Data          ");
     text = new TabbedText(this);
     layout->addWidget(name,0,0,Qt::AlignTop);

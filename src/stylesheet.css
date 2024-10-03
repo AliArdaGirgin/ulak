@@ -1,0 +1,15 @@
+QScrollArea {
+    border: 0;
+}
+
+QApplication{
+    background-color: black;
+}
+
+QMenuBar{
+    background-color: gainsboro;
+}
+
+QTextEdit{
+    border: 0;
+}

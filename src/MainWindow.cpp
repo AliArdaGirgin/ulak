@@ -17,11 +17,12 @@
 #include <QString>
 #include <QFile>
 #include <QMessageBox>
-#include "DataType.h"
 #include <QTimer>
 #include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
+
+    setWindowTitle("Ulak");
     drawMenu();
     resize(1200,600);
     QWidget *central = new QWidget(this);

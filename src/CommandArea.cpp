@@ -7,7 +7,6 @@
 #include "CommandArea.h"
 #include "Command.h"
 #include "PortHandler.h"
-#include "DataArea.h"
 #include "DataType.h"
 
 const int CommandArea::TIMER_RES=100;

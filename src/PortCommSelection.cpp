@@ -7,8 +7,6 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "PortCommSelection.h"
-#include "PortSelection.h"
-#include "CommandArea.h"
 
 
 PortCommSelection::PortCommSelection(QWidget *parent):QWidget(parent){

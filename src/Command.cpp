@@ -129,7 +129,7 @@ void Command::stop(){
 
 void Command::settings(){
     // Call AddButtonWindow with initials values for current command
-    AddButtonWindow *addButton = new AddButtonWindow(this);
+    AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
     connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*)),
             this,      SLOT(update(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*))
     );

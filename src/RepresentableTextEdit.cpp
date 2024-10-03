@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include "RepresentableTextEdit.h"
 #include <cstring>
+#include <sstream>
 #include <QDebug>
 
 
@@ -17,9 +18,14 @@ void AsciiText::keyPressEvent(QKeyEvent* event){
 }
 
 void AsciiText::update(){
-    clear();
+    setPlainText(data);
+}
+
+void AsciiText::clear(){
+    QTextEdit::clear();
     data.clear();
 }
+
 void HexText::keyPressEvent(QKeyEvent *event){
     int key = event->key();
     int blocked = false;
@@ -57,9 +63,14 @@ void HexText::keyPressEvent(QKeyEvent *event){
 
     updateData(toPlainText().toStdString());
 }
-
 void HexText::update(){
-    clear();
+    std::stringstream ss;
+    for(auto& c:data)
+        ss << std::hex << (int)c << " ";
+    setPlainText(QString::fromStdString(ss.str()));
+}
+void HexText::clear(){
+    QTextEdit::clear();
     data.clear();
 }
 

@@ -14,6 +14,7 @@ class IRepresantableTextEdit : public QTextEdit{
     IRepresantableTextEdit(QWidget *parent, QByteArray& data_):QTextEdit(parent), data(data_){}
         virtual void keyPressEvent(QKeyEvent *event) = 0;
         virtual void update() = 0;
+        virtual void clear() = 0;
     protected:
         QByteArray& data;
 };
@@ -24,6 +25,7 @@ class AsciiText : public IRepresantableTextEdit{
         AsciiText(QWidget *parent, QByteArray& data_): IRepresantableTextEdit(parent, data_){}
         void keyPressEvent(QKeyEvent* event) override;
         void update() override;
+        void clear() override;
 };
 
 class HexText : public IRepresantableTextEdit{
@@ -32,6 +34,7 @@ class HexText : public IRepresantableTextEdit{
         HexText(QWidget *parent, QByteArray& data_): IRepresantableTextEdit(parent, data_){}
         void keyPressEvent(QKeyEvent *event) override;
         void update() override;
+        void clear() override;
     private:
         void updateData(const std::string& str);
         const std::map<char, unsigned char> hexCharToByte{
