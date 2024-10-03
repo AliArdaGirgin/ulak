@@ -181,6 +181,7 @@ void MainWindow::drawMenu(void){
     connState = new QLabel("");
     connState->setPixmap(connOff);
     connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");
+    menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
 
     QMenu *settings = menuBar()->addMenu("&Port Settings");
     QAction *port_close = new QAction("&Close Port");
@@ -188,17 +189,23 @@ void MainWindow::drawMenu(void){
     settings->addAction(port_selection);
     settings->addAction(port_close);
 
-    menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
+    QMenu *commands = menuBar()->addMenu("&Commands");
+    QAction *add_commands= new QAction("&Add");
+    QAction *save_commands = new QAction("&Save");
+    QAction *load_commands = new QAction("&Load");
+    commands->addAction(add_commands);
+    commands->addAction(save_commands);
+    commands->addAction(load_commands);
 
-    QAction *addCommand    = menuBar()->addAction("&Add Command");
-    QAction *save_commands = menuBar()->addAction("&Save Commands");
-    QAction *load_commands = menuBar()->addAction("&Load Commands");
-    QAction *save_data     = menuBar()->addAction("&Save Data");
-    QAction *clear         = menuBar()->addAction("&Clear");
+    QMenu *log = menuBar()->addMenu("&Log");
+    QAction *save_data     = new QAction("&Save");
+    QAction *clear         = new QAction("&Clear");
+    log->addAction(save_data);
+    log->addAction(clear);
 
     connect(port_selection, SIGNAL(triggered()), this, SLOT(portSelect()));
     connect(port_close, SIGNAL(triggered()), this, SLOT(portClose()));
-    connect(addCommand, SIGNAL(triggered()), this, SLOT(onAddButton()));
+    connect(add_commands, SIGNAL(triggered()), this, SLOT(onAddButton()));
     connect(save_data, SIGNAL(triggered()), this, SLOT(onSaveData()));
     connect(save_commands, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
     connect(load_commands, SIGNAL(triggered()), this, SLOT(onLoadCommands()));
