@@ -13,7 +13,6 @@
 #include "PortHandler.h"
 #include "DataType.h"
 
-
 const int DataArea::TIMER_RES=100; // in ms
 
 DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
@@ -40,46 +39,22 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     connect(tabbed, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 }
 
-void DataArea::write(QByteArray &data_in, DataType dataType){
+void DataArea::write(QByteArray data_in, DataType dataType){
     TimestampedData dt;
     QString temp;
-    if(data.end()->type != dataType || timestampChanged){
+    if(!data.size() || data.back().type != dataType || timestampChanged){
         dt.dt = data_in;
         dt.timestamp = lastTimestamp;
         dt.type = dataType;
         data.push_back(dt);
 
     }else{
-        data.end()->dt.append(data_in);
+        data.back().dt.append(data_in);
     }
     if(tabbed->currentIndex() == ascii_index){
-        ascii->clear();
-        for(auto &m:data){
-            temp.clear();
-            if(m.type == DataType::TX)
-                temp.append("[TX] ");
-            else
-                temp.append("[RX] ");
-            temp.append( m.timestamp );
-            temp.append(" ");
-            temp.append( QString(m.dt) );
-
-            ascii->append(temp);
-        }
+        asciiUpdate();
     }else{
-        hex->clear();
-        for(auto &m:data){
-            temp.clear();
-            if(m.type == DataType::TX)
-                temp.append("[TX] ");
-            else
-                temp.append("[RX] ");
-            temp.append( m.timestamp );
-            temp.append(" ");
-            temp.append( m.dt.toHex(' ') );
-
-            hex->append(temp);
-        }
+        hexUpdate();
     }
 }
 
@@ -122,36 +97,11 @@ void DataArea::save(){
 }
 
 void DataArea::tabChanged(int index){
-    QString temp;
     current_index = index;
     if(index == ascii_index){
-        ascii->clear();
-        for(auto &m:data){
-            temp.clear();
-            if(m.type == DataType::TX)
-                temp.append("[TX] ");
-            else
-                temp.append("[RX] ");
-            temp.append( m.timestamp );
-            temp.append(" ");
-            temp.append( QString(m.dt) );
-
-            ascii->append(temp);
-        }
+        asciiUpdate();
     }else if(index == hex_index){
-        hex->clear();
-        for(auto &m:data){
-            temp.clear();
-            if(m.type == DataType::TX)
-                temp.append("[TX] ");
-            else
-                temp.append("[RX] ");
-            temp.append( m.timestamp );
-            temp.append(" ");
-            temp.append( m.dt.toHex(' ') );
-
-            hex->append(temp);
-        }
+        hexUpdate();
     }else{
         std::cout << "Error :" << __FILE__ << " " << __LINE__ << std::endl;
     }
@@ -161,4 +111,36 @@ void DataArea::tabChanged(int index){
 void DataArea::run(){
     lastTimestamp = QTime::currentTime().toString();
     timestampChanged = true;
+}
+void DataArea::asciiUpdate(){
+    ascii->clear();
+    QString temp;
+    for(auto &m:data){
+        temp.clear();
+        if(m.type == DataType::TX)
+            temp.append("[TX] ");
+        else
+            temp.append("[RX] ");
+        temp.append( m.timestamp );
+        temp.append(" ");
+        temp.append( QString(m.dt) );
+
+        ascii->append(temp);
+    }
+}
+void DataArea::hexUpdate(){
+    hex->clear();
+    QString temp;
+    for(auto &m:data){
+        temp.clear();
+        if(m.type == DataType::TX)
+            temp.append("[TX] ");
+        else
+            temp.append("[RX] ");
+        temp.append( m.timestamp );
+        temp.append(" ");
+        temp.append( m.dt.toHex(' ') );
+
+        hex->append(temp);
+    }
 }

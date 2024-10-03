@@ -49,9 +49,9 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
     connect(this, SIGNAL(saved()), data_area, SLOT(save()));
     connect(this, SIGNAL(cleared()), data_area, SLOT(clear()));
-    connect(cmd_area,     SIGNAL(send(QByteArray&,DataType)),  data_area, SLOT(write(QByteArray&,DataType))    );
-    connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  data_area, SLOT(write(QByteArray&,DataType))    );
-    connect(port_handler, SIGNAL(read(QByteArray&,DataType)),  cmd_area,  SLOT(dataRead(QByteArray&,DataType)) );
+    connect(cmd_area,     SIGNAL(send(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
+    connect(port_handler, SIGNAL(read(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
+    //connect(port_handler, SIGNAL(read(QByteArray,DataType)),  cmd_area,  SLOT(dataRead(QByteArray,DataType)) );
 
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(timedout()));

@@ -27,7 +27,7 @@ class DataArea : public QWidget{
         static const int TIMER_RES;
         DataArea(PortHandler *pHandler,QWidget *parent = 0);
     public slots:
-        void write(QByteArray &data_in, DataType dataType);
+        void write(QByteArray data_in, DataType dataType);
         void clear();
         void save();
         void tabChanged(int index);
@@ -40,7 +40,6 @@ class DataArea : public QWidget{
         QTabWidget  *tabbed;
         QTimer      *timer;
         QString     lastTimestamp;
-        QString     prevTimestamp;
         QTextEdit   *ascii;
         int         ascii_index;
         QTextEdit   *hex;
@@ -49,6 +48,8 @@ class DataArea : public QWidget{
         QVector<TimestampedData> data;
         TimestampedData currentData;
         bool timestampChanged;
+        void hexUpdate();
+        void asciiUpdate();
 
 };
 

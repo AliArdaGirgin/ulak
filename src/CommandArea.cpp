@@ -48,7 +48,7 @@ void CommandArea::deleteButton(Command *cmd_in){
     }
 }
 
-void CommandArea::dataRead(QByteArray &data, DataType dtype){
+void CommandArea::dataRead(QByteArray data, DataType dtype){
     if(dtype == DataType::TX)
         return;
     for(auto &command:command_pool){

@@ -17,7 +17,7 @@ class PortHandler:public QObject{
         bool removePort();
         int write(QByteArray &data);
     signals:
-        void read(QByteArray &data, DataType dtype);
+        void read(QByteArray data, DataType dtype);
 
     private slots:
         void run();

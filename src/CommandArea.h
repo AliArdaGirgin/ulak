@@ -6,7 +6,6 @@
 #include <QFormLayout>
 #include <QTimer>
 #include "Command.h"
-#include "DataArea.h"
 #include "PortHandler.h"
 #include "DataType.h"
 
@@ -22,10 +21,10 @@ class CommandArea:public QWidget{
         void addButton(QString name, Command::cmd_type type,
                 QByteArray data, QByteArray linefeed, int delay, int period,
                 QByteArray read_data, QWidget *parent);
-        void dataRead(QByteArray &data, DataType dtype);
+        void dataRead(QByteArray data, DataType dtype);
         void deleteButton(Command *cmd);
     signals:
-        void send(QByteArray &data, DataType dtype);
+        void send(QByteArray data, DataType dtype);
 
     private slots:
         void run();
