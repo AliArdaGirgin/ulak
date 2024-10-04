@@ -12,6 +12,7 @@
 #include <QVector>
 #include <QTime>
 #include <QTimer>
+#include <functional>
 #include "PortHandler.h"
 #include "DataType.h"
 
@@ -48,8 +49,7 @@ class DataArea : public QWidget{
         QVector<TimestampedData> data;
         TimestampedData currentData;
         bool timestampChanged;
-        void hexUpdate();
-        void asciiUpdate();
+        void textFieldUpdate(QTextEdit*, std::function<QString(QByteArray&)>);
 
 };
 

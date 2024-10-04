@@ -51,10 +51,12 @@ void DataArea::write(QByteArray data_in, DataType dataType){
     }else{
         data.back().dt.append(data_in);
     }
-    if(tabbed->currentIndex() == ascii_index){
-        asciiUpdate();
+    if(current_index == ascii_index){
+        textFieldUpdate(ascii, [](QByteArray& ba){ return QString(ba);});
+    }else if(current_index == hex_index){
+        textFieldUpdate(hex, [](QByteArray& ba){return ba.toHex(' ');});
     }else{
-        hexUpdate();
+        std::cout << "Error :" << __FILE__ << " " << __LINE__ << std::endl;
     }
 }
 
@@ -99,9 +101,9 @@ void DataArea::save(){
 void DataArea::tabChanged(int index){
     current_index = index;
     if(index == ascii_index){
-        asciiUpdate();
+        textFieldUpdate(ascii, [](QByteArray& ba){ return QString(ba);});
     }else if(index == hex_index){
-        hexUpdate();
+        textFieldUpdate(hex, [](QByteArray& ba){return ba.toHex(' ');});
     }else{
         std::cout << "Error :" << __FILE__ << " " << __LINE__ << std::endl;
     }
@@ -112,35 +114,31 @@ void DataArea::run(){
     lastTimestamp = QTime::currentTime().toString();
     timestampChanged = true;
 }
-void DataArea::asciiUpdate(){
-    ascii->clear();
+
+
+void DataArea::textFieldUpdate(QTextEdit* te, std::function<QString(QByteArray&)> byteToStr){
+    te->clear();
     QString temp;
     for(auto &m:data){
         temp.clear();
+
+        // add type and timestamp
         if(m.type == DataType::TX)
             temp.append("[TX] ");
         else
             temp.append("[RX] ");
         temp.append( m.timestamp );
-        temp.append(" ");
-        temp.append( QString(m.dt) );
 
-        ascii->append(temp);
-    }
-}
-void DataArea::hexUpdate(){
-    hex->clear();
-    QString temp;
-    for(auto &m:data){
-        temp.clear();
+        // write type and timestanp with colors
         if(m.type == DataType::TX)
-            temp.append("[TX] ");
+            te->setTextColor(Qt::red);
         else
-            temp.append("[RX] ");
-        temp.append( m.timestamp );
-        temp.append(" ");
-        temp.append( m.dt.toHex(' ') );
+            te->setTextColor(Qt::darkGreen);
+        te->append(temp);
+        te->setTextColor(Qt::black);
 
-        hex->append(temp);
+        // get text from lambda
+        te->append(byteToStr(m.dt));
+        te->append("\n");
     }
 }
