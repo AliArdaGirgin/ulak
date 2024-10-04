@@ -184,7 +184,8 @@ void MainWindow::drawMenu(void){
     menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
 
     QMenu *settings = menuBar()->addMenu("&Port Settings");
-    QAction *port_close = new QAction("&Close Port");
+    port_close = new QAction("&Close Port");
+    port_close->setEnabled(false);
     QAction *port_selection = new QAction("&Port Selection");
     settings->addAction(port_selection);
     settings->addAction(port_close);
@@ -213,10 +214,14 @@ void MainWindow::drawMenu(void){
 }
 
 void MainWindow::timedout(){
-    if(PortHandler::commExists())
+    if(PortHandler::commExists()){
         connState->setPixmap(connOn);
-    else
+        port_close->setEnabled(true);
+    }
+    else{
         connState->setPixmap(connOff);
+        port_close->setEnabled(false);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){

@@ -17,8 +17,6 @@
 #include "DataArea.h"
 #include "PortSelection.h"
 #include "AddButtonWindow.h"
-#include "Command.h"
-#include "DataType.h"
 
 class MainWindow : public QMainWindow{
     Q_OBJECT
@@ -51,6 +49,7 @@ class MainWindow : public QMainWindow{
         QLabel *connState;
         QPixmap connOn;
         QPixmap connOff;
+        QAction *port_close;
         void drawMenu(void);
 };
 

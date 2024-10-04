@@ -1,4 +1,3 @@
-#include <iostream>
 #include <QWidget>
 #include <QTabWidget>
 #include "PortSelection.h"
