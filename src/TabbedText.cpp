@@ -18,7 +18,7 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
 }
 
 void TabbedText::tabbedChanged(int index_in){
-    static_cast<IRepresantableTextEdit*>(widget(index_in))->clear();
+    static_cast<IRepresantableTextEdit*>(widget(index_in))->update();
 }
 
 bool TabbedText::isDataEmpty(){

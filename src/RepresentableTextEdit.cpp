@@ -6,15 +6,22 @@
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QDateTime>
+#include <QMessageBox>
 #include "RepresentableTextEdit.h"
 #include <cstring>
-#include <sstream>
 #include <QDebug>
+#include <climits>
 
 
 void AsciiText::keyPressEvent(QKeyEvent* event){
+    if(!isDataAscii()){
+        QMessageBox *msg = new QMessageBox();
+        msg->setText("Modifiying binary data from ascii edit is not allowed");
+        msg->exec();
+        return;
+    }
     QTextEdit::keyPressEvent(event);
-    data.append(event->text().toLocal8Bit());
+    data = toPlainText().toLocal8Bit();
 }
 
 void AsciiText::update(){
@@ -24,6 +31,19 @@ void AsciiText::update(){
 void AsciiText::clear(){
     QTextEdit::clear();
     data.clear();
+}
+
+bool AsciiText::isDataAscii() const{
+    for(auto& c: data){
+#if CHAR_MIN < 0 // for signed char
+    if(c<0)
+        return false;
+#else
+    if(c > 127) // for unsigned char
+        return false;
+#endif
+    }
+    return true;
 }
 
 void HexText::keyPressEvent(QKeyEvent *event){
@@ -64,10 +84,16 @@ void HexText::keyPressEvent(QKeyEvent *event){
     updateData(toPlainText().toStdString());
 }
 void HexText::update(){
-    std::stringstream ss;
-    for(auto& c:data)
-        ss << std::hex << (int)c << " ";
-    setPlainText(QString::fromStdString(ss.str()));
+    std::string temp;
+    for(auto& c:data){
+        char *s;
+        if(asprintf(&s, "%02x ", (unsigned char)c) < 0){
+            throw std::bad_alloc();
+        }
+        temp.append(s);
+        free(s);
+    }
+    setPlainText(QString::fromStdString(temp));
 }
 void HexText::clear(){
     QTextEdit::clear();

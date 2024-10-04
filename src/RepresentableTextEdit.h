@@ -26,6 +26,8 @@ class AsciiText : public IRepresantableTextEdit{
         void keyPressEvent(QKeyEvent* event) override;
         void update() override;
         void clear() override;
+    private:
+        bool isDataAscii() const;
 };
 
 class HexText : public IRepresantableTextEdit{
