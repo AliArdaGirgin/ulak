@@ -98,14 +98,7 @@ void Command::activate(){
 }
 
 void Command::dataRead(QByteArray &data){
-    int min = 0;
-    int remaining = read_data.length()-current_match; 
-    if(remaining <= data.length())
-        min = remaining;
-    else
-        min = data.length();
-    
-    for(int i=0; i<min; i++){
+    for(int i=0; i<data.length(); i++){
         if(read_data[current_match] == data[i]){
             current_match++;
             if(current_match == read_data.length()){
@@ -114,7 +107,6 @@ void Command::dataRead(QByteArray &data){
             }
         }else{
             current_match = 0;
-            break;
         }
     }
 }

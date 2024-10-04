@@ -22,7 +22,6 @@ class Command:public QWidget{
         int getPeriod();
         QByteArray getReadData();
         state getState();
-        void dataRead(QByteArray &data);
         void triggered(void);
         bool isTriggered(void);
         int delay_counter;
@@ -36,6 +35,8 @@ class Command:public QWidget{
                 QByteArray data_in, QByteArray linefeed_in,int delay_in,
                 int period_in = 0, QByteArray read_data_in = QByteArray(),
                 QWidget *parent=0);
+        void dataRead(QByteArray &data);
+
     signals:
         void onDelete(Command*);
 
