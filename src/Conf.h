@@ -1,0 +1,7 @@
+#ifndef CONF_H
+#define CONF_H
+
+#define COMMAND_AREA_TIMER_RESOLUTION 100
+#define DATA_AREA_TIMER_RESOLUTION 100
+
+#endif // CONF_H

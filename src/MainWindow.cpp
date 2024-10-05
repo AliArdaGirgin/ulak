@@ -70,10 +70,6 @@ void MainWindow::portClose(void){
 }
 
 void MainWindow::onAddButton(void){
-    addButton = new AddButtonWindow();
-    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
-            cmd_area,  SLOT(addButton(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))    );
-    addButton->show();
 }
 
 void MainWindow::onSaveData(void){
@@ -190,11 +186,9 @@ void MainWindow::drawMenu(void){
     settings->addAction(port_selection);
     settings->addAction(port_close);
 
-    QMenu *commands = menuBar()->addMenu("&Commands");
-    QAction *add_commands= new QAction("&Add");
+    QMenu *commands = menuBar()->addMenu("&Project");
     QAction *save_commands = new QAction("&Save");
     QAction *load_commands = new QAction("&Load");
-    commands->addAction(add_commands);
     commands->addAction(save_commands);
     commands->addAction(load_commands);
 
@@ -206,7 +200,6 @@ void MainWindow::drawMenu(void){
 
     connect(port_selection, SIGNAL(triggered()), this, SLOT(portSelect()));
     connect(port_close, SIGNAL(triggered()), this, SLOT(portClose()));
-    connect(add_commands, SIGNAL(triggered()), this, SLOT(onAddButton()));
     connect(save_data, SIGNAL(triggered()), this, SLOT(onSaveData()));
     connect(save_commands, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
     connect(load_commands, SIGNAL(triggered()), this, SLOT(onLoadCommands()));

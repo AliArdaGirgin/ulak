@@ -11,7 +11,7 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 #include "TabbedText.h"
-#include "CommandArea.h"
+#include "Command.h"
 
 // Needed, QStackedWidget always gets max size
 // We need a dynamically sized StackWidget

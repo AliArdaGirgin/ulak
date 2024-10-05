@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QIcon>
 #include "PortHandler.h"
+#include "Conf.h"
 
 Command::Command(QString name,cmd_type ctype_in,
                  QByteArray data_in, int last_tab_, QByteArray linefeed_in,int delay_in, int period_in,
@@ -20,8 +21,8 @@ Command::Command(QString name,cmd_type ctype_in,
     last_tab= last_tab_;
     read_last_tab = read_last_tab_;
     current_state = Command::PASSIVE;
-    delay_counter = delay/CommandArea::TIMER_RES;
-    periodic_counter = period/CommandArea::TIMER_RES;
+    delay_counter = COMMAND_AREA_TIMER_RESOLUTION;
+    periodic_counter = COMMAND_AREA_TIMER_RESOLUTION;
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
@@ -65,7 +66,7 @@ void Command::update(QString name,Command::cmd_type ctype_in,
     last_tab= last_tab_;
     linefeed = linefeed_in;
     delay = delay_in;
-    delay_counter = delay/CommandArea::TIMER_RES;
+    delay_counter =COMMAND_AREA_TIMER_RESOLUTION;
     period = period_in;
     periodic_counter = 0;
     read_data = read_data_in;
@@ -97,7 +98,7 @@ void Command::activate(){
         del_button->setEnabled(false);
         stop_button->setEnabled(true);
         periodic_counter = 0;
-        delay_counter  = delay/CommandArea::TIMER_RES;
+        delay_counter  = COMMAND_AREA_TIMER_RESOLUTION;
     }
 }
 

@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QFormLayout>
 #include <QTimer>
+#include "AddButtonWindow.h"
 #include "Command.h"
 #include "PortHandler.h"
 #include "DataType.h"
@@ -12,7 +13,6 @@
 class CommandArea:public QWidget{
     Q_OBJECT
     public:
-        static const int TIMER_RES;
         CommandArea(PortHandler *pHandler, QWidget *parent = 0);
         QVector<Command*>* getCommands();
         int getCommandCount();
@@ -28,11 +28,14 @@ class CommandArea:public QWidget{
 
     private slots:
         void run();
+        void onAddButton();
     private:
         QVector<Command*> command_pool;
         QFormLayout *layout;
         QTimer      *timer;
         PortHandler *port_handler;
+        QPushButton *add_button;
+        AddButtonWindow *add_button_window;
 
 };
 #endif

@@ -26,6 +26,7 @@ HEADERS += \
     AddButtonWindow.h \
     Command.h \
     CommandArea.h \
+    Conf.h \
     DataArea.h \
     DataType.h \
     MainWindow.h \

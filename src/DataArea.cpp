@@ -12,8 +12,7 @@
 #include "DataArea.h"
 #include "PortHandler.h"
 #include "DataType.h"
-
-const int DataArea::TIMER_RES=100; // in ms
+#include "Conf.h"
 
 DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     QWidget(parent),port_handler(pHandler){
@@ -29,7 +28,7 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     timestampChanged = false;
     timer  = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
-    timer->start(TIMER_RES);
+    timer->start(DATA_AREA_TIMER_RESOLUTION);
 
     layout->addWidget(tabbed,0,1);
     layout->setColumnStretch(1,10);

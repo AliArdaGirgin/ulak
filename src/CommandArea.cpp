@@ -4,19 +4,24 @@
 #include <QTimer>
 #include <QTime>
 #include <QSerialPort>
+#include "AddButtonWindow.h"
 #include "CommandArea.h"
 #include "Command.h"
 #include "PortHandler.h"
 #include "DataType.h"
-
-const int CommandArea::TIMER_RES=100;
+#include "Conf.h"
 
 CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent),port_handler(pHandler){
     timer  = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
-    timer->start(TIMER_RES);
+    timer->start(COMMAND_AREA_TIMER_RESOLUTION);
+
+    add_button = new QPushButton("Add");
     layout = new QFormLayout(this);
+    layout->addRow(add_button);
     setLayout(layout);
+
+    connect(add_button, SIGNAL(clicked()), this, SLOT(onAddButton()));
 }
 
 void CommandArea::addButton(QString name, Command::cmd_type type,
@@ -59,6 +64,13 @@ void CommandArea::dataRead(QByteArray data, DataType dtype){
     }
 }
 
+void CommandArea::onAddButton(){
+    add_button_window = new AddButtonWindow();
+    connect(add_button_window, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
+            this,  SLOT(addButton(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))    );
+    add_button_window->show();
+
+}
 void CommandArea::run(){
     QByteArray dt;
     for(auto &command:command_pool){
@@ -84,7 +96,7 @@ void CommandArea::run(){
                            port_handler->write(command->getDataRef());
                            port_handler->write(command->getLineFeed());
                            emit send(dt, DataType::TX);
-                           command->periodic_counter = command->getPeriod()/CommandArea::TIMER_RES;
+                           command->periodic_counter = command->getPeriod()/COMMAND_AREA_TIMER_RESOLUTION;
                        }else{
                            command->periodic_counter--;
                        }
