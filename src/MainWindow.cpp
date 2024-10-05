@@ -71,8 +71,8 @@ void MainWindow::portClose(void){
 
 void MainWindow::onAddButton(void){
     addButton = new AddButtonWindow();
-    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*)),
-            cmd_area,  SLOT(addButton(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*))    );
+    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
+            cmd_area,  SLOT(addButton(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))    );
     addButton->show();
 }
 
@@ -167,7 +167,7 @@ void MainWindow::onLoadCommands(){
         QByteArray data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
         QByteArray read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
 
-        cmd_area->addButton(name, cmd_type, data, linefeed, delay, period, read_data, this);
+        cmd_area->addButton(name, cmd_type, data, 0, linefeed, delay, period, read_data, 0,this);
     }
 }
 

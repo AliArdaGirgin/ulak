@@ -57,6 +57,8 @@ class ReadTriggerWidget:public QWidget{
         QByteArray getReadData();
         void setReadData(QByteArray read_data_in);
         bool isReadDataEmpty();
+        int getLastTab(){ return text->currentIndex();}
+        void setLastTab(int tab_){ text->setCurrentIndex(tab_);}
     private:
         QLabel *name;
         TabbedText *text;
@@ -68,8 +70,8 @@ class AddButtonWindow:public QWidget{
         AddButtonWindow(QWidget *parent=0, Command *cmd =0);
     signals:
         void onButtonAdded(QString name, Command::cmd_type cmd, 
-                           QByteArray data, QByteArray linefeed, int delay, int period=0,
-                           QByteArray read_data=QByteArray(), QWidget *parent=0);
+                           QByteArray data, int last_tab, QByteArray linefeed, int delay, int period=0,
+                           QByteArray read_data=QByteArray(), int read_last_tab=0,  QWidget *parent=0);
 
     private slots:
         void buttonAdded();

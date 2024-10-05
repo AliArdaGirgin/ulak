@@ -9,14 +9,16 @@
 #include <QIcon>
 #include "PortHandler.h"
 
-Command::Command(QString name,cmd_type ctype_in, 
-                 QByteArray data_in, QByteArray linefeed_in,int delay_in, int period_in,
-                 QByteArray read_data_in, QWidget *parent):
+Command::Command(QString name,cmd_type ctype_in,
+                 QByteArray data_in, int last_tab_, QByteArray linefeed_in,int delay_in, int period_in,
+                 QByteArray read_data_in, int read_last_tab_, QWidget *parent):
                     QWidget(parent),ctype(ctype_in),data(data_in),linefeed(linefeed_in),
                     delay(delay_in), period(period_in), read_data(read_data_in)
 {
     current_match = 0;
     trigger_count = 0;
+    last_tab= last_tab_;
+    read_last_tab = read_last_tab_;
     current_state = Command::PASSIVE;
     delay_counter = delay/CommandArea::TIMER_RES;
     periodic_counter = period/CommandArea::TIMER_RES;
@@ -55,17 +57,19 @@ Command::Command(QString name,cmd_type ctype_in,
 }
 
 void Command::update(QString name,Command::cmd_type ctype_in, 
-        QByteArray data_in, QByteArray linefeed_in,
-        int delay_in, int period_in, QByteArray read_data_in, QWidget *parent)
+        QByteArray data_in, int last_tab_, QByteArray linefeed_in,
+        int delay_in, int period_in, QByteArray read_data_in, int read_last_tab_, QWidget *parent)
 {
     ctype = ctype_in;
     data = data_in;
+    last_tab= last_tab_;
     linefeed = linefeed_in;
     delay = delay_in;
     delay_counter = delay/CommandArea::TIMER_RES;
     period = period_in;
     periodic_counter = 0;
     read_data = read_data_in;
+    read_last_tab = read_last_tab_;
     current_state = Command::PASSIVE;
     start_button->setEnabled(true); // enable start button
     (void)parent;// surpress unused variable warning
@@ -122,8 +126,8 @@ void Command::stop(){
 void Command::settings(){
     // Call AddButtonWindow with initials values for current command
     AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
-    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*)),
-            this,      SLOT(update(QString,Command::cmd_type,QByteArray,QByteArray,int,int,QByteArray,QWidget*))
+    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
+            this,      SLOT(update(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))
     );
     addButton->show();
 }

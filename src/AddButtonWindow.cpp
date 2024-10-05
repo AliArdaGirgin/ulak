@@ -1,4 +1,3 @@
-#include <iostream>
 #include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
@@ -105,13 +104,17 @@ void AddButtonWindow::buttonAdded(){
         QByteArray linefeeds = linefeed->getLineEnd();
         switch(type){
             case Command::SINGLE:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), linefeeds, delay_text->text().toInt());
+                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
+                                   linefeeds, delay_text->text().toInt());
                 break;
             case Command::PERIODIC:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), linefeeds, delay_text->text().toInt(), periodic_widget->getPeriod());
+                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
+                                   linefeeds, delay_text->text().toInt(), periodic_widget->getPeriod());
                 break;
             case Command::READ_TRIGGER:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), linefeeds, delay_text->text().toInt(), 0, read_trigger_widget->getReadData());
+                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
+                                   linefeeds, delay_text->text().toInt(), 0,
+                                   read_trigger_widget->getReadData(), read_trigger_widget->getLastTab());
                 break;
             default:
                 //Error
@@ -124,6 +127,7 @@ void AddButtonWindow::buttonAdded(){
 void AddButtonWindow::setInitials(Command *cmd){
     name_text->setText(cmd->getName());
     data_tabbedText->setData(cmd->getData());
+    data_tabbedText->setCurrentIndex(cmd->getDataTab());
     data_tabbedText->update();
     linefeed->setLineEnd(cmd->getLineFeed());
     delay_text->setText(QString::number(cmd->getDelay()));
@@ -140,6 +144,7 @@ void AddButtonWindow::setInitials(Command *cmd){
         case Command::READ_TRIGGER:
             command_cbox->setCurrentText("Read Trigger");
             read_trigger_widget->setReadData(cmd->getReadData());
+            read_trigger_widget->setLastTab(cmd->getReadDataTab());
             stacked_widget->setCurrentIndex(2);
             break;
         default:

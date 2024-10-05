@@ -20,8 +20,8 @@ CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent)
 }
 
 void CommandArea::addButton(QString name, Command::cmd_type type,
-                QByteArray data, QByteArray linefeed, int delay, int period,
-                QByteArray read_data, QWidget *parent){
+                QByteArray data, int last_tab, QByteArray linefeed, int delay, int period,
+                QByteArray read_data, int read_last_tab, QWidget *parent){
     // fill empty index if exist , appends otherwise
     int empty_index = command_pool.size();
     int cnt = 0;
@@ -32,7 +32,7 @@ void CommandArea::addButton(QString name, Command::cmd_type type,
         }
         cnt++;
     }
-    command_pool.insert(empty_index, new Command(name,type, data, linefeed, delay, period, read_data, parent));
+    command_pool.insert(empty_index, new Command(name,type, data, last_tab, linefeed, delay, period, read_data, read_last_tab, parent));
     layout->addRow(command_pool.at(empty_index));
     connect(command_pool.at(empty_index), SIGNAL(onDelete(Command*)), this, SLOT(deleteButton(Command*)));
 }
