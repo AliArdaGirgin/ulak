@@ -18,6 +18,7 @@ SOURCES += \
     PortCommSelection.cpp \
     PortHandler.cpp \
     PortSelection.cpp \
+    ProjectSettings.cpp \
     RepresentableTextEdit.cpp \
     TabbedText.cpp \
     ulak.cpp
@@ -33,6 +34,7 @@ HEADERS += \
     PortCommSelection.h \
     PortHandler.h \
     PortSelection.h \
+    ProjectSettings.h \
     RepresentableTextEdit.h \
     TabbedText.h
 

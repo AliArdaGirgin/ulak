@@ -8,7 +8,6 @@
 #include "PortSelection.h"
 #include "CommandArea.h"
 #include "DataArea.h"
-#include "AddButtonWindow.h"
 #include "PortHandler.h"
 #include <QFileDialog>
 #include <QJsonObject>
@@ -19,6 +18,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QLabel>
+#include "ProjectSettings.h"
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
@@ -179,18 +179,20 @@ void MainWindow::drawMenu(void){
     connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");
     menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
 
-    QMenu *settings = menuBar()->addMenu("&Port Settings");
+    QMenu *port_settings = menuBar()->addMenu("&Port Settings");
     port_close = new QAction("&Close Port");
     port_close->setEnabled(false);
     QAction *port_selection = new QAction("&Port Selection");
-    settings->addAction(port_selection);
-    settings->addAction(port_close);
+    port_settings->addAction(port_selection);
+    port_settings->addAction(port_close);
 
-    QMenu *commands = menuBar()->addMenu("&Project");
-    QAction *save_commands = new QAction("&Save");
-    QAction *load_commands = new QAction("&Load");
-    commands->addAction(save_commands);
-    commands->addAction(load_commands);
+    QMenu *proj = menuBar()->addMenu("&Project");
+    QAction *proj_settings  = new QAction("&Settings");
+    QAction *proj_save = new QAction("&Save");
+    QAction *proj_load = new QAction("&Load");
+    proj->addAction(proj_settings);
+    proj->addAction(proj_save);
+    proj->addAction(proj_load);
 
     QMenu *log = menuBar()->addMenu("&Log");
     QAction *save_data     = new QAction("&Save");
@@ -200,9 +202,10 @@ void MainWindow::drawMenu(void){
 
     connect(port_selection, SIGNAL(triggered()), this, SLOT(portSelect()));
     connect(port_close, SIGNAL(triggered()), this, SLOT(portClose()));
+    connect(proj_settings, SIGNAL(triggered()), this, SLOT(onProjSettings()));
+    connect(proj_save, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
+    connect(proj_load, SIGNAL(triggered()), this, SLOT(onLoadCommands()));
     connect(save_data, SIGNAL(triggered()), this, SLOT(onSaveData()));
-    connect(save_commands, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
-    connect(load_commands, SIGNAL(triggered()), this, SLOT(onLoadCommands()));
     connect(clear, SIGNAL(triggered()), this, SLOT(onClear()));
 }
 
@@ -215,6 +218,11 @@ void MainWindow::timedout(){
         connState->setPixmap(connOff);
         port_close->setEnabled(false);
     }
+}
+
+void MainWindow::onProjSettings(){
+    ProjectSettings *proj_settings = new ProjectSettings();
+    proj_settings->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){

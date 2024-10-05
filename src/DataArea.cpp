@@ -19,7 +19,9 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     layout = new QGridLayout();
     tabbed = new QTabWidget();
     ascii  = new QTextEdit();
+    ascii->setReadOnly(true);
     hex    = new QTextEdit();
+    hex->setReadOnly(true);
 
     ascii_index = tabbed->addTab(ascii, "ASCII");
     hex_index   = tabbed->addTab(hex, "HEX");

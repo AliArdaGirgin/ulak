@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow{
     private slots:
         void onAddButton();
         void onSaveData();
+        void onProjSettings();
         void onSaveCommands();
         void onLoadCommands();
         void onClear();
@@ -50,6 +51,7 @@ class MainWindow : public QMainWindow{
         QPixmap connOn;
         QPixmap connOff;
         QAction *port_close;
+
         void drawMenu(void);
 };
 
