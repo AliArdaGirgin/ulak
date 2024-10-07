@@ -6,14 +6,19 @@
 #include <QStringList>
 #include "TabbedText.h"
 #include "RepresentableTextEdit.h"
+#include "DataType.h"
+#include "ProjectSettings.h"
 
 TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
     AsciiText *ascii = new AsciiText(this, data);
     HexText   *hex   = new HexText(this, data);
 
-    addTab(ascii,"ASCII");
-    addTab(hex,"HEX");
-
+    ascii_index = addTab(ascii, VIEW_TYPE_ASCII_NAME);
+    hex_index = addTab(hex, VIEW_TYPE_HEX_NAME);
+    if(ProjectSettings::getDefaultDataType() == VIEW_TYPE::ASCII)
+        setCurrentIndex(ascii_index);
+    else
+        setCurrentIndex(hex_index);
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabbedChanged(int)));
 }
 

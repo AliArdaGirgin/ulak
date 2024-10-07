@@ -19,6 +19,7 @@
 #include <QTimer>
 #include <QLabel>
 #include "ProjectSettings.h"
+#include "DataType.h"
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
@@ -67,9 +68,6 @@ void MainWindow::portClose(void){
     if(port_handler->commExists()){
         port_handler->removePort();
     }
-}
-
-void MainWindow::onAddButton(void){
 }
 
 void MainWindow::onSaveData(void){
@@ -222,6 +220,7 @@ void MainWindow::timedout(){
 
 void MainWindow::onProjSettings(){
     ProjectSettings *proj_settings = new ProjectSettings();
+    connect(proj_settings, SIGNAL(viewTypeUpdated(VIEW_TYPE)), data_area, SLOT(setCurrentTab(VIEW_TYPE)));
     proj_settings->show();
 }
 

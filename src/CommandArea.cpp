@@ -69,7 +69,6 @@ void CommandArea::onAddButton(){
     connect(add_button_window, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
             this,  SLOT(addButton(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))    );
     add_button_window->show();
-
 }
 void CommandArea::run(){
     QByteArray dt;

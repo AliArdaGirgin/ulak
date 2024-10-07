@@ -12,6 +12,7 @@
 #include "AddButtonWindow.h"
 #include "TabbedText.h"
 #include <limits>
+#include "ProjectSettings.h"
 
 AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
@@ -44,6 +45,8 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
     QLabel *linefeed_label = new QLabel("Line Feed");
     linefeed = new LineEndSel(this);
+    linefeed->setLineEnd( ProjectSettings::getDefaultLineFeed());
+
     QLabel    *command_label = new QLabel("Type");
     command_cbox = new QComboBox(this);
     command_cbox->addItem("Manual");

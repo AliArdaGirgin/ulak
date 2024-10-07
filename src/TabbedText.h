@@ -24,6 +24,8 @@ class TabbedText : public QTabWidget{
 
     private:
         QByteArray data;
+        int ascii_index;
+        int hex_index;
 };
 
 #endif

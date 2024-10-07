@@ -30,7 +30,8 @@ class DataArea : public QWidget{
         void write(QByteArray data_in, DataType dataType);
         void clear();
         void save();
-        void tabChanged(int index);
+        void tabChanged(int);
+        void setCurrentTab(VIEW_TYPE);
     private slots:
         void run();
     private:

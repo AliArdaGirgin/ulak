@@ -13,6 +13,8 @@
 #include "PortHandler.h"
 #include "DataType.h"
 #include "Conf.h"
+#include "DataType.h"
+#include "ProjectSettings.h"
 
 DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     QWidget(parent),port_handler(pHandler){
@@ -23,9 +25,12 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     hex    = new QTextEdit();
     hex->setReadOnly(true);
 
-    ascii_index = tabbed->addTab(ascii, "ASCII");
-    hex_index   = tabbed->addTab(hex, "HEX");
-    current_index = ascii_index;
+    ascii_index = tabbed->addTab(ascii, VIEW_TYPE_ASCII_NAME);
+    hex_index   = tabbed->addTab(hex, VIEW_TYPE_HEX_NAME);
+    tabbed->setCurrentIndex(
+        static_cast<int>(ProjectSettings::getDefaultDataType())
+    );
+    current_index = tabbed->currentIndex();
 
     timestampChanged = false;
     timer  = new QTimer();
@@ -99,11 +104,11 @@ void DataArea::save(){
     file.close();
 }
 
-void DataArea::tabChanged(int index){
-    current_index = index;
-    if(index == ascii_index){
+void DataArea::tabChanged(int tab){
+    current_index = tab;
+    if(current_index == ascii_index){
         textFieldUpdate(ascii, [](QByteArray& ba){ return QString(ba);});
-    }else if(index == hex_index){
+    }else if(current_index == hex_index){
         textFieldUpdate(hex, [](QByteArray& ba){return ba.toHex(' ');});
     }else{
         std::cout << "Error :" << __FILE__ << " " << __LINE__ << std::endl;
@@ -142,4 +147,8 @@ void DataArea::textFieldUpdate(QTextEdit* te, std::function<QString(QByteArray&)
         te->append(byteToStr(m.dt));
         te->append("\n");
     }
+}
+
+void DataArea::setCurrentTab(VIEW_TYPE tab){
+    tabbed->setCurrentIndex(static_cast<int>(tab));
 }

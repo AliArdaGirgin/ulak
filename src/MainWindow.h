@@ -31,7 +31,6 @@ class MainWindow : public QMainWindow{
         void portClose();
 
     private slots:
-        void onAddButton();
         void onSaveData();
         void onProjSettings();
         void onSaveCommands();
