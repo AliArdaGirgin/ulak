@@ -15,7 +15,7 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
 
     ascii_index = addTab(ascii, VIEW_TYPE_ASCII_NAME);
     hex_index = addTab(hex, VIEW_TYPE_HEX_NAME);
-    if(ProjectSettings::getDefaultDataType() == VIEW_TYPE::ASCII)
+    if(ProjectSettings::getDefaultViewType() == VIEW_TYPE::ASCII)
         setCurrentIndex(ascii_index);
     else
         setCurrentIndex(hex_index);

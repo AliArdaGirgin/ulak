@@ -43,9 +43,15 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     QLabel *data_label = new QLabel("Data");
     data_tabbedText    = new TabbedText(this);
 
-    QLabel *linefeed_label = new QLabel("Line Feed");
-    linefeed = new LineEndSel(this);
-    linefeed->setLineEnd( ProjectSettings::getDefaultLineFeed());
+    QLabel *linefeed_label = new QLabel("Linefeed");
+    linefeed_selection = new QComboBox();
+    linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
+    linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
+    linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
+    linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
+    linefeed_selection->setCurrentIndex(0
+        //static_cast<LINEFEED_TYPE>( ProjectSettings::getDefaultLineFeed());
+    );
 
     QLabel    *command_label = new QLabel("Type");
     command_cbox = new QComboBox(this);
@@ -71,7 +77,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     layout->addWidget(data_label,1,0,Qt::AlignTop);
     layout->addWidget(data_tabbedText,1,1);
     layout->addWidget(linefeed_label,2,0);
-    layout->addWidget(linefeed,2,1);
+    layout->addWidget(linefeed_selection,2,1);
     layout->addWidget(command_label,3,0,Qt::AlignTop);
     layout->addWidget(command_cbox,3,1);
     layout->addWidget(delay_label,4,0,Qt::AlignTop);
@@ -104,20 +110,21 @@ void AddButtonWindow::buttonAdded(){
         msg->exec();
     // Checks complete add button to cmd area
     }else{
-        QByteArray linefeeds = linefeed->getLineEnd();
+        delete msg;
+        LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(linefeed_selection->currentIndex());
         switch(type){
             case Command::SINGLE:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeeds, delay_text->text().toInt());
+                                   linefeed, delay_text->text().toInt());
                 break;
             case Command::PERIODIC:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeeds, delay_text->text().toInt(), periodic_widget->getPeriod());
+                                   linefeed, delay_text->text().toInt(), periodic_widget->getPeriod());
                 break;
             case Command::READ_TRIGGER:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeeds, delay_text->text().toInt(), 0,
-                                   read_trigger_widget->getReadData(), read_trigger_widget->getLastTab());
+                                   linefeed, delay_text->text().toInt(), 0,
+                                   read_trigger_widget->getReadData(), read_trigger_widget->getLinefeed(), read_trigger_widget->getLastTab());
                 break;
             default:
                 //Error
@@ -132,7 +139,7 @@ void AddButtonWindow::setInitials(Command *cmd){
     data_tabbedText->setData(cmd->getData());
     data_tabbedText->setCurrentIndex(cmd->getDataTab());
     data_tabbedText->update();
-    linefeed->setLineEnd(cmd->getLineFeed());
+    linefeed_selection->setCurrentIndex( static_cast<int>(cmd->getLineFeed()));
     delay_text->setText(QString::number(cmd->getDelay()));
     switch(cmd->getCommandType()){
         case Command::SINGLE:
@@ -148,6 +155,7 @@ void AddButtonWindow::setInitials(Command *cmd){
             command_cbox->setCurrentText("Read Trigger");
             read_trigger_widget->setReadData(cmd->getReadData());
             read_trigger_widget->setLastTab(cmd->getReadDataTab());
+            read_trigger_widget->setLinefeed(cmd->getReadLineFeed());
             stacked_widget->setCurrentIndex(2);
             break;
         default:
@@ -172,63 +180,20 @@ PeriodicWidget::PeriodicWidget(QWidget *parent):QWidget(parent){
     setLayout(layout);
 }
 
-int PeriodicWidget::getPeriod(){
-    return text->text().toInt();
-}
-
-void PeriodicWidget::setPeriod(int delay_in){
-    text->setText(QString::number(delay_in));
-}
-
 ReadTriggerWidget::ReadTriggerWidget(QWidget *parent):QWidget(parent){
     QGridLayout *layout = new QGridLayout();
     layout->setSpacing(0);
     name = new QLabel("Read Data          ");
     text = new TabbedText(this);
+    QLabel *read_linefeed_label = new QLabel("Linefeed");
+    read_linefeed_selection = new QComboBox();
+    read_linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
+    read_linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
+    read_linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
+    read_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
     layout->addWidget(name,0,0,Qt::AlignTop);
     layout->addWidget(text,0,1);
+    layout->addWidget(read_linefeed_label, 1, 0);
+    layout->addWidget(read_linefeed_selection, 1, 1);
     setLayout(layout);
 }
-
-bool ReadTriggerWidget::isReadDataEmpty(){
-    return text->isDataEmpty();
-}
-
-QByteArray ReadTriggerWidget::getReadData(){
-    return text->getData();
-}
-
-void ReadTriggerWidget::setReadData(QByteArray read_data_in){
-    text->setData(read_data_in);
-}
-
-LineEndSel::LineEndSel(QWidget *parent):QWidget(parent){
-    layout = new QGridLayout();
-    CR_label = new QLabel("CR");
-    CR_check = new QCheckBox(this);
-    LF_label = new QLabel("LF");
-    LF_check = new QCheckBox(this);
-
-    layout->addWidget(CR_label, 0,0,Qt::AlignRight);
-    layout->addWidget(CR_check, 0,1);
-    layout->addWidget(LF_label, 0,2,Qt::AlignRight);
-    layout->addWidget(LF_check, 0,3);
-    setLayout(layout);
-}
-
-QByteArray LineEndSel::getLineEnd(){
-    QByteArray lineend;
-    if(CR_check->isChecked())
-        lineend.append('\r');
-    if(LF_check->isChecked())
-        lineend.append('\n');
-    return lineend;
-}
-
-void LineEndSel::setLineEnd(QByteArray linefeed_in){
-    if(linefeed_in[0] == '\r')
-        CR_check->setCheckState(Qt::CheckState::Checked);
-    if(linefeed_in[1] == '\n')
-        LF_check->setCheckState(Qt::CheckState::Checked);
-}
-

@@ -7,15 +7,16 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QByteArray>
-#include "AddButtonWindow.h"
 #include "DataType.h"
 
 class ProjectSettings: public QWidget{
     Q_OBJECT
     public:
         ProjectSettings();
-        static VIEW_TYPE getDefaultDataType(){ return default_data_type;}
-        static QByteArray getDefaultLineFeed(){ return default_linefeed;}
+        static VIEW_TYPE getDefaultViewType(){ return default_view_type;}
+        static void setDefaultViewType(VIEW_TYPE t){ default_view_type = t;}
+        static LINEFEED_TYPE getDefaultLinefeed(){ return default_linefeed;}
+        static void setDefaultLinefeed(LINEFEED_TYPE t){ default_linefeed = t;}
     signals:
         void viewTypeUpdated(VIEW_TYPE);
     private slots:
@@ -25,9 +26,10 @@ class ProjectSettings: public QWidget{
         QGridLayout *layout;
         QPushButton *save;
         QPushButton *cancel;
-        QComboBox* default_data_type_selection;
-        LineEndSel *linefeed_selection;
-        static VIEW_TYPE default_data_type;
-        static QByteArray default_linefeed;
+        QComboBox* default_view_type_selection;
+        QComboBox* default_linefeed_selection;
+        static QString project_file_name;
+        static VIEW_TYPE default_view_type;
+        static LINEFEED_TYPE default_linefeed;
 };
 #endif // PROJECTSETTINGS_H

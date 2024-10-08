@@ -75,12 +75,7 @@ void MainWindow::onSaveData(void){
 }
 
 void MainWindow::onSaveCommands(void){
-    if(cmd_area->getCommandCount() == 0){
-        QMessageBox *msg = new QMessageBox;
-        msg->setText("No commands to save!");
-        msg->exec();
-        return;
-    }
+    // Open file
     QString file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
     if(file_name.isEmpty()){return;}
 
@@ -92,7 +87,21 @@ void MainWindow::onSaveCommands(void){
         return;
     }
 
+    // Json array to hold saved data
+    // [0] -> settings
+    // [1..] -> rest is commands
     QJsonArray json_arr = QJsonArray();
+
+    // Save project settings
+    QJsonObject json_sett = QJsonObject();
+    if(ProjectSettings::getDefaultViewType() == VIEW_TYPE::ASCII)
+        json_sett["view_type"] = VIEW_TYPE_ASCII_NAME;
+    else
+        json_sett["view_type"] = VIEW_TYPE_HEX_NAME;
+    json_sett["linefeed"] = static_cast<int>( ProjectSettings::getDefaultLinefeed());
+    json_arr.push_back(json_sett);
+
+    // Save commands
     QVector<Command*> *cmds = cmd_area->getCommands();
     for(auto &cmd : *cmds){
         QJsonObject obj = QJsonObject();
@@ -100,9 +109,10 @@ void MainWindow::onSaveCommands(void){
         obj["type"] = cmd->getCommandType();
         obj["delay"] = cmd->getDelay();
         obj["period"] = cmd->getPeriod();
-        obj["linefeed"] = QString(cmd->getLineFeed().toBase64().toStdString().c_str());
-        obj["data"] = QString(cmd->getDataRef().toBase64().toStdString().c_str());
-        obj["readData"] = QString(cmd->getReadData().toBase64().toStdString().c_str());
+        obj["linefeed"] = static_cast<int>(cmd->getLineFeed());
+        obj["data"] = QString(cmd->getData().toBase64());
+        obj["readData"] = QString(cmd->getReadData().toBase64());
+        obj["read_linefeed"] = static_cast<int>(cmd->getReadLineFeed());
         json_arr.push_back(obj);
     }
     QJsonDocument json_doc = QJsonDocument(json_arr);
@@ -136,14 +146,43 @@ void MainWindow::onLoadCommands(){
     }
 
     QJsonArray json_arr = json_doc.array();
-    for(auto json_value : json_arr){
-        if(!json_value.isObject()){
+    auto it = json_arr.cbegin();
+
+    // First member in array is settings
+    if(it != json_arr.cend()){
+        if(!it->isObject()){
+            QMessageBox *msg = new QMessageBox;
+            msg->setText("Not json object");
+            msg->exec();
+            return;
+        }
+        QJsonObject json_obj = it->toObject();
+        if(!json_obj.contains("view_type") || !json_obj.contains("linefeed")){
+            QMessageBox *msg = new QMessageBox;
+            msg->setText("Not a valid ulak json object");
+            msg->exec();
+            return;
+        }
+        if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME)
+            ProjectSettings::setDefaultViewType(VIEW_TYPE::ASCII);
+        else // HEX
+            ProjectSettings::setDefaultViewType(VIEW_TYPE::HEX);
+
+        ProjectSettings::setDefaultLinefeed(
+            static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt())
+        );
+    }
+
+    // Rest is commands
+    it += 1;
+    for(;it!=json_arr.cend(); it++){
+        if(!it->isObject()){
             QMessageBox *msg = new QMessageBox;
             msg->setText("Not json object");
             msg->exec();
             continue;
         }
-        QJsonObject json_obj = json_value.toObject();
+        QJsonObject json_obj = it->toObject();
         if(!json_obj.contains("name") || !json_obj.contains("type") || !json_obj.contains("delay") ||
            !json_obj.contains(("period")) || !json_obj.contains("linefeed") || !json_obj.contains("data") ||
            !json_obj.contains("readData")){
@@ -157,11 +196,12 @@ void MainWindow::onLoadCommands(){
         int delay = json_obj["delay"].toInt();
         int period = json_obj["period"].toInt();
         Command::cmd_type cmd_type = static_cast<Command::cmd_type>(json_obj["type"].toInt());
-        QByteArray linefeed = QByteArray::fromBase64(json_obj["linefeed"].toString().toLocal8Bit());
         QByteArray data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
+        LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
         QByteArray read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
+        LINEFEED_TYPE read_linefeed = static_cast<LINEFEED_TYPE>(json_obj["read_linefeed"].toInt());
 
-        cmd_area->addButton(name, cmd_type, data, 0, linefeed, delay, period, read_data, 0,this);
+        cmd_area->addButton(name, cmd_type, data, 0, linefeed, delay, period, read_data, read_linefeed, 0,this);
     }
 }
 

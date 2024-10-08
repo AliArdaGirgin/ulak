@@ -19,8 +19,8 @@ class CommandArea:public QWidget{
 
     public slots:
         void addButton(QString name, Command::cmd_type type,
-                QByteArray data, int last_tab, QByteArray linefeed, int delay, int period,
-                QByteArray read_data, int rad_last_tab, QWidget *parent);
+                QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period,
+                QByteArray read_data, LINEFEED_TYPE read_linefeed, int read_last_tab, QWidget *parent);
         void dataRead(QByteArray data, DataType dtype);
         void deleteButton(Command *cmd);
     signals:

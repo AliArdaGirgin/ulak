@@ -28,7 +28,7 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     ascii_index = tabbed->addTab(ascii, VIEW_TYPE_ASCII_NAME);
     hex_index   = tabbed->addTab(hex, VIEW_TYPE_HEX_NAME);
     tabbed->setCurrentIndex(
-        static_cast<int>(ProjectSettings::getDefaultDataType())
+        static_cast<int>(ProjectSettings::getDefaultViewType())
     );
     current_index = tabbed->currentIndex();
 

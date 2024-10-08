@@ -9,17 +9,22 @@
 #include <QIcon>
 #include "PortHandler.h"
 #include "Conf.h"
+#include "DataType.h"
 
-Command::Command(QString name,cmd_type ctype_in,
-                 QByteArray data_in, int last_tab_, QByteArray linefeed_in,int delay_in, int period_in,
-                 QByteArray read_data_in, int read_last_tab_, QWidget *parent):
-                    QWidget(parent),ctype(ctype_in),data(data_in),linefeed(linefeed_in),
-                    delay(delay_in), period(period_in), read_data(read_data_in)
+Command::Command(QString name,cmd_type ctype_,
+                 QByteArray data_, int last_tab_,
+                 LINEFEED_TYPE linefeed_, int delay_, int period_,
+                 QByteArray read_data_, LINEFEED_TYPE read_linefeed_,
+                 int read_last_tab_, QWidget *parent):
+                    QWidget(parent),ctype(ctype_),data(data_),linefeed(linefeed_),
+                    delay(delay_), period(period_), read_data(read_data_),
+                    read_linefeed(read_linefeed_), read_last_tab(read_last_tab_)
 {
+    setLinefeedData(linefeed_data, linefeed);
+    setLinefeedData(read_linefeed_data, read_linefeed);
     current_match = 0;
     trigger_count = 0;
     last_tab= last_tab_;
-    read_last_tab = read_last_tab_;
     current_state = Command::PASSIVE;
     delay_counter = COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = COMMAND_AREA_TIMER_RESOLUTION;
@@ -57,32 +62,29 @@ Command::Command(QString name,cmd_type ctype_in,
     connect(del_button,      SIGNAL(clicked()),  this, SLOT(del()));
 }
 
-void Command::update(QString name,Command::cmd_type ctype_in, 
-        QByteArray data_in, int last_tab_, QByteArray linefeed_in,
-        int delay_in, int period_in, QByteArray read_data_in, int read_last_tab_, QWidget *parent)
+void Command::update(QString name,Command::cmd_type ctype_,
+        QByteArray data_, int last_tab_, LINEFEED_TYPE linefeed_,
+        int delay_, int period_, QByteArray read_data_,
+        LINEFEED_TYPE read_linefeed_,
+        int read_last_tab_, QWidget *parent)
 {
-    ctype = ctype_in;
-    data = data_in;
+    ctype = ctype_;
+    data = data_;
     last_tab= last_tab_;
-    linefeed = linefeed_in;
-    delay = delay_in;
+    linefeed = linefeed_;
+    setLinefeedData(linefeed_data, linefeed);
+    delay = delay_;
     delay_counter =COMMAND_AREA_TIMER_RESOLUTION;
-    period = period_in;
+    period = period_;
     periodic_counter = 0;
-    read_data = read_data_in;
+    read_data = read_data_;
+    read_linefeed = read_linefeed_;
+    setLinefeedData(read_linefeed_data, read_linefeed);
     read_last_tab = read_last_tab_;
     current_state = Command::PASSIVE;
     start_button->setEnabled(true); // enable start button
     (void)parent;// surpress unused variable warning
     start_button->setText(name);
-}
-
-void Command::triggered(void){
-    trigger_count--;
-}
-
-bool Command::isTriggered(void){
-    return trigger_count <= 0 ? false : true;
 }
 
 void Command::activate(){
@@ -127,50 +129,24 @@ void Command::stop(){
 void Command::settings(){
     // Call AddButtonWindow with initials values for current command
     AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
-    connect(addButton, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
-            this,      SLOT(update(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))
+    connect(addButton, SIGNAL(onButtonAdded(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
+            this,               SLOT(update(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
     );
     addButton->show();
 }
 
-void Command::del(){
-    // Delete signal, Command must be deleted from CommandArea
-    emit onDelete(this);
-}
-
-// Getters
-QString Command::getName(){
-    return start_button->text();
-}
-
-QByteArray Command::getData(){
-    return data;
-}
-
-int Command::getDelay(){
-    return delay;
-}
-
-int Command::getPeriod(){
-    return period;
-}
-
-QByteArray Command::getReadData(){
-    return read_data;
-}
-
-Command::cmd_type Command::getCommandType(){
-    return ctype;
-}
-
-Command::state Command::getState(){
-    return current_state;
-}
-
-QByteArray& Command::getDataRef(){
-    return data;
-}
-
-QByteArray& Command::getLineFeed(){
-    return linefeed;
+void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
+    switch(ln){
+        case LINEFEED_TYPE::NONE:
+        break;
+        case LINEFEED_TYPE::CR:
+            dt.append('\r');
+        break;
+        case LINEFEED_TYPE::CR_LF:
+            data.append("\r\n");
+        break;
+        case LINEFEED_TYPE::NULL_TERMINATOR:
+            data.append('\0');
+        break;
+    }
 }

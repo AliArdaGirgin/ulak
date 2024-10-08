@@ -25,8 +25,8 @@ CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent)
 }
 
 void CommandArea::addButton(QString name, Command::cmd_type type,
-                QByteArray data, int last_tab, QByteArray linefeed, int delay, int period,
-                QByteArray read_data, int read_last_tab, QWidget *parent){
+                QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period,
+                QByteArray read_data, LINEFEED_TYPE read_linefeed, int read_last_tab, QWidget *parent){
     // fill empty index if exist , appends otherwise
     int empty_index = command_pool.size();
     int cnt = 0;
@@ -37,7 +37,7 @@ void CommandArea::addButton(QString name, Command::cmd_type type,
         }
         cnt++;
     }
-    command_pool.insert(empty_index, new Command(name,type, data, last_tab, linefeed, delay, period, read_data, read_last_tab, parent));
+    command_pool.insert(empty_index, new Command(name,type, data, last_tab, linefeed, delay, period, read_data, read_linefeed, read_last_tab, parent));
     layout->addRow(command_pool.at(empty_index));
     connect(command_pool.at(empty_index), SIGNAL(onDelete(Command*)), this, SLOT(deleteButton(Command*)));
 }
@@ -66,8 +66,10 @@ void CommandArea::dataRead(QByteArray data, DataType dtype){
 
 void CommandArea::onAddButton(){
     add_button_window = new AddButtonWindow();
-    connect(add_button_window, SIGNAL(onButtonAdded(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*)),
-            this,  SLOT(addButton(QString,Command::cmd_type,QByteArray,int,QByteArray,int,int,QByteArray,int,QWidget*))    );
+    connect(
+            add_button_window, SIGNAL(onButtonAdded(QString, Command::cmd_type ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
+            this, SLOT(addButton(QString, Command::cmd_type ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+    );
     add_button_window->show();
 }
 void CommandArea::run(){
@@ -75,13 +77,11 @@ void CommandArea::run(){
     for(auto &command:command_pool){
         // Command not deleted and active
         if(command != nullptr && command->getState()==Command::ACTIVE){
-            dt = command->getDataRef();
-            dt.append(command->getLineFeed());
+            dt = command->getDataWithLinefeed();
             switch(command->getCommandType()){
                 case Command::SINGLE:
                     if(command->delay_counter == 0){
-                        port_handler->write(command->getDataRef());
-                        port_handler->write(command->getLineFeed());
+                        port_handler->write(dt);
                         emit send(dt, DataType::TX);
                         command->stop();
                     }else{
@@ -92,8 +92,7 @@ void CommandArea::run(){
                 case Command::PERIODIC:
                     if(command->delay_counter == 0){
                        if(command->periodic_counter == 0){
-                           port_handler->write(command->getDataRef());
-                           port_handler->write(command->getLineFeed());
+                           port_handler->write(dt);
                            emit send(dt, DataType::TX);
                            command->periodic_counter = command->getPeriod()/COMMAND_AREA_TIMER_RESOLUTION;
                        }else{
@@ -106,8 +105,7 @@ void CommandArea::run(){
                 case Command::READ_TRIGGER:
                     if(command->isTriggered()){
                         if(command->delay_counter == 0){
-                            port_handler->write(command->getDataRef());
-                            port_handler->write(command->getLineFeed());
+                            port_handler->write(dt);
                             emit send(dt, DataType::TX);
                             command->triggered();
                         }else{
