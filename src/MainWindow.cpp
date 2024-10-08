@@ -234,8 +234,8 @@ void MainWindow::onClear(void){
 }
 
 void MainWindow::drawMenu(void){
-    connOn = QIcon("../img/connOn.img").pixmap( QSize(16,16) );
-    connOff = QIcon("../img/connOff.img").pixmap( QSize(16,16) );
+    connOn = QIcon(":/conn_on.png").pixmap( QSize(16,16) );
+    connOff = QIcon(":/conn_off.png").pixmap( QSize(16,16) );
     connState = new QLabel("");
     connState->setPixmap(connOff);
     connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");

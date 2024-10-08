@@ -33,19 +33,19 @@ Command::Command(QString name,cmd_type ctype_,
     // Set up buttons
     start_button = new QPushButton(name,this);
     start_button->setFixedSize(150,start_button->height());
-    start_button->setIcon(QIcon("../img/start_inactive.img") );
+    start_button->setIcon(QIcon(":/start_inactive.png") );
 
     stop_button  = new QPushButton("",this);
-    stop_button->setIcon(QIcon("../img/stop.img"));
+    stop_button->setIcon(QIcon(":/stop.png"));
     stop_button->setFixedSize(40, stop_button->height());
     stop_button->setEnabled(false);
     
     settings_button = new QPushButton("",this);
-    settings_button->setIcon(QIcon("../img/settings.img"));
+    settings_button->setIcon(QIcon(":/settings.png"));
     settings_button->setFixedSize(40, settings_button->height());
     
     del_button = new QPushButton("",this);
-    del_button->setIcon(QIcon("../img/delete.img"));
+    del_button->setIcon(QIcon(":/delete.png"));
     del_button->setFixedSize(40, del_button->height());
 
     layout->setSizeConstraint(QLayout::SetFixedSize);
@@ -137,15 +137,18 @@ void Command::settings(){
 void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
     switch(ln){
         case LINEFEED_TYPE::NONE:
-        break;
+            break;
         case LINEFEED_TYPE::CR:
             dt.append('\r');
-        break;
+            break;
+        case LINEFEED_TYPE::LF:
+            dt.append('\n');
+            break;
         case LINEFEED_TYPE::CR_LF:
             dt.append("\r\n");
-        break;
+            break;
         case LINEFEED_TYPE::NULL_TERMINATOR:
             dt.append('\0');
-        break;
+            break;
     }
 }

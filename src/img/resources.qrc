@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>conn_off.png</file>
+	<file>conn_on.png</file>
+	<file>delete.png</file>
+	<file>settings.png</file>
+	<file>start_inactive.png</file>
+	<file>stop.png</file>
+</qresource>
+</RCC>
