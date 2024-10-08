@@ -163,11 +163,13 @@ void MainWindow::onLoadCommands(){
             msg->exec();
             return;
         }
-        if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME)
+        if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME){
             ProjectSettings::setDefaultViewType(VIEW_TYPE::ASCII);
-        else // HEX
+            data_area->setCurrentTab(VIEW_TYPE::ASCII);
+        }else{ // HEX
             ProjectSettings::setDefaultViewType(VIEW_TYPE::HEX);
-
+            data_area->setCurrentTab(VIEW_TYPE::HEX);
+        }
         ProjectSettings::setDefaultLinefeed(
             static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt())
         );

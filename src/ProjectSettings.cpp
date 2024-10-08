@@ -26,6 +26,7 @@ ProjectSettings::ProjectSettings(){
     // line feed selection
     QLabel* default_linefeed_selection_name = new QLabel("Linefeed");
     default_linefeed_selection = new QComboBox();
+    default_linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);

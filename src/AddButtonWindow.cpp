@@ -49,8 +49,8 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
     linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
-    linefeed_selection->setCurrentIndex(0
-        //static_cast<LINEFEED_TYPE>( ProjectSettings::getDefaultLineFeed());
+    linefeed_selection->setCurrentIndex(
+        static_cast<int>( ProjectSettings::getDefaultLinefeed())
     );
 
     QLabel    *command_label = new QLabel("Type");
@@ -191,6 +191,9 @@ ReadTriggerWidget::ReadTriggerWidget(QWidget *parent):QWidget(parent){
     read_linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
     read_linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     read_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
+    read_linefeed_selection->setCurrentIndex(
+        static_cast<int>( ProjectSettings::getDefaultLinefeed())
+    );
     layout->addWidget(name,0,0,Qt::AlignTop);
     layout->addWidget(text,0,1);
     layout->addWidget(read_linefeed_label, 1, 0);
