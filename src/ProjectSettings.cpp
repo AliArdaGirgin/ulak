@@ -28,6 +28,7 @@ ProjectSettings::ProjectSettings(){
     default_linefeed_selection = new QComboBox();
     default_linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
+    default_linefeed_selection->addItem(LINEFEED_TYPE_LF_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     default_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
     default_linefeed_selection->setCurrentIndex(static_cast<int>(default_linefeed));
@@ -60,4 +61,8 @@ void ProjectSettings::onSaved(){
     this->close();
 }
 
+void ProjectSettings::setParamatersToDefault(){
+    default_view_type = VIEW_TYPE::ASCII;
+    default_linefeed = LINEFEED_TYPE::NONE;
+}
 

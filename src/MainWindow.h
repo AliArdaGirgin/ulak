@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QIcon>
 #include <QPixmap>
+
 #include "CommandArea.h"
 #include "DataArea.h"
 #include "PortSelection.h"
@@ -33,8 +34,9 @@ class MainWindow : public QMainWindow{
     private slots:
         void onSaveData();
         void onProjSettings();
-        void onSaveCommands();
-        void onLoadCommands();
+        void onProjSave();
+        void onProjOpen();
+        void onProjClose();
         void onClear();
         void timedout();
     private:
@@ -50,7 +52,8 @@ class MainWindow : public QMainWindow{
         QPixmap connOn;
         QPixmap connOff;
         QAction *port_close;
-
+        QString save_file_name;
+        QAction *proj_close;
         void drawMenu(void);
 };
 

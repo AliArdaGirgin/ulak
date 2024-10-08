@@ -17,6 +17,7 @@ class ProjectSettings: public QWidget{
         static void setDefaultViewType(VIEW_TYPE t){ default_view_type = t;}
         static LINEFEED_TYPE getDefaultLinefeed(){ return default_linefeed;}
         static void setDefaultLinefeed(LINEFEED_TYPE t){ default_linefeed = t;}
+        static void setParamatersToDefault();
     signals:
         void viewTypeUpdated(VIEW_TYPE);
     private slots:

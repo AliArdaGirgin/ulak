@@ -16,7 +16,7 @@ class CommandArea:public QWidget{
         CommandArea(PortHandler *pHandler, QWidget *parent = 0);
         QVector<Command*>* getCommands();
         int getCommandCount();
-
+        void clearCommands();
     public slots:
         void addButton(QString name, Command::cmd_type type,
                 QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period,

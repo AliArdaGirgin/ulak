@@ -47,6 +47,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     linefeed_selection = new QComboBox();
     linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
     linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
+    linefeed_selection->addItem(LINEFEED_TYPE_LF_NAME);
     linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
     linefeed_selection->setCurrentIndex(
@@ -189,6 +190,7 @@ ReadTriggerWidget::ReadTriggerWidget(QWidget *parent):QWidget(parent){
     read_linefeed_selection = new QComboBox();
     read_linefeed_selection->addItem(LINEFEED_TYPE_NONE_NAME);
     read_linefeed_selection->addItem(LINEFEED_TYPE_CR_NAME);
+    read_linefeed_selection->addItem(LINEFEED_TYPE_LF_NAME);
     read_linefeed_selection->addItem(LINEFEED_TYPE_CR_LF_NAME);
     read_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
     read_linefeed_selection->setCurrentIndex(

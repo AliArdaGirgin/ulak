@@ -134,3 +134,8 @@ int CommandArea::getCommandCount(){
     }
     return total;
 }
+
+void CommandArea::clearCommands(){
+    while(!command_pool.isEmpty())
+        delete command_pool.takeLast();
+}

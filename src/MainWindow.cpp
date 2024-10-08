@@ -1,23 +1,24 @@
+#include <QLabel>
 #include <QMenuBar>
 #include <QMenu>
 #include <QScrollArea>
 #include <QByteArray>
 #include <QDebug>
 #include <QCloseEvent>
-#include "MainWindow.h"
-#include "PortSelection.h"
-#include "CommandArea.h"
-#include "DataArea.h"
-#include "PortHandler.h"
+#include <QFile>
 #include <QFileDialog>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QString>
-#include <QFile>
 #include <QMessageBox>
 #include <QTimer>
-#include <QLabel>
+
+#include "MainWindow.h"
+#include "PortSelection.h"
+#include "CommandArea.h"
+#include "DataArea.h"
+#include "PortHandler.h"
 #include "ProjectSettings.h"
 #include "DataType.h"
 
@@ -74,19 +75,21 @@ void MainWindow::onSaveData(void){
     emit saved();
 }
 
-void MainWindow::onSaveCommands(void){
-    // Open file
-    QString file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
-    if(file_name.isEmpty()){return;}
+void MainWindow::onProjSave(void){
 
-    QFile save_file(file_name);
+    // Open file dialog, if already not set
+    if(save_file_name.isEmpty()){
+        save_file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
+        if(save_file_name.isEmpty()){return;}
+    }
+
+    QFile save_file(save_file_name);
     if(!save_file.open(QIODevice::WriteOnly | QIODevice::Text)){
         QMessageBox *msg = new QMessageBox;
         msg->setText("Failed to open file");
         msg->exec();
         return;
     }
-
     // Json array to hold saved data
     // [0] -> settings
     // [1..] -> rest is commands
@@ -120,14 +123,20 @@ void MainWindow::onSaveCommands(void){
     QJsonDocument json_doc = QJsonDocument(json_arr);
     save_file.write(json_doc.toJson());
     save_file.close();
+
 }
 
-void MainWindow::onLoadCommands(){
-    QString file_name = QFileDialog::getOpenFileName(this,tr("Open File"),"","All Files(*)");
-    if(file_name.isEmpty()){return;}
+void MainWindow::onProjOpen(){
 
-    QFile load_file(file_name);
-    if(!load_file.open(QIODevice::ReadOnly | QIODevice::Text)){
+    // if already open project close it first
+    if(!save_file_name.isEmpty())
+        onProjClose();
+
+    save_file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
+    if(save_file_name.isEmpty()){return;}
+
+    QFile load_file(save_file_name);
+    if(!load_file.open(QIODevice::ReadWrite | QIODevice::Text)){
         QMessageBox *msg = new QMessageBox;
         msg->setText("Failed to open file");
         msg->exec();
@@ -209,8 +218,17 @@ void MainWindow::onLoadCommands(){
 
         cmd_area->addButton(name, cmd_type, data, dataTab, linefeed, delay, period, read_data, read_linefeed, readDataTab, this);
     }
+
+    proj_close->setEnabled(true);
 }
 
+void MainWindow::onProjClose(){
+    cmd_area->clearCommands();
+    ProjectSettings::setParamatersToDefault();
+    data_area->setCurrentTab(VIEW_TYPE::ASCII);
+    save_file_name.clear();
+    proj_close->setEnabled(false);
+}
 void MainWindow::onClear(void){
     emit cleared();
 }
@@ -221,7 +239,18 @@ void MainWindow::drawMenu(void){
     connState = new QLabel("");
     connState->setPixmap(connOff);
     connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");
-    menuBar()->setCornerWidget(connState, Qt::TopLeftCorner);
+    menuBar()->setCornerWidget(connState, Qt::TopRightCorner);
+
+    QMenu *proj = menuBar()->addMenu("&Project");
+    QAction *proj_open = new QAction("&Open");
+    QAction *proj_settings  = new QAction("&Settings");
+    QAction *proj_save = new QAction("&Save");
+    proj_close = new QAction("&Close");
+    proj_close->setEnabled(false);
+    proj->addAction(proj_open);
+    proj->addAction(proj_settings);
+    proj->addAction(proj_save);
+    proj->addAction(proj_close);
 
     QMenu *port_settings = menuBar()->addMenu("&Port Settings");
     port_close = new QAction("&Close Port");
@@ -230,13 +259,6 @@ void MainWindow::drawMenu(void){
     port_settings->addAction(port_selection);
     port_settings->addAction(port_close);
 
-    QMenu *proj = menuBar()->addMenu("&Project");
-    QAction *proj_settings  = new QAction("&Settings");
-    QAction *proj_save = new QAction("&Save");
-    QAction *proj_load = new QAction("&Load");
-    proj->addAction(proj_settings);
-    proj->addAction(proj_save);
-    proj->addAction(proj_load);
 
     QMenu *log = menuBar()->addMenu("&Log");
     QAction *save_data     = new QAction("&Save");
@@ -244,11 +266,13 @@ void MainWindow::drawMenu(void){
     log->addAction(save_data);
     log->addAction(clear);
 
+    connect(proj_settings, SIGNAL(triggered()), this, SLOT(onProjSettings()));
+    connect(proj_save, SIGNAL(triggered()), this, SLOT(onProjSave()));
+    connect(proj_open, SIGNAL(triggered()), this, SLOT(onProjOpen()));
+    connect(proj_close, SIGNAL(triggered()), this, SLOT(onProjClose()));
+
     connect(port_selection, SIGNAL(triggered()), this, SLOT(portSelect()));
     connect(port_close, SIGNAL(triggered()), this, SLOT(portClose()));
-    connect(proj_settings, SIGNAL(triggered()), this, SLOT(onProjSettings()));
-    connect(proj_save, SIGNAL(triggered()), this, SLOT(onSaveCommands()));
-    connect(proj_load, SIGNAL(triggered()), this, SLOT(onLoadCommands()));
     connect(save_data, SIGNAL(triggered()), this, SLOT(onSaveData()));
     connect(clear, SIGNAL(triggered()), this, SLOT(onClear()));
 }
