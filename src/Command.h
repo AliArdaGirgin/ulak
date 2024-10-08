@@ -53,6 +53,7 @@ class Command:public QWidget{
     private:
         cmd_type    ctype;
         QByteArray  data;
+        int last_tab;
         LINEFEED_TYPE  linefeed;
         QByteArray linefeed_data;
         int delay;
@@ -67,7 +68,6 @@ class Command:public QWidget{
         QPushButton *del_button;
         int current_match;
         int trigger_count;
-        int last_tab;
         int read_last_tab;
         void setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln);
 };

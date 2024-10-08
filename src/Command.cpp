@@ -16,15 +16,14 @@ Command::Command(QString name,cmd_type ctype_,
                  LINEFEED_TYPE linefeed_, int delay_, int period_,
                  QByteArray read_data_, LINEFEED_TYPE read_linefeed_,
                  int read_last_tab_, QWidget *parent):
-                    QWidget(parent),ctype(ctype_),data(data_),linefeed(linefeed_),
-                    delay(delay_), period(period_), read_data(read_data_),
+                    QWidget(parent),ctype(ctype_),data(data_), last_tab(last_tab_),
+                    linefeed(linefeed_), delay(delay_), period(period_), read_data(read_data_),
                     read_linefeed(read_linefeed_), read_last_tab(read_last_tab_)
 {
     setLinefeedData(linefeed_data, linefeed);
     setLinefeedData(read_linefeed_data, read_linefeed);
     current_match = 0;
     trigger_count = 0;
-    last_tab= last_tab_;
     current_state = Command::PASSIVE;
     delay_counter = COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = COMMAND_AREA_TIMER_RESOLUTION;
@@ -143,10 +142,10 @@ void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
             dt.append('\r');
         break;
         case LINEFEED_TYPE::CR_LF:
-            data.append("\r\n");
+            dt.append("\r\n");
         break;
         case LINEFEED_TYPE::NULL_TERMINATOR:
-            data.append('\0');
+            dt.append('\0');
         break;
     }
 }

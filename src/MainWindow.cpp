@@ -111,7 +111,9 @@ void MainWindow::onSaveCommands(void){
         obj["period"] = cmd->getPeriod();
         obj["linefeed"] = static_cast<int>(cmd->getLineFeed());
         obj["data"] = QString(cmd->getData().toBase64());
+        obj["dataTab"] = cmd->getDataTab();
         obj["readData"] = QString(cmd->getReadData().toBase64());
+        obj["readDataTab"] = cmd->getReadDataTab();
         obj["read_linefeed"] = static_cast<int>(cmd->getReadLineFeed());
         json_arr.push_back(obj);
     }
@@ -187,7 +189,7 @@ void MainWindow::onLoadCommands(){
         QJsonObject json_obj = it->toObject();
         if(!json_obj.contains("name") || !json_obj.contains("type") || !json_obj.contains("delay") ||
            !json_obj.contains(("period")) || !json_obj.contains("linefeed") || !json_obj.contains("data") ||
-           !json_obj.contains("readData")){
+            !json_obj.contains("readData") || !json_obj.contains("dataTab") || !json_obj.contains("readDataTab")){
             QMessageBox *msg = new QMessageBox;
             msg->setText("Not a valid ulak json object");
             msg->exec();
@@ -199,11 +201,13 @@ void MainWindow::onLoadCommands(){
         int period = json_obj["period"].toInt();
         Command::cmd_type cmd_type = static_cast<Command::cmd_type>(json_obj["type"].toInt());
         QByteArray data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
+        int dataTab = json_obj["dataTab"].toInt();
         LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
         QByteArray read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
+        int readDataTab = json_obj["readDataTab"].toInt();
         LINEFEED_TYPE read_linefeed = static_cast<LINEFEED_TYPE>(json_obj["read_linefeed"].toInt());
 
-        cmd_area->addButton(name, cmd_type, data, 0, linefeed, delay, period, read_data, read_linefeed, 0,this);
+        cmd_area->addButton(name, cmd_type, data, dataTab, linefeed, delay, period, read_data, read_linefeed, readDataTab, this);
     }
 }
 
