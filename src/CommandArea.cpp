@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QTime>
 #include <QSerialPort>
+#include <QIcon>
+
 #include "AddButtonWindow.h"
 #include "CommandArea.h"
 #include "Command.h"
@@ -16,7 +18,9 @@ CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent)
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(COMMAND_AREA_TIMER_RESOLUTION);
 
-    add_button = new QPushButton("Add");
+    add_button = new QPushButton();
+    add_button->setIconSize(QSize(100,30));
+    add_button->setIcon(QIcon(":/add_command.png"));
     layout = new QFormLayout(this);
     layout->addRow(add_button);
     setLayout(layout);
