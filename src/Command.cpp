@@ -25,8 +25,8 @@ Command::Command(QString name,cmd_type ctype_,
     current_match = 0;
     trigger_count = 0;
     current_state = Command::PASSIVE;
-    delay_counter = COMMAND_AREA_TIMER_RESOLUTION;
-    periodic_counter = COMMAND_AREA_TIMER_RESOLUTION;
+    delay_counter = delay/COMMAND_AREA_TIMER_RESOLUTION;
+    periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
@@ -73,13 +73,16 @@ void Command::update(QString name,Command::cmd_type ctype_,
     linefeed = linefeed_;
     setLinefeedData(linefeed_data, linefeed);
     delay = delay_;
-    delay_counter =COMMAND_AREA_TIMER_RESOLUTION;
+    delay_counter =delay/COMMAND_AREA_TIMER_RESOLUTION;
     period = period_;
-    periodic_counter = 0;
+    periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
     read_data = read_data_;
     read_linefeed = read_linefeed_;
     setLinefeedData(read_linefeed_data, read_linefeed);
     read_last_tab = read_last_tab_;
+    current_match = 0;
+    trigger_count = 0;
+
     current_state = Command::PASSIVE;
     start_button->setEnabled(true); // enable start button
     (void)parent;// surpress unused variable warning
@@ -98,8 +101,10 @@ void Command::activate(){
         settings_button->setEnabled(false);
         del_button->setEnabled(false);
         stop_button->setEnabled(true);
-        periodic_counter = 0;
-        delay_counter  = COMMAND_AREA_TIMER_RESOLUTION;
+        periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
+        delay_counter  = delay/COMMAND_AREA_TIMER_RESOLUTION;
+        current_match = 0;
+        trigger_count = 0;
     }
 }
 
