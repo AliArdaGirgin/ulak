@@ -3,7 +3,6 @@
 #include "PortHandler.h"
 #include <QSerialPort>
 #include <QTimer>
-#include <iostream>
 #include "DataType.h"
 
 QSerialPort *PortHandler::current_port = nullptr;
@@ -27,19 +26,21 @@ bool PortHandler::removePort(){
             ;
         }
         current_port = nullptr;
+        emit portStateChanged(false, "");
         return true;
     }else{
+        emit portStateChanged(false, "");
         return false;
     }
 }
 
 bool PortHandler::setPort(QSerialPort *port_in){
-    if(!current_port){
-        current_port = port_in;
-        return true;
-    }else{
-        return false;
-    }
+    if(current_port)
+        removePort();
+
+    current_port = port_in;
+    emit portStateChanged(true, current_port->portName());
+    return true;
 }
 
 int PortHandler::write(QByteArray &data){

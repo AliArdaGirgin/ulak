@@ -1,7 +1,11 @@
 #ifndef CONF_H
 #define CONF_H
 
-#include <QtSystemDetection>
+#include <QtGlobal>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    #include <QtSystemDetection>
+#endif
 
 #if  defined(Q_OS_LINUX)
     #define RCC_FILE "./img/resources.rcc"

@@ -27,6 +27,7 @@ void AsciiText::keyPressEvent(QKeyEvent* event){
 
 void AsciiText::update(){
     setPlainText(data);
+    moveCursor(QTextCursor::End);
 }
 
 void AsciiText::clear(){
@@ -87,14 +88,13 @@ void HexText::keyPressEvent(QKeyEvent *event){
 void HexText::update(){
     std::string temp;
     for(auto& c:data){
-        char *s = new char[3];
-        if(std::sprintf(s, "%02x ", (unsigned char)c) < 0){
-            throw std::bad_alloc();
-        }
+        char *s = new char[4]; // "ff \0" -> size= 4
+        std::sprintf(s, "%02x ", (unsigned char)c);
         temp.append(s);
         delete[] s;
     }
     setPlainText(QString::fromStdString(temp));
+    moveCursor(QTextCursor::End);
 }
 void HexText::clear(){
     QTextEdit::clear();

@@ -19,6 +19,24 @@
 #include "PortSelection.h"
 #include "AddButtonWindow.h"
 
+class CommRightCornerWidget: public QWidget{
+    Q_OBJECT
+    public:
+        CommRightCornerWidget(QWidget *parent);
+
+    public slots:
+        void setState(bool state_, QString name = "");
+
+    private:
+        QWidget *parent;
+        QGridLayout *layout;
+        QLabel *comm_name;
+        QLabel *comm_state;
+        QIcon  *icon_active;
+        QIcon  *icon_passive;
+        bool state;
+};
+
 class MainWindow : public QMainWindow{
     Q_OBJECT
     public:
@@ -28,6 +46,7 @@ class MainWindow : public QMainWindow{
         void saved();
         void cleared();
     public slots:
+        void setPortState(bool state, QString);
         void portSelect();
         void portClose();
 
@@ -38,7 +57,6 @@ class MainWindow : public QMainWindow{
         void onProjOpen();
         void onProjClose();
         void onClear();
-        void timedout();
     private:
         CommandArea *cmd_area;
         QScrollArea *cmd_scroll;
@@ -47,13 +65,10 @@ class MainWindow : public QMainWindow{
         PortSelection *sel;
         AddButtonWindow *addButton;
         PortHandler *port_handler;
-        QTimer *timer;
-        QLabel *connState;
-        QPixmap connOn;
-        QPixmap connOff;
         QAction *port_close;
         QString save_file_name;
         QAction *proj_close;
+        CommRightCornerWidget *corner_widget;
         void drawMenu(void);
 };
 

@@ -54,10 +54,8 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     connect(cmd_area,     SIGNAL(send(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
     connect(port_handler, SIGNAL(read(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
     connect(port_handler, SIGNAL(read(QByteArray,DataType)),  cmd_area,  SLOT(dataRead(QByteArray,DataType)) );
-
-    timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(timedout()));
-    timer->start(100);
+    connect(port_handler, SIGNAL(portStateChanged(bool,QString)), corner_widget, SLOT(setState(bool,QString)));
+    connect(port_handler, SIGNAL(portStateChanged(bool,QString)), this, SLOT(setPortState(bool,QString)));
 }
 
 void MainWindow::portSelect(void){
@@ -234,12 +232,8 @@ void MainWindow::onClear(void){
 }
 
 void MainWindow::drawMenu(void){
-    connOn = QIcon(":/conn_on.png").pixmap( QSize(16,16) );
-    connOff = QIcon(":/conn_off.png").pixmap( QSize(16,16) );
-    connState = new QLabel("");
-    connState->setPixmap(connOff);
-    connState->setStyleSheet("margin-right: 2px; margin-left: 2px;");
-    menuBar()->setCornerWidget(connState, Qt::TopRightCorner);
+    corner_widget = new CommRightCornerWidget(this);
+    menuBar()->setCornerWidget(corner_widget, Qt::TopRightCorner);
 
     QMenu *proj = menuBar()->addMenu("&Project");
     QAction *proj_open = new QAction("&Open");
@@ -277,17 +271,6 @@ void MainWindow::drawMenu(void){
     connect(clear, SIGNAL(triggered()), this, SLOT(onClear()));
 }
 
-void MainWindow::timedout(){
-    if(PortHandler::commExists()){
-        connState->setPixmap(connOn);
-        port_close->setEnabled(true);
-    }
-    else{
-        connState->setPixmap(connOff);
-        port_close->setEnabled(false);
-    }
-}
-
 void MainWindow::onProjSettings(){
     ProjectSettings *proj_settings = new ProjectSettings();
     connect(proj_settings, SIGNAL(viewTypeUpdated(VIEW_TYPE)), data_area, SLOT(setCurrentTab(VIEW_TYPE)));
@@ -299,3 +282,47 @@ void MainWindow::closeEvent(QCloseEvent *event){
         port_handler->removePort();
     event->accept();
 }
+
+CommRightCornerWidget::CommRightCornerWidget(QWidget* parent_): parent(parent_){
+    state = 0;
+    layout = new QGridLayout();
+    comm_name = new QLabel("None");
+
+    comm_state = new QLabel("");
+    icon_active  = new QIcon(":/conn_on.png");
+    icon_passive = new QIcon(":/conn_off.png");
+    comm_state->setPixmap(icon_passive->pixmap(QSize(16,16)));
+    comm_state->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+    layout->setSizeConstraint(QLayout::SetMinimumSize);
+    layout->addWidget(comm_name, 0, 0);
+    layout->addWidget(comm_state, 0, 1);
+    setLayout(layout);
+}
+
+void CommRightCornerWidget::setState(bool state_, QString name){
+    state = state_;
+    if(state){
+        comm_name->setText(name);
+        comm_state->setPixmap(icon_active->pixmap(QSize(16,16)));
+    }else{
+        comm_name->setText("None");
+        comm_state->setPixmap(icon_passive->pixmap(QSize(16,16)));
+    }
+
+    // resize mainwindow so comm_name and icon fits properly
+    // we need to change the size a little for update to occur
+    QSize s = parent->size();
+    s.rwidth() += 1;
+    parent->resize(s);
+}
+
+void MainWindow::setPortState(bool state, QString name){
+    (void) name;
+    if(state)
+        port_close->setEnabled(true);
+    else
+        port_close->setEnabled(false);
+}
+
+
