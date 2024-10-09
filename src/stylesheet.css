@@ -1,15 +1,15 @@
 QScrollArea {
-    border: 0;
+    border: 0
 }
 
 QApplication{
-    background-color: black;
+    background-color: black
 }
 
 QMenuBar{
-    background-color: gainsboro;
+    background-color: gainsboro
 }
 
 QTextEdit{
-    border: 0;
+    border: 0
 }

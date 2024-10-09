@@ -11,6 +11,7 @@
 #include <cstring>
 #include <QDebug>
 #include <climits>
+#include <cstdio>
 
 
 void AsciiText::keyPressEvent(QKeyEvent* event){
@@ -86,12 +87,12 @@ void HexText::keyPressEvent(QKeyEvent *event){
 void HexText::update(){
     std::string temp;
     for(auto& c:data){
-        char *s;
-        if(asprintf(&s, "%02x ", (unsigned char)c) < 0){
+        char *s = new char[3];
+        if(std::sprintf(s, "%02x ", (unsigned char)c) < 0){
             throw std::bad_alloc();
         }
         temp.append(s);
-        free(s);
+        delete[] s;
     }
     setPlainText(QString::fromStdString(temp));
 }
