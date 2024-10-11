@@ -37,6 +37,7 @@ HEADERS += \
     ProjectSettings.h \
     RepresentableTextEdit.h \
     TabbedText.h
+RESOURCES = ../resources/resources.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

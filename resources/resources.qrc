@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+	<file>stylesheet.css</file>
 	<file>conn_off.png</file>
 	<file>conn_on.png</file>
 	<file>delete.png</file>

@@ -1,1 +1,0 @@
-./ulak --platform "xcb"
