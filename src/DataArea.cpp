@@ -32,10 +32,11 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     );
     current_index = tabbed->currentIndex();
 
+    // Start timer to update timestamp
     timestampChanged = false;
     timer  = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
-    timer->start(DATA_AREA_TIMER_RESOLUTION);
+    timer->start(DATA_AREA_TIMESTAMP_UPDATE_PERIOD);
 
     layout->addWidget(tabbed,0,1);
     layout->setColumnStretch(1,10);
@@ -48,15 +49,20 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
 void DataArea::write(QByteArray data_in, DataType dataType){
     TimestampedData dt;
     QString temp;
+
+    // insetr new row, if first data or data type changed or timestamp changed
     if(!data.size() || data.back().type != dataType || timestampChanged){
         dt.dt = data_in;
         dt.timestamp = lastTimestamp;
         dt.type = dataType;
         data.push_back(dt);
 
+    // if not, append to last roe
     }else{
         data.back().dt.append(data_in);
     }
+
+    //
     if(current_index == ascii_index){
         textFieldUpdate(ascii, [](QByteArray& ba){ return QString(ba);});
     }else if(current_index == hex_index){

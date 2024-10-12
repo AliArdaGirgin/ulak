@@ -15,6 +15,9 @@
 
 
 void AsciiText::keyPressEvent(QKeyEvent* event){
+
+    // if non-ascii data exist in underlying bytearray do not allow
+    // modification from ascii view
     if(!isDataAscii()){
         QMessageBox *msg = new QMessageBox();
         msg->setText("Modifiying binary data from ascii edit is not allowed");

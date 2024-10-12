@@ -15,10 +15,13 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
 
     ascii_index = addTab(ascii, VIEW_TYPE_ASCII_NAME);
     hex_index = addTab(hex, VIEW_TYPE_HEX_NAME);
+
+    // set default acoording to project settings
     if(ProjectSettings::getDefaultViewType() == VIEW_TYPE::ASCII)
         setCurrentIndex(ascii_index);
     else
         setCurrentIndex(hex_index);
+
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabbedChanged(int)));
 }
 

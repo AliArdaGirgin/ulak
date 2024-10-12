@@ -13,6 +13,7 @@
 #include "TabbedText.h"
 #include <limits>
 #include "ProjectSettings.h"
+#include "Conf.h"
 
 AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
@@ -100,15 +101,21 @@ void AddButtonWindow::buttonAdded(){
     // Check name and data fileds
     if(data_tabbedText->isDataEmpty() || name_text->text().isEmpty()){
         msg->setText("Name and/or data can not be empty");
-        msg->exec();
+        msg->exec()
+            ;
     // Check period if command is periodic
     }else if(type == Command::PERIODIC && periodic_widget->getPeriod() == 0){
-        msg->setText("Period min = 5ms");
+        QString str("Period min =");
+        str += QString::number(COMMAND_AREA_TIMER_RESOLUTION);
+        str += "ms";
+        msg->setText(str);
         msg->exec();
+
     // Check read data if command is read trigger
     }else if(type == Command::READ_TRIGGER && read_trigger_widget->isReadDataEmpty()){
         msg->setText("Read data cant be empty");
         msg->exec();
+
     // Checks complete add button to cmd area
     }else{
         delete msg;

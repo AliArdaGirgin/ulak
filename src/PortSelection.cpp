@@ -8,8 +8,10 @@
 PortSelection::PortSelection(PortHandler *pHandler, QWidget * parent):QTabWidget(parent),port_handler(pHandler){
 
     setWindowTitle("Port");
+
     // Block input to other windows
     setWindowModality(Qt::ApplicationModal);
+
     // Always on top of main window
     setWindowFlags(Qt::WindowStaysOnTopHint);
 

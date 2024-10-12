@@ -168,7 +168,7 @@ void MainWindow::onProjOpen(){
         QJsonObject json_obj = it->toObject();
         if(!json_obj.contains("view_type") || !json_obj.contains("linefeed")){
             QMessageBox *msg = new QMessageBox;
-            msg->setText("Not a valid ulak json object");
+            msg->setText("Not a valid ulak settings json object");
             msg->exec();
             return;
         }
@@ -194,15 +194,18 @@ void MainWindow::onProjOpen(){
             continue;
         }
         QJsonObject json_obj = it->toObject();
+        // Check if required vairbales exists in json object
         if(!json_obj.contains("name") || !json_obj.contains("type") || !json_obj.contains("delay") ||
            !json_obj.contains(("period")) || !json_obj.contains("linefeed") || !json_obj.contains("data") ||
-            !json_obj.contains("readData") || !json_obj.contains("dataTab") || !json_obj.contains("readDataTab")){
+            !json_obj.contains("readData") || !json_obj.contains("dataTab") || !json_obj.contains("readDataTab"))
+        {
             QMessageBox *msg = new QMessageBox;
             msg->setText("Not a valid ulak json object");
             msg->exec();
             continue;
         }
 
+        //checks complete, add command to command area
         QString name = json_obj["name"].toString();
         int delay = json_obj["delay"].toInt();
         int period = json_obj["period"].toInt();
@@ -267,6 +270,7 @@ void MainWindow::drawMenu(void){
 
     connect(port_selection, SIGNAL(triggered()), this, SLOT(portSelect()));
     connect(port_close, SIGNAL(triggered()), this, SLOT(portClose()));
+
     connect(save_data, SIGNAL(triggered()), this, SLOT(onSaveData()));
     connect(clear, SIGNAL(triggered()), this, SLOT(onClear()));
 }
@@ -312,6 +316,7 @@ void CommRightCornerWidget::setState(bool state_, QString name){
 
     // resize mainwindow so comm_name and icon fits properly
     // we need to change the size a little for update to occur
+    // @TODO: find a better way to do this
     QSize s = parent->size();
     s.rwidth() += 1;
     parent->resize(s);

@@ -20,11 +20,15 @@ Command::Command(QString name,cmd_type ctype_,
                     linefeed(linefeed_), delay(delay_), period(period_), read_data(read_data_),
                     read_linefeed(read_linefeed_), read_last_tab(read_last_tab_)
 {
+    // create linefeed data acoording to LINEFEED_TYPE
     setLinefeedData(linefeed_data, linefeed);
     setLinefeedData(read_linefeed_data, read_linefeed);
+
     current_match = 0;
     trigger_count = 0;
     current_state = Command::PASSIVE;
+
+    // set counter values to match with command area timer resolution
     delay_counter = delay/COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
 
@@ -95,6 +99,7 @@ void Command::activate(){
         QMessageBox *msg = new QMessageBox();
         msg->setText("No Connection");
         msg->exec();
+
     }else{
         current_state  = Command::ACTIVE;
         start_button->setEnabled(false);
@@ -134,7 +139,7 @@ void Command::settings(){
     // Call AddButtonWindow with initials values for current command
     AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
     connect(addButton, SIGNAL(onButtonAdded(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
-            this,               SLOT(update(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+            this,      SLOT(update(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
     );
     addButton->show();
 }

@@ -4,13 +4,14 @@
 #include <QSerialPort>
 #include <QTimer>
 #include "DataType.h"
+#include "Conf.h"
 
 QSerialPort *PortHandler::current_port = nullptr;
 
 PortHandler::PortHandler(QObject *parent):QObject(parent){
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
-    timer->start(100);
+    timer->start(PORT_HANDLER_READ_PERIOD);
 }
 
 bool PortHandler::commExists(){
