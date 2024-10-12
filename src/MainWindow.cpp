@@ -95,11 +95,18 @@ void MainWindow::onProjSave(void){
 
     // Save project settings
     QJsonObject json_sett = QJsonObject();
+
+    // view type
     if(ProjectSettings::getDefaultViewType() == VIEW_TYPE::ASCII)
         json_sett["view_type"] = VIEW_TYPE_ASCII_NAME;
     else
         json_sett["view_type"] = VIEW_TYPE_HEX_NAME;
+
+    // linefeed
     json_sett["linefeed"] = static_cast<int>( ProjectSettings::getDefaultLinefeed());
+
+    // timestamp format
+    json_sett["timestamp_format"] = static_cast<int>( ProjectSettings::getDefaultTimestampFormat());
     json_arr.push_back(json_sett);
 
     // Save commands
@@ -166,12 +173,15 @@ void MainWindow::onProjOpen(){
             return;
         }
         QJsonObject json_obj = it->toObject();
-        if(!json_obj.contains("view_type") || !json_obj.contains("linefeed")){
+        if(!json_obj.contains("view_type") || !json_obj.contains("linefeed") ||
+            !json_obj.contains("timestamp_format")){
             QMessageBox *msg = new QMessageBox;
             msg->setText("Not a valid ulak settings json object");
             msg->exec();
             return;
         }
+
+        // view type
         if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME){
             ProjectSettings::setDefaultViewType(VIEW_TYPE::ASCII);
             data_area->setCurrentTab(VIEW_TYPE::ASCII);
@@ -179,8 +189,15 @@ void MainWindow::onProjOpen(){
             ProjectSettings::setDefaultViewType(VIEW_TYPE::HEX);
             data_area->setCurrentTab(VIEW_TYPE::HEX);
         }
+
+        // linefeed
         ProjectSettings::setDefaultLinefeed(
             static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt())
+        );
+
+        // timestamp_format
+        ProjectSettings::setDefaultTimestampFormat(
+            static_cast<TIMESTAMP_FORMAT_TYPE>(json_obj["timestamp_format"].toInt())
         );
     }
 
@@ -194,7 +211,7 @@ void MainWindow::onProjOpen(){
             continue;
         }
         QJsonObject json_obj = it->toObject();
-        // Check if required vairbales exists in json object
+        // Check if required variables exists in json object
         if(!json_obj.contains("name") || !json_obj.contains("type") || !json_obj.contains("delay") ||
            !json_obj.contains(("period")) || !json_obj.contains("linefeed") || !json_obj.contains("data") ||
             !json_obj.contains("readData") || !json_obj.contains("dataTab") || !json_obj.contains("readDataTab"))
@@ -220,6 +237,7 @@ void MainWindow::onProjOpen(){
         cmd_area->addButton(name, cmd_type, data, dataTab, linefeed, delay, period, read_data, read_linefeed, readDataTab, this);
     }
 
+    load_file.close();
     proj_close->setEnabled(true);
 }
 

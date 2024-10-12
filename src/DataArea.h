@@ -1,6 +1,7 @@
 #ifndef DATAAREA_H
 #define DATAAREA_H
 
+#include <chrono>
 #include <QWidget>
 #include <QTextEdit>
 #include <QObject>
@@ -49,8 +50,9 @@ class DataArea : public QWidget{
         QVector<TimestampedData> data;
         TimestampedData currentData;
         bool timestampChanged;
+        std::chrono::time_point<std::chrono::system_clock> time_prog_start;
         void textFieldUpdate(QTextEdit*, std::function<QString(QByteArray&)>);
-
+        QString getTimestamp();
 };
 
 

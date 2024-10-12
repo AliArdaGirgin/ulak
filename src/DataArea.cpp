@@ -3,12 +3,16 @@
 #include <QGridLayout>
 #include <QDebug>
 #include <QFileDialog>
-#include <iostream>
 #include <QTime>
 #include <QTimer>
 #include <QTabWidget>
 #include <QVector>
 #include <QMessageBox>
+#include <ctime>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+
 #include "DataArea.h"
 #include "PortHandler.h"
 #include "DataType.h"
@@ -44,6 +48,8 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     setLayout(layout);
 
     connect(tabbed, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+    time_prog_start = std::chrono::system_clock::now();
 }
 
 void DataArea::write(QByteArray data_in, DataType dataType){
@@ -123,10 +129,65 @@ void DataArea::tabChanged(int tab){
 }
 
 void DataArea::run(){
-    lastTimestamp = QTime::currentTime().toString();
+    lastTimestamp = getTimestamp();
     timestampChanged = true;
 }
 
+QString DataArea::getTimestamp(){
+    QString ret;
+
+    using namespace std::chrono;
+    std::stringstream ss;
+
+    // Holds date time
+    std::time_t t = system_clock::to_time_t(system_clock::now());
+
+    // Hold ms since
+    time_point<system_clock> ms_now = system_clock::now();
+
+    switch(ProjectSettings::getDefaultTimestampFormat()){
+        case TIMESTAMP_FORMAT_TYPE::DATE:
+            ss << std::put_time(std::localtime(&t), "%Y-%m-%d");
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::TIME:
+            ss << std::put_time(std::localtime(&t), "%H:%M:%S");
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::DATE_TIME:
+            ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::TIME_MS:
+            ss << std::put_time(std::localtime(&t), "%H:%M:%S");
+            // add ms
+            ss << "," << time_point_cast<milliseconds>(ms_now).time_since_epoch().count()%1000;
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::DATE_TIME_MS:
+            ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
+            // add ms
+            ss << "," << time_point_cast<milliseconds>(ms_now).time_since_epoch().count()%1000;
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::MS_FROM_START:
+            ss << duration_cast<milliseconds>(ms_now - time_prog_start).count();
+            ret = QString::fromStdString(ss.str());
+            break;
+
+        case TIMESTAMP_FORMAT_TYPE::SEC_FROM_START:
+            ss << duration<float>(ms_now - time_prog_start).count();
+            ret = QString::fromStdString(ss.str());
+        break;
+    }
+
+    return ret;
+}
 
 void DataArea::textFieldUpdate(QTextEdit* te, std::function<QString(QByteArray&)> byteToStr){
     te->clear();

@@ -5,9 +5,11 @@
 #include "ProjectSettings.h"
 #include "DataType.h"
 
-VIEW_TYPE  ProjectSettings::default_view_type = VIEW_TYPE::ASCII;
-LINEFEED_TYPE ProjectSettings::default_linefeed = {};
 QString    ProjectSettings::project_file_name = {};
+
+VIEW_TYPE  ProjectSettings::default_view_type = VIEW_TYPE::ASCII;
+LINEFEED_TYPE ProjectSettings::default_linefeed = LINEFEED_TYPE::NONE;
+TIMESTAMP_FORMAT_TYPE ProjectSettings::default_timestamp_format = TIMESTAMP_FORMAT_TYPE::TIME_MS;
 
 ProjectSettings::ProjectSettings(){
     setWindowTitle("Project Settings");
@@ -33,6 +35,16 @@ ProjectSettings::ProjectSettings(){
     default_linefeed_selection->addItem(LINEFEED_TYPE_0_NAME);
     default_linefeed_selection->setCurrentIndex(static_cast<int>(default_linefeed));
 
+    QLabel* default_timestamp_format_name = new QLabel("Timestamp Format");
+    default_timestamp_selection = new QComboBox(this);
+    default_timestamp_selection->addItem(TIMESTAMP_DATE_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_TIME_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_DATE_TIME_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_TIME_MS_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_DATE_TIME_MS_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_MS_FROM_START_NAME);
+    default_timestamp_selection->addItem(TIMESTAMP_SEC_FROM_START_NAME);
+    default_timestamp_selection->setCurrentIndex(static_cast<int>(default_timestamp_format));
 
     // save and cancel buttons
     save = new QPushButton("Ok");
@@ -45,8 +57,10 @@ ProjectSettings::ProjectSettings(){
     layout->addWidget(default_view_type_selection, 0, 1);
     layout->addWidget(default_linefeed_selection_name, 1,0);
     layout->addWidget(default_linefeed_selection, 1,1);
-    layout->addWidget(save, 2, 0);
-    layout->addWidget(cancel, 2, 1);
+    layout->addWidget(default_timestamp_format_name, 2, 0);
+    layout->addWidget(default_timestamp_selection, 2, 1);
+    layout->addWidget(save, 3, 0);
+    layout->addWidget(cancel, 3, 1);
     setLayout(layout);
 }
 
@@ -58,11 +72,16 @@ void ProjectSettings::onSaved(){
 
     // linefeed
     default_linefeed = static_cast<LINEFEED_TYPE>(default_linefeed_selection->currentIndex());
+
+    // timestam format
+    default_timestamp_format = static_cast<TIMESTAMP_FORMAT_TYPE>( default_timestamp_selection->currentIndex());
+
     this->close();
 }
 
 void ProjectSettings::setParamatersToDefault(){
     default_view_type = VIEW_TYPE::ASCII;
     default_linefeed = LINEFEED_TYPE::NONE;
+    default_timestamp_format = TIMESTAMP_FORMAT_TYPE::TIME_MS;
 }
 
