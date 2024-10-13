@@ -129,6 +129,7 @@ void MainWindow::onProjSave(void){
     save_file.write(json_doc.toJson());
     save_file.close();
 
+    proj_close->setEnabled(true);
 }
 
 void MainWindow::onProjOpen(){
@@ -137,7 +138,7 @@ void MainWindow::onProjOpen(){
     if(!save_file_name.isEmpty())
         onProjClose();
 
-    save_file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"");
+    save_file_name = QFileDialog::getSaveFileName(this, tr("Open File"), "");
     if(save_file_name.isEmpty()){return;}
 
     QFile load_file(save_file_name);
@@ -248,6 +249,7 @@ void MainWindow::onProjClose(){
     save_file_name.clear();
     proj_close->setEnabled(false);
 }
+
 void MainWindow::onClear(void){
     emit cleared();
 }
