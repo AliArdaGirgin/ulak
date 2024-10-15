@@ -8,16 +8,14 @@
 class Command:public QWidget{
     Q_OBJECT
     public:
-        enum cmd_type{SINGLE, PERIODIC, READ_TRIGGER};
-        enum state{ACTIVE, FROZEN, PASSIVE};
-        Command(QString name,cmd_type ctype_in,
+        Command(QString name, COMMAND_TYPE ctype_in,
                 QByteArray data_in, int last_tab_,
                 LINEFEED_TYPE linefeed_in, int delay_in,
                 int period_in = 0, QByteArray read_data_in = QByteArray(),
                 LINEFEED_TYPE read_linefeed_in = LINEFEED_TYPE::NONE,
                 int read_last_tab_ =0, QWidget *parent = 0);
         QString getName(){ return start_button->text();}
-        cmd_type getCommandType(){return ctype;}
+        COMMAND_TYPE getCommandType(){return ctype;}
         QByteArray  getData(){return data;}
         QByteArray  getDataWithLinefeed(){return data + linefeed_data;}
         int getDataTab(){ return last_tab;}
@@ -28,7 +26,7 @@ class Command:public QWidget{
         QByteArray getReadDataWithLinefeed(){ return read_data + read_linefeed_data;}
         int getReadDataTab(){ return read_last_tab;}
         LINEFEED_TYPE getReadLineFeed(){return read_linefeed;}
-        state getState(){return current_state;}
+        COMMAND_STATE getState(){return current_state;}
         void triggered(void){--trigger_count;}
         bool isTriggered(void){return trigger_count <= 0 ? false : true;}
         int delay_counter;
@@ -39,7 +37,7 @@ class Command:public QWidget{
         void stop();
         void settings();
         void del(){emit onDelete(this);}
-        void update(QString name,Command::cmd_type ctype_in, 
+        void update(QString name, COMMAND_TYPE ctype_in,
                 QByteArray data_in, int last_tab,
                 LINEFEED_TYPE read_linefeedi_in, int delay_in,
                 int period_in = 0, QByteArray read_data_in = QByteArray(),
@@ -51,7 +49,7 @@ class Command:public QWidget{
         void onDelete(Command*);
 
     private:
-        cmd_type    ctype;
+        COMMAND_TYPE    ctype;
         QByteArray  data;
         int last_tab;
         LINEFEED_TYPE  linefeed;
@@ -61,7 +59,7 @@ class Command:public QWidget{
         QByteArray  read_data;
         LINEFEED_TYPE read_linefeed;
         QByteArray read_linefeed_data;
-        state current_state;
+        COMMAND_STATE current_state;
         QPushButton *start_button;
         QPushButton *stop_button;
         QPushButton *settings_button;

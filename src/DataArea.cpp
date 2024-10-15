@@ -52,7 +52,7 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     time_prog_start = std::chrono::system_clock::now();
 }
 
-void DataArea::write(QByteArray data_in, DataType dataType){
+void DataArea::write(QByteArray data_in, DATA_TYPE dataType){
     TimestampedData dt;
     QString temp;
 
@@ -196,14 +196,14 @@ void DataArea::textFieldUpdate(QTextEdit* te, std::function<QString(QByteArray&)
         temp.clear();
 
         // add type and timestamp
-        if(m.type == DataType::TX)
+        if(m.type == DATA_TYPE::TX)
             temp.append("[TX] ");
         else
             temp.append("[RX] ");
         temp.append( m.timestamp );
 
         // write type and timestanp with colors
-        if(m.type == DataType::TX)
+        if(m.type == DATA_TYPE::TX)
             te->setTextColor(Qt::red);
         else
             te->setTextColor(Qt::darkGreen);

@@ -11,7 +11,7 @@
 #include "Conf.h"
 #include "DataType.h"
 
-Command::Command(QString name,cmd_type ctype_,
+Command::Command(QString name, COMMAND_TYPE ctype_,
                  QByteArray data_, int last_tab_,
                  LINEFEED_TYPE linefeed_, int delay_, int period_,
                  QByteArray read_data_, LINEFEED_TYPE read_linefeed_,
@@ -26,7 +26,7 @@ Command::Command(QString name,cmd_type ctype_,
 
     current_match = 0;
     trigger_count = 0;
-    current_state = Command::PASSIVE;
+    current_state = COMMAND_STATE::PASSIVE;
 
     // set counter values to match with command area timer resolution
     delay_counter = delay/COMMAND_AREA_TIMER_RESOLUTION;
@@ -65,7 +65,7 @@ Command::Command(QString name,cmd_type ctype_,
     connect(del_button,      SIGNAL(clicked()),  this, SLOT(del()));
 }
 
-void Command::update(QString name,Command::cmd_type ctype_,
+void Command::update(QString name, COMMAND_TYPE ctype_,
         QByteArray data_, int last_tab_, LINEFEED_TYPE linefeed_,
         int delay_, int period_, QByteArray read_data_,
         LINEFEED_TYPE read_linefeed_,
@@ -87,7 +87,7 @@ void Command::update(QString name,Command::cmd_type ctype_,
     current_match = 0;
     trigger_count = 0;
 
-    current_state = Command::PASSIVE;
+    current_state = COMMAND_STATE::PASSIVE;
     start_button->setEnabled(true); // enable start button
     (void)parent;// surpress unused variable warning
     start_button->setText(name);
@@ -101,7 +101,7 @@ void Command::activate(){
         msg->exec();
 
     }else{
-        current_state  = Command::ACTIVE;
+        current_state  = COMMAND_STATE::ACTIVE;
         start_button->setEnabled(false);
         settings_button->setEnabled(false);
         del_button->setEnabled(false);
@@ -128,7 +128,7 @@ void Command::dataRead(QByteArray &data){
 }
 
 void Command::stop(){
-    current_state = Command::PASSIVE;
+    current_state = COMMAND_STATE::PASSIVE;
     start_button->setEnabled(true);
     settings_button->setEnabled(true);
     del_button->setEnabled(true);
@@ -138,8 +138,8 @@ void Command::stop(){
 void Command::settings(){
     // Call AddButtonWindow with initials values for current command
     AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
-    connect(addButton, SIGNAL(onButtonAdded(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
-            this,      SLOT(update(QString, Command::cmd_type, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+    connect(addButton, SIGNAL(onButtonAdded(QString, COMMAND_TYPE, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
+            this,      SLOT(update(QString, COMMAND_TYPE, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
     );
     addButton->show();
 }

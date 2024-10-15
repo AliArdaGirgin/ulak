@@ -18,7 +18,7 @@
 #include "DataType.h"
 
 struct TimestampedData{
-    DataType type;
+    DATA_TYPE type;
     QString timestamp;
     QByteArray dt;
 };
@@ -28,7 +28,7 @@ class DataArea : public QWidget{
     public:
         DataArea(PortHandler *pHandler,QWidget *parent = 0);
     public slots:
-        void write(QByteArray data_in, DataType dataType);
+        void write(QByteArray data_in, DATA_TYPE dataType);
         void clear();
         void save();
         void tabChanged(int);

@@ -95,7 +95,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 }
 
 void AddButtonWindow::buttonAdded(){
-    Command::cmd_type type = static_cast<Command::cmd_type>(command_cbox->currentIndex());
+    COMMAND_TYPE type = static_cast<COMMAND_TYPE>(command_cbox->currentIndex());
     QMessageBox *msg = new QMessageBox;
 
     // Check name and data fileds
@@ -104,7 +104,7 @@ void AddButtonWindow::buttonAdded(){
         msg->exec()
             ;
     // Check period if command is periodic
-    }else if(type == Command::PERIODIC && periodic_widget->getPeriod() == 0){
+    }else if(type == COMMAND_TYPE::PERIODIC && periodic_widget->getPeriod() == 0){
         QString str("Period min =");
         str += QString::number(COMMAND_AREA_TIMER_RESOLUTION);
         str += "ms";
@@ -112,7 +112,7 @@ void AddButtonWindow::buttonAdded(){
         msg->exec();
 
     // Check read data if command is read trigger
-    }else if(type == Command::READ_TRIGGER && read_trigger_widget->isReadDataEmpty()){
+    }else if(type == COMMAND_TYPE::READ_TRIGGER && read_trigger_widget->isReadDataEmpty()){
         msg->setText("Read data cant be empty");
         msg->exec();
 
@@ -121,15 +121,15 @@ void AddButtonWindow::buttonAdded(){
         delete msg;
         LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(linefeed_selection->currentIndex());
         switch(type){
-            case Command::SINGLE:
+            case COMMAND_TYPE::ONE_SHOT:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
                                    linefeed, delay_text->text().toInt());
                 break;
-            case Command::PERIODIC:
+            case COMMAND_TYPE::PERIODIC:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
                                    linefeed, delay_text->text().toInt(), periodic_widget->getPeriod());
                 break;
-            case Command::READ_TRIGGER:
+            case COMMAND_TYPE::READ_TRIGGER:
                 emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
                                    linefeed, delay_text->text().toInt(), 0,
                                    read_trigger_widget->getReadData(), read_trigger_widget->getLinefeed(), read_trigger_widget->getLastTab());
@@ -150,16 +150,16 @@ void AddButtonWindow::setInitials(Command *cmd){
     linefeed_selection->setCurrentIndex( static_cast<int>(cmd->getLineFeed()));
     delay_text->setText(QString::number(cmd->getDelay()));
     switch(cmd->getCommandType()){
-        case Command::SINGLE:
+        case COMMAND_TYPE::ONE_SHOT:
             command_cbox->setCurrentText("Manual");
             stacked_widget->setCurrentIndex(0);
             break;
-        case Command::PERIODIC:
+        case COMMAND_TYPE::PERIODIC:
             command_cbox->setCurrentText("Periodic");
             periodic_widget->setPeriod(cmd->getPeriod());
             stacked_widget->setCurrentIndex(1);
             break;
-        case Command::READ_TRIGGER:
+        case COMMAND_TYPE::READ_TRIGGER:
             command_cbox->setCurrentText("Read Trigger");
             read_trigger_widget->setReadData(cmd->getReadData());
             read_trigger_widget->setLastTab(cmd->getReadDataTab());
