@@ -11,31 +11,25 @@
 #include "Conf.h"
 #include "DataType.h"
 
-Command::Command(QString name, COMMAND_TYPE ctype_,
-                 QByteArray data_, int last_tab_,
-                 LINEFEED_TYPE linefeed_, int delay_, int period_,
-                 QByteArray read_data_, LINEFEED_TYPE read_linefeed_,
-                 int read_last_tab_, QWidget *parent):
-                    QWidget(parent),ctype(ctype_),data(data_), last_tab(last_tab_),
-                    linefeed(linefeed_), delay(delay_), period(period_), read_data(read_data_),
-                    read_linefeed(read_linefeed_), read_last_tab(read_last_tab_)
+Command::Command(Command_t cmd_, QWidget *parent):
+    QWidget(parent),cmd(cmd_)
 {
     // create linefeed data acoording to LINEFEED_TYPE
-    setLinefeedData(linefeed_data, linefeed);
-    setLinefeedData(read_linefeed_data, read_linefeed);
+    setLinefeedData(linefeed_data, cmd.linefeed);
+    setLinefeedData(read_linefeed_data, cmd.read_linefeed);
 
     current_match = 0;
     trigger_count = 0;
     current_state = COMMAND_STATE::PASSIVE;
 
     // set counter values to match with command area timer resolution
-    delay_counter = delay/COMMAND_AREA_TIMER_RESOLUTION;
-    periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
+    delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
+    periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
     // Set up buttons
-    start_button = new QPushButton(name,this);
+    start_button = new QPushButton(cmd.name,this);
     start_button->setFixedSize(150,start_button->height());
     start_button->setIcon(QIcon(":/start_inactive.png") );
 
@@ -65,32 +59,20 @@ Command::Command(QString name, COMMAND_TYPE ctype_,
     connect(del_button,      SIGNAL(clicked()),  this, SLOT(del()));
 }
 
-void Command::update(QString name, COMMAND_TYPE ctype_,
-        QByteArray data_, int last_tab_, LINEFEED_TYPE linefeed_,
-        int delay_, int period_, QByteArray read_data_,
-        LINEFEED_TYPE read_linefeed_,
-        int read_last_tab_, QWidget *parent)
+void Command::update(Command_t cmd_, QWidget *parent)
 {
-    ctype = ctype_;
-    data = data_;
-    last_tab= last_tab_;
-    linefeed = linefeed_;
-    setLinefeedData(linefeed_data, linefeed);
-    delay = delay_;
-    delay_counter =delay/COMMAND_AREA_TIMER_RESOLUTION;
-    period = period_;
-    periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
-    read_data = read_data_;
-    read_linefeed = read_linefeed_;
-    setLinefeedData(read_linefeed_data, read_linefeed);
-    read_last_tab = read_last_tab_;
+    cmd = cmd_;
+    setLinefeedData(linefeed_data, cmd.linefeed);
+    delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
+    periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+    setLinefeedData(read_linefeed_data, cmd.read_linefeed);
     current_match = 0;
     trigger_count = 0;
 
     current_state = COMMAND_STATE::PASSIVE;
     start_button->setEnabled(true); // enable start button
     (void)parent;// surpress unused variable warning
-    start_button->setText(name);
+    start_button->setText(cmd.name);
 }
 
 void Command::activate(){
@@ -106,8 +88,8 @@ void Command::activate(){
         settings_button->setEnabled(false);
         del_button->setEnabled(false);
         stop_button->setEnabled(true);
-        periodic_counter = period/COMMAND_AREA_TIMER_RESOLUTION;
-        delay_counter  = delay/COMMAND_AREA_TIMER_RESOLUTION;
+        periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+        delay_counter  = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
         current_match = 0;
         trigger_count = 0;
     }
@@ -115,9 +97,9 @@ void Command::activate(){
 
 void Command::dataRead(QByteArray &data){
     for(int i=0; i<data.length(); i++){
-        if(read_data[current_match] == data[i]){
+        if(cmd.read_data[current_match] == data[i]){
             current_match++;
-            if(current_match == read_data.length()){
+            if(current_match == cmd.read_data.length()){
                 trigger_count++;
                 current_match = 0;
             }
@@ -138,8 +120,8 @@ void Command::stop(){
 void Command::settings(){
     // Call AddButtonWindow with initials values for current command
     AddButtonWindow *addButton = new AddButtonWindow(nullptr, this);
-    connect(addButton, SIGNAL(onButtonAdded(QString, COMMAND_TYPE, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
-            this,      SLOT(update(QString, COMMAND_TYPE, QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+    connect(addButton, SIGNAL(onButtonAdded(Command_t, QWidget*)),
+            this,      SLOT(update(Command_t, QWidget*))
     );
     addButton->show();
 }

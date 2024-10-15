@@ -28,9 +28,7 @@ CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent)
     connect(add_button, SIGNAL(clicked()), this, SLOT(onAddButton()));
 }
 
-void CommandArea::addButton(QString name, COMMAND_TYPE type,
-                QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period,
-                QByteArray read_data, LINEFEED_TYPE read_linefeed, int read_last_tab, QWidget *parent){
+void CommandArea::addButton(Command_t cmd, QWidget *parent){
     // fill empty index if exist , appends otherwise
     int empty_index = command_pool.size();
     int cnt = 0;
@@ -41,7 +39,7 @@ void CommandArea::addButton(QString name, COMMAND_TYPE type,
         }
         cnt++;
     }
-    command_pool.insert(empty_index, new Command(name,type, data, last_tab, linefeed, delay, period, read_data, read_linefeed, read_last_tab, parent));
+    command_pool.insert(empty_index, new Command(cmd, parent));
     layout->addRow(command_pool.at(empty_index));
     connect(command_pool.at(empty_index), SIGNAL(onDelete(Command*)), this, SLOT(deleteButton(Command*)));
 }
@@ -71,8 +69,8 @@ void CommandArea::dataRead(QByteArray data, DATA_TYPE dtype){
 void CommandArea::onAddButton(){
     add_button_window = new AddButtonWindow();
     connect(
-            add_button_window, SIGNAL(onButtonAdded(QString, COMMAND_TYPE ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
-            this, SLOT(addButton(QString, COMMAND_TYPE ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+        add_button_window, SIGNAL(onButtonAdded(Command_t, QWidget*)),
+            this, SLOT(addButton(Command_t, QWidget*))
     );
     add_button_window->show();
 }

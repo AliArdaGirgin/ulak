@@ -223,19 +223,20 @@ void MainWindow::onProjOpen(){
             continue;
         }
 
+        Command_t cmd;
         //checks complete, add command to command area
-        QString name = json_obj["name"].toString();
-        int delay = json_obj["delay"].toInt();
-        int period = json_obj["period"].toInt();
-        COMMAND_TYPE cmd_type = static_cast<COMMAND_TYPE>(json_obj["type"].toInt());
-        QByteArray data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
-        int dataTab = json_obj["dataTab"].toInt();
-        LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
-        QByteArray read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
-        int readDataTab = json_obj["readDataTab"].toInt();
-        LINEFEED_TYPE read_linefeed = static_cast<LINEFEED_TYPE>(json_obj["read_linefeed"].toInt());
+        cmd.name = json_obj["name"].toString();
+        cmd.delay = json_obj["delay"].toInt();
+        cmd.period = json_obj["period"].toInt();
+        cmd.cmd_type = static_cast<COMMAND_TYPE>(json_obj["type"].toInt());
+        cmd.data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
+        cmd.last_tab = json_obj["dataTab"].toInt();
+        cmd.linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
+        cmd.read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
+        cmd.read_last_tab = json_obj["readDataTab"].toInt();
+        cmd.read_linefeed = static_cast<LINEFEED_TYPE>(json_obj["read_linefeed"].toInt());
 
-        cmd_area->addButton(name, cmd_type, data, dataTab, linefeed, delay, period, read_data, read_linefeed, readDataTab, this);
+        cmd_area->addButton(cmd, this);
     }
 
     load_file.close();
