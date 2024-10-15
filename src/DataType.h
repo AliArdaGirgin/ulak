@@ -1,7 +1,12 @@
 #ifndef DATATYPE_H
 #define DATATYPE_H
 
-enum class DataType{TX,RX};
+#include <QString>
+
+enum class DATA_TYPE{TX,RX};
+
+enum class COMMAND_TYPE{ONE_SHOT, PERIODIC, READ_TRIGGER};
+enum class COMMAND_STATE{ACTIVE, FROZEN, PASSIVE};
 
 enum class VIEW_TYPE{ ASCII, HEX};
 #define VIEW_TYPE_ASCII_NAME "ASCII"
@@ -25,6 +30,5 @@ enum class TIMESTAMP_FORMAT_TYPE {DATE, TIME, DATE_TIME,
     (TIMESTAMP_DATE_NAME TIMESTAMP_TIME_NAME "Milliseconds")
 #define TIMESTAMP_MS_FROM_START_NAME "Millisecs from program started"
 #define TIMESTAMP_SEC_FROM_START_NAME "Seconds from program started"
-
 
 #endif // DATATYPE_H

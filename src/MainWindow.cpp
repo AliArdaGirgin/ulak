@@ -51,9 +51,9 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
     connect(this, SIGNAL(saved()), data_area, SLOT(save()));
     connect(this, SIGNAL(cleared()), data_area, SLOT(clear()));
-    connect(cmd_area,     SIGNAL(send(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
-    connect(port_handler, SIGNAL(read(QByteArray,DataType)),  data_area, SLOT(write(QByteArray,DataType))    );
-    connect(port_handler, SIGNAL(read(QByteArray,DataType)),  cmd_area,  SLOT(dataRead(QByteArray,DataType)) );
+    connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray,DATA_TYPE))    );
+    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray,DATA_TYPE))    );
+    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,  SLOT(dataRead(QByteArray,DATA_TYPE)) );
     connect(port_handler, SIGNAL(portStateChanged(bool,QString)), corner_widget, SLOT(setState(bool,QString)));
     connect(port_handler, SIGNAL(portStateChanged(bool,QString)), this, SLOT(setPortState(bool,QString)));
 }
@@ -114,7 +114,7 @@ void MainWindow::onProjSave(void){
     for(auto &cmd : *cmds){
         QJsonObject obj = QJsonObject();
         obj["name"] = cmd->getName();
-        obj["type"] = cmd->getCommandType();
+        obj["type"] = static_cast<int>(cmd->getCommandType());
         obj["delay"] = cmd->getDelay();
         obj["period"] = cmd->getPeriod();
         obj["linefeed"] = static_cast<int>(cmd->getLineFeed());
@@ -227,7 +227,7 @@ void MainWindow::onProjOpen(){
         QString name = json_obj["name"].toString();
         int delay = json_obj["delay"].toInt();
         int period = json_obj["period"].toInt();
-        Command::cmd_type cmd_type = static_cast<Command::cmd_type>(json_obj["type"].toInt());
+        COMMAND_TYPE cmd_type = static_cast<COMMAND_TYPE>(json_obj["type"].toInt());
         QByteArray data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
         int dataTab = json_obj["dataTab"].toInt();
         LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());

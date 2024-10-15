@@ -28,7 +28,7 @@ CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent)
     connect(add_button, SIGNAL(clicked()), this, SLOT(onAddButton()));
 }
 
-void CommandArea::addButton(QString name, Command::cmd_type type,
+void CommandArea::addButton(QString name, COMMAND_TYPE type,
                 QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period,
                 QByteArray read_data, LINEFEED_TYPE read_linefeed, int read_last_tab, QWidget *parent){
     // fill empty index if exist , appends otherwise
@@ -57,12 +57,12 @@ void CommandArea::deleteButton(Command *cmd_in){
     }
 }
 
-void CommandArea::dataRead(QByteArray data, DataType dtype){
-    if(dtype == DataType::TX)
+void CommandArea::dataRead(QByteArray data, DATA_TYPE dtype){
+    if(dtype == DATA_TYPE::TX)
         return;
     for(auto &command:command_pool){
-        if(command != nullptr && command->getState()==Command::ACTIVE){
-            if(command->getCommandType() == Command::READ_TRIGGER)
+        if(command != nullptr && command->getState()==COMMAND_STATE::ACTIVE){
+            if(command->getCommandType() == COMMAND_TYPE::READ_TRIGGER)
                 command->dataRead(data);
         }
     }
@@ -71,8 +71,8 @@ void CommandArea::dataRead(QByteArray data, DataType dtype){
 void CommandArea::onAddButton(){
     add_button_window = new AddButtonWindow();
     connect(
-            add_button_window, SIGNAL(onButtonAdded(QString, Command::cmd_type ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
-            this, SLOT(addButton(QString, Command::cmd_type ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
+            add_button_window, SIGNAL(onButtonAdded(QString, COMMAND_TYPE ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*)),
+            this, SLOT(addButton(QString, COMMAND_TYPE ,QByteArray, int, LINEFEED_TYPE, int, int, QByteArray, LINEFEED_TYPE, int, QWidget*))
     );
     add_button_window->show();
 }
@@ -80,24 +80,24 @@ void CommandArea::run(){
     QByteArray dt;
     for(auto &command:command_pool){
         // Command not deleted and active
-        if(command != nullptr && command->getState()==Command::ACTIVE){
+        if(command != nullptr && command->getState()==COMMAND_STATE::ACTIVE){
             dt = command->getDataWithLinefeed();
             switch(command->getCommandType()){
-                case Command::SINGLE:
+                case COMMAND_TYPE::ONE_SHOT:
                     if(command->delay_counter == 0){
                         port_handler->write(dt);
-                        emit send(dt, DataType::TX);
+                        emit send(dt, DATA_TYPE::TX);
                         command->stop();
                     }else{
                         command->delay_counter--;
                     }
                     break;
 
-                case Command::PERIODIC:
+                case COMMAND_TYPE::PERIODIC:
                     if(command->delay_counter == 0){
                        if(command->periodic_counter == 0){
                            port_handler->write(dt);
-                           emit send(dt, DataType::TX);
+                           emit send(dt, DATA_TYPE::TX);
                            command->periodic_counter = command->getPeriod()/COMMAND_AREA_TIMER_RESOLUTION;
                        }else{
                            command->periodic_counter--;
@@ -106,11 +106,11 @@ void CommandArea::run(){
                         command->delay_counter--;
                     }
                     break;
-                case Command::READ_TRIGGER:
+                case COMMAND_TYPE::READ_TRIGGER:
                     if(command->isTriggered()){
                         if(command->delay_counter == 0){
                             port_handler->write(dt);
-                            emit send(dt, DataType::TX);
+                            emit send(dt, DATA_TYPE::TX);
                             command->triggered();
                         }else{
                             command->delay_counter--;
