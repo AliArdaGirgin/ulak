@@ -57,9 +57,9 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
     QLabel    *command_label = new QLabel("Type");
     command_cbox = new QComboBox(this);
-    command_cbox->addItem("Manual");
-    command_cbox->addItem("Periodic");
-    command_cbox->addItem("Read Trigger");
+    command_cbox->addItem(COMMAND_TYPE_ONESHOT_NAME);
+    command_cbox->addItem(COMMAND_TYPE_PERIODIC_NAME);
+    command_cbox->addItem(COMMAND_TYPE_READTRIGGER_NAME);
 
     QLabel *delay_label = new QLabel("Delay(ms)");
     delay_text  = new QLineEdit("0");
@@ -119,25 +119,18 @@ void AddButtonWindow::buttonAdded(){
     // Checks complete add button to cmd area
     }else{
         delete msg;
-        LINEFEED_TYPE linefeed = static_cast<LINEFEED_TYPE>(linefeed_selection->currentIndex());
-        switch(type){
-            case COMMAND_TYPE::ONE_SHOT:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeed, delay_text->text().toInt());
-                break;
-            case COMMAND_TYPE::PERIODIC:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeed, delay_text->text().toInt(), periodic_widget->getPeriod());
-                break;
-            case COMMAND_TYPE::READ_TRIGGER:
-                emit onButtonAdded(name_text->text(), type, data_tabbedText->getData(), data_tabbedText->currentIndex(),
-                                   linefeed, delay_text->text().toInt(), 0,
-                                   read_trigger_widget->getReadData(), read_trigger_widget->getLinefeed(), read_trigger_widget->getLastTab());
-                break;
-            default:
-                //Error
-                break;
-        }
+        Command_t cmd;
+        cmd.name = name_text->text();
+        cmd.cmd_type = type;
+        cmd.data = data_tabbedText->getData();
+        cmd.last_tab = data_tabbedText->currentIndex();
+        cmd.linefeed = static_cast<LINEFEED_TYPE>(linefeed_selection->currentIndex());
+        cmd.delay = delay_text->text().toInt();
+        cmd.period = periodic_widget->getPeriod();
+        cmd.read_data = read_trigger_widget->getReadData();
+        cmd.read_linefeed = read_trigger_widget->getLinefeed();
+        cmd.read_last_tab = read_trigger_widget->getLastTab();
+        emit onButtonAdded(cmd);
         this->close();
     }
 }
@@ -151,16 +144,16 @@ void AddButtonWindow::setInitials(Command *cmd){
     delay_text->setText(QString::number(cmd->getDelay()));
     switch(cmd->getCommandType()){
         case COMMAND_TYPE::ONE_SHOT:
-            command_cbox->setCurrentText("Manual");
+            command_cbox->setCurrentText(COMMAND_TYPE_ONESHOT_NAME);
             stacked_widget->setCurrentIndex(0);
             break;
         case COMMAND_TYPE::PERIODIC:
-            command_cbox->setCurrentText("Periodic");
+            command_cbox->setCurrentText(COMMAND_TYPE_PERIODIC_NAME);
             periodic_widget->setPeriod(cmd->getPeriod());
             stacked_widget->setCurrentIndex(1);
             break;
         case COMMAND_TYPE::READ_TRIGGER:
-            command_cbox->setCurrentText("Read Trigger");
+            command_cbox->setCurrentText(COMMAND_TYPE_READTRIGGER_NAME);
             read_trigger_widget->setReadData(cmd->getReadData());
             read_trigger_widget->setLastTab(cmd->getReadDataTab());
             read_trigger_widget->setLinefeed(cmd->getReadLineFeed());

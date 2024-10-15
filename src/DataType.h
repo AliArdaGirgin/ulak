@@ -2,10 +2,15 @@
 #define DATATYPE_H
 
 #include <QString>
+#include <QByteArray>
 
 enum class DATA_TYPE{TX,RX};
 
 enum class COMMAND_TYPE{ONE_SHOT, PERIODIC, READ_TRIGGER};
+#define COMMAND_TYPE_ONESHOT_NAME "One-Shot"
+#define COMMAND_TYPE_PERIODIC_NAME "Periodic"
+#define COMMAND_TYPE_READTRIGGER_NAME "Read-Trigger"
+
 enum class COMMAND_STATE{ACTIVE, FROZEN, PASSIVE};
 
 enum class VIEW_TYPE{ ASCII, HEX};
@@ -31,4 +36,16 @@ enum class TIMESTAMP_FORMAT_TYPE {DATE, TIME, DATE_TIME,
 #define TIMESTAMP_MS_FROM_START_NAME "Millisecs from program started"
 #define TIMESTAMP_SEC_FROM_START_NAME "Seconds from program started"
 
+struct Command_t{
+    QString name;
+    COMMAND_TYPE cmd_type;
+    QByteArray data;
+    int last_tab;
+    LINEFEED_TYPE linefeed;
+    int delay;
+    int period;
+    QByteArray read_data;
+    LINEFEED_TYPE read_linefeed;
+    int read_last_tab;
+};
 #endif // DATATYPE_H

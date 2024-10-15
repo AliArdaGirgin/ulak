@@ -63,10 +63,7 @@ class AddButtonWindow:public QWidget{
     public:
         AddButtonWindow(QWidget *parent=0, Command *cmd =0);
     signals:
-        void onButtonAdded(QString name, COMMAND_TYPE cmd,
-                           QByteArray data, int last_tab, LINEFEED_TYPE linefeed, int delay, int period=0,
-                           QByteArray read_data=QByteArray(), LINEFEED_TYPE read_linefeed = LINEFEED_TYPE::NONE,
-                           int read_last_tab=0,  QWidget *parent=0);
+        void onButtonAdded(Command_t cmd, QWidget *parent=0);
 
     private slots:
         void buttonAdded();
