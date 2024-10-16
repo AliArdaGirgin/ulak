@@ -58,6 +58,7 @@ void DataArea::write(QByteArray data_in, DATA_TYPE dataType){
 
     // insetr new row, if first data or data type changed or timestamp changed
     if(!data.size() || data.back().type != dataType || timestampChanged){
+        timestampChanged = false;
         dt.dt = data_in;
         dt.timestamp = lastTimestamp;
         dt.type = dataType;

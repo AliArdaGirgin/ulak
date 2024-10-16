@@ -15,10 +15,11 @@ class PortHandler:public QObject{
         static bool commExists();
         bool setPort(QSerialPort *port_in);
         bool removePort();
-        int write(QByteArray &data);
     signals:
         void read(QByteArray data, DATA_TYPE dtype);
         void portStateChanged(bool state, QString name);
+    public slots:
+        void write(QByteArray data, DATA_TYPE);
 
     private slots:
         void run();

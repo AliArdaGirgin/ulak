@@ -42,6 +42,7 @@ void CommandArea::addButton(Command_t cmd, QWidget *parent){
     command_pool.insert(empty_index, new Command(cmd, parent));
     layout->addRow(command_pool.at(empty_index));
     connect(command_pool.at(empty_index), SIGNAL(onDelete(Command*)), this, SLOT(deleteButton(Command*)));
+    connect(command_pool.at(empty_index), SIGNAL(send(QByteArray,DATA_TYPE)), this, SIGNAL(send(QByteArray,DATA_TYPE)));
 }
 
 void CommandArea::deleteButton(Command *cmd_in){
@@ -60,7 +61,7 @@ void CommandArea::dataRead(QByteArray data, DATA_TYPE dtype){
         return;
     for(auto &command:command_pool){
         if(command != nullptr && command->getState()==COMMAND_STATE::ACTIVE){
-            if(command->getCommandType() == COMMAND_TYPE::READ_TRIGGER)
+            if(command->getTriggerType() == TRIGGER_TYPE::READ_TRIGGER)
                 command->dataRead(data);
         }
     }
@@ -77,48 +78,9 @@ void CommandArea::onAddButton(){
 void CommandArea::run(){
     QByteArray dt;
     for(auto &command:command_pool){
-        // Command not deleted and active
-        if(command != nullptr && command->getState()==COMMAND_STATE::ACTIVE){
-            dt = command->getDataWithLinefeed();
-            switch(command->getCommandType()){
-                case COMMAND_TYPE::ONE_SHOT:
-                    if(command->delay_counter == 0){
-                        port_handler->write(dt);
-                        emit send(dt, DATA_TYPE::TX);
-                        command->stop();
-                    }else{
-                        command->delay_counter--;
-                    }
-                    break;
-
-                case COMMAND_TYPE::PERIODIC:
-                    if(command->delay_counter == 0){
-                       if(command->periodic_counter == 0){
-                           port_handler->write(dt);
-                           emit send(dt, DATA_TYPE::TX);
-                           command->periodic_counter = command->getPeriod()/COMMAND_AREA_TIMER_RESOLUTION;
-                       }else{
-                           command->periodic_counter--;
-                       }
-                    }else{
-                        command->delay_counter--;
-                    }
-                    break;
-                case COMMAND_TYPE::READ_TRIGGER:
-                    if(command->isTriggered()){
-                        if(command->delay_counter == 0){
-                            port_handler->write(dt);
-                            emit send(dt, DATA_TYPE::TX);
-                            command->triggered();
-                        }else{
-                            command->delay_counter--;
-                        }
-                    }
-                    break;
-                default:
-                    //Error
-                    break;
-            }
+        // Command not deleted
+        if(command != nullptr){
+            command->run();
         }
     }
 }

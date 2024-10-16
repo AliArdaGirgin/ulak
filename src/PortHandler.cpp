@@ -44,13 +44,10 @@ bool PortHandler::setPort(QSerialPort *port_in){
     return true;
 }
 
-int PortHandler::write(QByteArray &data){
-
+void PortHandler::write(QByteArray data, DATA_TYPE t){
+    (void)t;
     if(current_port)
-        return current_port->write(data);
-    else
-        return -1;
-        
+        current_port->write(data);
 }
 
 void PortHandler::run(){

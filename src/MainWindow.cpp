@@ -51,9 +51,10 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
     connect(this, SIGNAL(saved()), data_area, SLOT(save()));
     connect(this, SIGNAL(cleared()), data_area, SLOT(clear()));
-    connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray,DATA_TYPE))    );
-    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray,DATA_TYPE))    );
-    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,  SLOT(dataRead(QByteArray,DATA_TYPE)) );
+    connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
+    connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  port_handler, SLOT(write(QByteArray, DATA_TYPE)));
+    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
+    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
     connect(port_handler, SIGNAL(portStateChanged(bool,QString)), corner_widget, SLOT(setState(bool,QString)));
     connect(port_handler, SIGNAL(portStateChanged(bool,QString)), this, SLOT(setPortState(bool,QString)));
 }
@@ -120,9 +121,9 @@ void MainWindow::onProjSave(void){
         obj["linefeed"] = static_cast<int>(cmd->getLineFeed());
         obj["data"] = QString(cmd->getData().toBase64());
         obj["dataTab"] = cmd->getDataTab();
+        obj["trigger_type"] = static_cast<int>(cmd->getTriggerType());
         obj["readData"] = QString(cmd->getReadData().toBase64());
         obj["readDataTab"] = cmd->getReadDataTab();
-        obj["read_linefeed"] = static_cast<int>(cmd->getReadLineFeed());
         json_arr.push_back(obj);
     }
     QJsonDocument json_doc = QJsonDocument(json_arr);
@@ -174,13 +175,6 @@ void MainWindow::onProjOpen(){
             return;
         }
         QJsonObject json_obj = it->toObject();
-        if(!json_obj.contains("view_type") || !json_obj.contains("linefeed") ||
-            !json_obj.contains("timestamp_format")){
-            QMessageBox *msg = new QMessageBox;
-            msg->setText("Not a valid ulak settings json object");
-            msg->exec();
-            return;
-        }
 
         // view type
         if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME){
@@ -212,16 +206,6 @@ void MainWindow::onProjOpen(){
             continue;
         }
         QJsonObject json_obj = it->toObject();
-        // Check if required variables exists in json object
-        if(!json_obj.contains("name") || !json_obj.contains("type") || !json_obj.contains("delay") ||
-           !json_obj.contains(("period")) || !json_obj.contains("linefeed") || !json_obj.contains("data") ||
-            !json_obj.contains("readData") || !json_obj.contains("dataTab") || !json_obj.contains("readDataTab"))
-        {
-            QMessageBox *msg = new QMessageBox;
-            msg->setText("Not a valid ulak json object");
-            msg->exec();
-            continue;
-        }
 
         Command_t cmd;
         //checks complete, add command to command area
@@ -232,9 +216,9 @@ void MainWindow::onProjOpen(){
         cmd.data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
         cmd.last_tab = json_obj["dataTab"].toInt();
         cmd.linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
+        cmd.trig_type = static_cast<TRIGGER_TYPE>(json_obj["trigger_type"].toInt());
         cmd.read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
         cmd.read_last_tab = json_obj["readDataTab"].toInt();
-        cmd.read_linefeed = static_cast<LINEFEED_TYPE>(json_obj["read_linefeed"].toInt());
 
         cmd_area->addButton(cmd, this);
     }

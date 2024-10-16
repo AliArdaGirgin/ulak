@@ -20,12 +20,11 @@ class Command:public QWidget{
         QByteArray getReadData(){ return cmd.read_data;}
         QByteArray getReadDataWithLinefeed(){ return cmd.read_data + read_linefeed_data;}
         int getReadDataTab(){ return cmd.read_last_tab;}
-        LINEFEED_TYPE getReadLineFeed(){return cmd.read_linefeed;}
         COMMAND_STATE getState(){return current_state;}
         void triggered(void){--trigger_count;}
         bool isTriggered(void){return trigger_count <= 0 ? false : true;}
-        int delay_counter;
-        int periodic_counter;
+        TRIGGER_TYPE getTriggerType(){return cmd.trig_type;}
+        void run();
 
     public slots:
         void activate();
@@ -37,6 +36,7 @@ class Command:public QWidget{
 
     signals:
         void onDelete(Command*);
+        void send(QByteArray, DATA_TYPE);
 
     private:
         Command_t cmd;
@@ -49,6 +49,8 @@ class Command:public QWidget{
         QPushButton *del_button;
         int current_match;
         int trigger_count;
+        int delay_counter;
+        int periodic_counter;
         void setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln);
 };
 

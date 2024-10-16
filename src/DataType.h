@@ -6,10 +6,13 @@
 
 enum class DATA_TYPE{TX,RX};
 
-enum class COMMAND_TYPE{ONE_SHOT, PERIODIC, READ_TRIGGER};
+enum class COMMAND_TYPE{ONE_SHOT, PERIODIC};
 #define COMMAND_TYPE_ONESHOT_NAME "One-Shot"
 #define COMMAND_TYPE_PERIODIC_NAME "Periodic"
-#define COMMAND_TYPE_READTRIGGER_NAME "Read-Trigger"
+
+enum class TRIGGER_TYPE{MANUAL,READ_TRIGGER};
+#define TRIGGER_TYPE_MANUAL_NAME "Manual"
+#define TRIGGER_TYPE_READTRIGGER_NAME "Read Trigger"
 
 enum class COMMAND_STATE{ACTIVE, FROZEN, PASSIVE};
 
@@ -39,13 +42,13 @@ enum class TIMESTAMP_FORMAT_TYPE {DATE, TIME, DATE_TIME,
 struct Command_t{
     QString name;
     COMMAND_TYPE cmd_type;
+    TRIGGER_TYPE trig_type;
     QByteArray data;
     int last_tab;
     LINEFEED_TYPE linefeed;
     int delay;
     int period;
     QByteArray read_data;
-    LINEFEED_TYPE read_linefeed;
     int read_last_tab;
 };
 #endif // DATATYPE_H

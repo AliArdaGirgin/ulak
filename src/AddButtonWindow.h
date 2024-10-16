@@ -14,50 +14,6 @@
 #include "Command.h"
 #include "DataType.h"
 
-// Needed, QStackedWidget always gets max size
-// We need a dynamically sized StackWidget
-class StackedWidget:public QStackedWidget{
-    QSize sizeHint() const override{
-        return currentWidget()->sizeHint();
-    }
-    QSize minimumSizeHint() const override{
-        return currentWidget()->minimumSize();
-    }
-};
-
-
-class PeriodicWidget:public QWidget{
-    Q_OBJECT
-    public:
-        PeriodicWidget(QWidget *parent=0);
-        int getPeriod(){return text->text().toInt();}
-        void setPeriod(int delay_in){text->setText(QString::number(delay_in));}
-    private:
-        QIntValidator *period_valid;
-        QLabel *name;
-        QLineEdit *text;
-};
-
-class ReadTriggerWidget:public QWidget{
-    Q_OBJECT
-    public:
-        ReadTriggerWidget(QWidget *parent=0);
-        QByteArray getReadData(){return text->getData();}
-        void setReadData(QByteArray read_data_in){text->setData(read_data_in);}
-        bool isReadDataEmpty(){ return text->isDataEmpty();}
-        int getLastTab(){ return text->currentIndex();}
-        void setLastTab(int tab_){ text->setCurrentIndex(tab_);}
-        LINEFEED_TYPE getLinefeed(){
-            return static_cast<LINEFEED_TYPE>(read_linefeed_selection->currentIndex());
-        }
-        void setLinefeed( LINEFEED_TYPE t){
-            read_linefeed_selection->setCurrentIndex(static_cast<int>(t));}
-    private:
-        QLabel *name;
-        TabbedText *text;
-        QComboBox* read_linefeed_selection;
-};
-
 class AddButtonWindow:public QWidget{
     Q_OBJECT
     public:
@@ -67,22 +23,23 @@ class AddButtonWindow:public QWidget{
 
     private slots:
         void buttonAdded();
+        void commandTypeChanged(int);
+        void triggerTypeChanged(int);
     private:
         QGridLayout *layout;
         QLineEdit   *name_text;
         TabbedText  *data_tabbedText;
         QComboBox   *linefeed_selection;
-        QLabel      *read_trigger_name;
-        TabbedText  *read_trigger_tabbedText;
-        QLabel      *period_label;
-        QLineEdit   *period_text;
-        QPushButton *ok_button;
-        QPushButton *cancel_button;
         QComboBox   *command_cbox;
         QLineEdit   *delay_text;
-        StackedWidget     *stacked_widget;
-        PeriodicWidget    *periodic_widget;
-        ReadTriggerWidget *read_trigger_widget;
+        QLabel		*period_label;
+        QLineEdit   *period_text;
+        QLabel      *trigger_label;
+        QComboBox   *trigger_cbox;
+        QLabel      *read_data_label;
+        TabbedText  *read_data_text;
+        QPushButton *ok_button;
+        QPushButton *cancel_button;
         void setInitials(Command *cmd);
 };
 

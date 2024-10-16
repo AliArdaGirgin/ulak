@@ -16,7 +16,6 @@ Command::Command(Command_t cmd_, QWidget *parent):
 {
     // create linefeed data acoording to LINEFEED_TYPE
     setLinefeedData(linefeed_data, cmd.linefeed);
-    setLinefeedData(read_linefeed_data, cmd.read_linefeed);
 
     current_match = 0;
     trigger_count = 0;
@@ -65,7 +64,6 @@ void Command::update(Command_t cmd_, QWidget *parent)
     setLinefeedData(linefeed_data, cmd.linefeed);
     delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
-    setLinefeedData(read_linefeed_data, cmd.read_linefeed);
     current_match = 0;
     trigger_count = 0;
 
@@ -115,6 +113,8 @@ void Command::stop(){
     settings_button->setEnabled(true);
     del_button->setEnabled(true);
     stop_button->setEnabled(false);
+    current_match = 0;
+    trigger_count = 0;
 }
 
 void Command::settings(){
@@ -124,6 +124,47 @@ void Command::settings(){
             this,      SLOT(update(Command_t, QWidget*))
     );
     addButton->show();
+}
+
+void Command::run(){
+    bool write_data = false;
+    if(current_state == COMMAND_STATE::ACTIVE){
+        if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::MANUAL){
+            if(--delay_counter <= 0){
+                // send data
+                delay_counter = 0;
+                write_data = true;
+                stop();
+            }
+        }else if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
+            if(trigger_count>0 && --delay_counter <= 0){
+                // data send
+                delay_counter = 0;
+                write_data = true;
+                stop();
+            }
+        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && cmd.trig_type == TRIGGER_TYPE::MANUAL){
+            if(--delay_counter <= 0 && --periodic_counter == 0){
+                // data send
+                write_data = true;
+                delay_counter = 0;
+                periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+            }
+
+        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
+            if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter == 0){
+                // data send
+                write_data = true;
+                delay_counter = 0;
+                periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+            }
+        }
+
+        if(write_data){
+            emit send(cmd.data, DATA_TYPE::TX);
+            emit send(linefeed_data, DATA_TYPE::TX);
+        }
+    }
 }
 
 void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
