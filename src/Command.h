@@ -13,13 +13,13 @@ class Command:public QWidget{
         COMMAND_TYPE getCommandType(){return cmd.cmd_type;}
         QByteArray  getData(){return cmd.data;}
         QByteArray  getDataWithLinefeed(){return cmd.data + linefeed_data;}
-        int getDataTab(){ return cmd.last_tab;}
+        VIEW_TYPE getDataTab(){ return cmd.last_tab;}
         LINEFEED_TYPE getLineFeed(){ return cmd.linefeed;}
         int getDelay(){return cmd.delay;}
         int getPeriod(){return cmd.period;}
         QByteArray getReadData(){ return cmd.read_data;}
         QByteArray getReadDataWithLinefeed(){ return cmd.read_data + read_linefeed_data;}
-        int getReadDataTab(){ return cmd.read_last_tab;}
+        VIEW_TYPE getReadDataTab(){ return cmd.read_last_tab;}
         COMMAND_STATE getState(){return current_state;}
         void triggered(void){--trigger_count;}
         bool isTriggered(void){return trigger_count <= 0 ? false : true;}

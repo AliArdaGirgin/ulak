@@ -31,8 +31,10 @@ class AddButtonWindow:public QWidget{
         TabbedText  *data_tabbedText;
         QComboBox   *linefeed_selection;
         QComboBox   *command_cbox;
+        QIntValidator *delay_valid;
         QLineEdit   *delay_text;
         QLabel		*period_label;
+        QIntValidator *period_valid;
         QLineEdit   *period_text;
         QLabel      *trigger_label;
         QComboBox   *trigger_cbox;

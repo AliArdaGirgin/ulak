@@ -185,6 +185,10 @@ QString DataArea::getTimestamp(){
             ss << duration<float>(ms_now - time_prog_start).count();
             ret = QString::fromStdString(ss.str());
         break;
+
+        case TIMESTAMP_FORMAT_TYPE::MAX:
+        default:
+            break;
     }
 
     return ret;

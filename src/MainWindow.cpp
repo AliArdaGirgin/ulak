@@ -21,6 +21,7 @@
 #include "PortHandler.h"
 #include "ProjectSettings.h"
 #include "DataType.h"
+#include "Conf.h"
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
@@ -98,32 +99,31 @@ void MainWindow::onProjSave(void){
     QJsonObject json_sett = QJsonObject();
 
     // view type
-    if(ProjectSettings::getDefaultViewType() == VIEW_TYPE::ASCII)
-        json_sett["view_type"] = VIEW_TYPE_ASCII_NAME;
-    else
-        json_sett["view_type"] = VIEW_TYPE_HEX_NAME;
+    json_sett[PROJ_JSON_SETT_VIEWTYPE_STR] = static_cast<int>( ProjectSettings::getDefaultViewType());
 
     // linefeed
-    json_sett["linefeed"] = static_cast<int>( ProjectSettings::getDefaultLinefeed());
+    json_sett[PROJ_JSON_SETT_LINEFEED_STR] = static_cast<int>( ProjectSettings::getDefaultLinefeed());
 
     // timestamp format
-    json_sett["timestamp_format"] = static_cast<int>( ProjectSettings::getDefaultTimestampFormat());
+    json_sett[PROJ_JSON_SETT_TIMESTAMP_STR] = static_cast<int>( ProjectSettings::getDefaultTimestampFormat());
+
+    // add
     json_arr.push_back(json_sett);
 
     // Save commands
     QVector<Command*> *cmds = cmd_area->getCommands();
     for(auto &cmd : *cmds){
         QJsonObject obj = QJsonObject();
-        obj["name"] = cmd->getName();
-        obj["type"] = static_cast<int>(cmd->getCommandType());
-        obj["delay"] = cmd->getDelay();
-        obj["period"] = cmd->getPeriod();
-        obj["linefeed"] = static_cast<int>(cmd->getLineFeed());
-        obj["data"] = QString(cmd->getData().toBase64());
-        obj["dataTab"] = cmd->getDataTab();
-        obj["trigger_type"] = static_cast<int>(cmd->getTriggerType());
-        obj["readData"] = QString(cmd->getReadData().toBase64());
-        obj["readDataTab"] = cmd->getReadDataTab();
+        obj[PROJ_JSON_CMD_NAME_STR] = cmd->getName();
+        obj[PROJ_JSON_CMD_CMDTYPE_STR] = static_cast<int>(cmd->getCommandType());
+        obj[PROJ_JSON_CMD_DELAY_STR] = cmd->getDelay();
+        obj[PROJ_JSON_CMD_PERIOD_STR] = cmd->getPeriod();
+        obj[PROJ_JSON_CMD_LINEFEED_STR] = static_cast<int>(cmd->getLineFeed());
+        obj[PROJ_JSON_CMD_DATA_STR] = QString(cmd->getData().toBase64());
+        obj[PROJ_JSON_CMD_DATATAB_STR] = static_cast<int>(cmd->getDataTab());
+        obj[PROJ_JSON_CMD_TRIG_STR] = static_cast<int>(cmd->getTriggerType());
+        obj[PROJ_JSON_CMD_READDATA_STR] = QString(cmd->getReadData().toBase64());
+        obj[PROJ_JSON_CMD_READDATATAB_STR] = static_cast<int>(cmd->getReadDataTab());
         json_arr.push_back(obj);
     }
     QJsonDocument json_doc = QJsonDocument(json_arr);
@@ -177,23 +177,44 @@ void MainWindow::onProjOpen(){
         QJsonObject json_obj = it->toObject();
 
         // view type
-        if(json_obj["view_type"].toString() == VIEW_TYPE_ASCII_NAME){
+        if(json_obj.contains(PROJ_JSON_SETT_VIEWTYPE_STR)){
+            int t = json_obj[PROJ_JSON_SETT_VIEWTYPE_STR].toInt();
+            if(t < 0 || t >= static_cast<int>(VIEW_TYPE::MAX)){
+                ProjectSettings::setDefaultViewType(VIEW_TYPE::ASCII);
+                data_area->setCurrentTab(VIEW_TYPE::ASCII);
+            }else{
+                ProjectSettings::setDefaultViewType(static_cast<VIEW_TYPE>(t));
+                data_area->setCurrentTab(static_cast<VIEW_TYPE>(t));
+            }
+        }else{
             ProjectSettings::setDefaultViewType(VIEW_TYPE::ASCII);
             data_area->setCurrentTab(VIEW_TYPE::ASCII);
-        }else{ // HEX
-            ProjectSettings::setDefaultViewType(VIEW_TYPE::HEX);
-            data_area->setCurrentTab(VIEW_TYPE::HEX);
         }
 
         // linefeed
-        ProjectSettings::setDefaultLinefeed(
-            static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt())
-        );
+        if(json_obj.contains(PROJ_JSON_SETT_LINEFEED_STR)){
+            int t = json_obj[PROJ_JSON_SETT_LINEFEED_STR].toInt();
+            if(t < 0 || t >=static_cast<int>(LINEFEED_TYPE::MAX)){
+                ProjectSettings::setDefaultLinefeed( LINEFEED_TYPE::NONE);
+            }else{
+                ProjectSettings::setDefaultLinefeed( static_cast<LINEFEED_TYPE>(t));
+            }
+        }else{
+            ProjectSettings::setDefaultLinefeed( LINEFEED_TYPE::NONE);
+        }
+
 
         // timestamp_format
-        ProjectSettings::setDefaultTimestampFormat(
-            static_cast<TIMESTAMP_FORMAT_TYPE>(json_obj["timestamp_format"].toInt())
-        );
+        if(json_obj.contains(PROJ_JSON_SETT_TIMESTAMP_STR)){
+            int t = json_obj[PROJ_JSON_SETT_TIMESTAMP_STR].toInt();
+            if(t < 0 || t >= static_cast<int>(TIMESTAMP_FORMAT_TYPE::MAX)){
+                ProjectSettings::setDefaultTimestampFormat(TIMESTAMP_FORMAT_TYPE::TIME_MS);
+            }else{
+                ProjectSettings::setDefaultTimestampFormat( static_cast<TIMESTAMP_FORMAT_TYPE>(t));
+            }
+        }else{
+            ProjectSettings::setDefaultTimestampFormat(TIMESTAMP_FORMAT_TYPE::TIME_MS);
+        }
     }
 
     // Rest is commands
@@ -208,17 +229,111 @@ void MainWindow::onProjOpen(){
         QJsonObject json_obj = it->toObject();
 
         Command_t cmd;
-        //checks complete, add command to command area
-        cmd.name = json_obj["name"].toString();
-        cmd.delay = json_obj["delay"].toInt();
-        cmd.period = json_obj["period"].toInt();
-        cmd.cmd_type = static_cast<COMMAND_TYPE>(json_obj["type"].toInt());
-        cmd.data = QByteArray::fromBase64(json_obj["data"].toString().toLocal8Bit());
-        cmd.last_tab = json_obj["dataTab"].toInt();
-        cmd.linefeed = static_cast<LINEFEED_TYPE>(json_obj["linefeed"].toInt());
-        cmd.trig_type = static_cast<TRIGGER_TYPE>(json_obj["trigger_type"].toInt());
-        cmd.read_data = QByteArray::fromBase64(json_obj["readData"].toString().toLocal8Bit());
-        cmd.read_last_tab = json_obj["readDataTab"].toInt();
+
+        // name
+        if(json_obj.contains(PROJ_JSON_CMD_NAME_STR))
+            cmd.name = json_obj[PROJ_JSON_CMD_NAME_STR].toString();
+        else{
+            continue; // must have a name
+        }
+
+        // delay
+        if(json_obj.contains(PROJ_JSON_CMD_DELAY_STR)){
+            cmd.delay = json_obj[PROJ_JSON_CMD_DELAY_STR].toInt();
+            if(cmd.delay < 0)
+                cmd.delay = 0;
+        }else{
+            cmd.delay = 0;
+        }
+
+        // period
+        if(json_obj.contains(PROJ_JSON_CMD_PERIOD_STR)){
+            cmd.period = json_obj["period"].toInt();
+            if(cmd.period < COMMAND_AREA_TIMER_RESOLUTION)
+                cmd.period = COMMAND_AREA_TIMER_RESOLUTION;
+        }else{
+            cmd.period = COMMAND_AREA_TIMER_RESOLUTION;
+        }
+
+        // command type
+        if(json_obj.contains(PROJ_JSON_CMD_CMDTYPE_STR)){
+            int t = json_obj[PROJ_JSON_CMD_CMDTYPE_STR].toInt();
+            if( t<0 || t >= static_cast<int>(COMMAND_TYPE::MAX))
+                continue; // out of range
+            else
+                cmd.cmd_type = static_cast<COMMAND_TYPE>(t);
+        }else{
+            continue; // command type must exist
+        }
+
+        // data
+        if(json_obj.contains(PROJ_JSON_CMD_DATA_STR)){
+            cmd.data = QByteArray::fromBase64(json_obj[PROJ_JSON_CMD_DATA_STR].toString().toLocal8Bit());
+            if(cmd.data.isEmpty())
+                continue; // can't be empty
+        }else{
+            continue; // data must exist
+        }
+
+        // data_tab
+        if(json_obj.contains(PROJ_JSON_CMD_DATATAB_STR)){
+            int t = json_obj[PROJ_JSON_CMD_DATATAB_STR].toInt();
+            if(t < 0 || t >= static_cast<int>(VIEW_TYPE::MAX))
+                cmd.last_tab = ProjectSettings::getDefaultViewType();
+            else
+                cmd.last_tab = static_cast<VIEW_TYPE>(t);
+        }else{
+            cmd.last_tab = ProjectSettings::getDefaultViewType();
+        }
+
+        //linefeed
+        if(json_obj.contains(PROJ_JSON_CMD_LINEFEED_STR)){
+            int t = json_obj[PROJ_JSON_CMD_LINEFEED_STR].toInt();
+            if( t < 0 || t >= static_cast<int>(LINEFEED_TYPE::MAX))
+                cmd.linefeed = ProjectSettings::getDefaultLinefeed();
+            else
+                cmd.linefeed = static_cast<LINEFEED_TYPE>(t);
+        }else{
+            cmd.linefeed = ProjectSettings::getDefaultLinefeed();
+        }
+
+        // trigger type
+        if(json_obj.contains(PROJ_JSON_CMD_TRIG_STR)){
+            int t = static_cast<int>(json_obj[PROJ_JSON_CMD_TRIG_STR].toInt());
+            if( t < 0 || t >= static_cast<int>(TRIGGER_TYPE::MAX)){
+                cmd.trig_type = TRIGGER_TYPE::MANUAL;
+            }else{
+                cmd.trig_type = static_cast<TRIGGER_TYPE>(t);
+            }
+        }else{
+            cmd.trig_type = TRIGGER_TYPE::MANUAL;
+        }
+
+        // read data
+        if(json_obj.contains(PROJ_JSON_CMD_READDATA_STR)){
+            cmd.read_data = QByteArray::fromBase64(json_obj[PROJ_JSON_CMD_READDATA_STR].toString().toLocal8Bit());
+            if(cmd.read_data.isEmpty()){
+                if(cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
+                    continue; // for read trigger, read data cant be empty
+                }
+            }
+        }else{
+            if(cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER)
+                continue; // for read trigger, read data cant be empty
+            else
+                cmd.read_data = QByteArray();
+        }
+
+        // read_data_tab
+        if(json_obj.contains(PROJ_JSON_CMD_READDATATAB_STR)){
+            int t = json_obj[PROJ_JSON_CMD_READDATATAB_STR].toInt();
+            if(t < 0 || t >= static_cast<int>(VIEW_TYPE::MAX))
+                cmd.read_last_tab = ProjectSettings::getDefaultViewType();
+            else
+                cmd.read_last_tab = static_cast<VIEW_TYPE>(t);
+        }else{
+            cmd.read_last_tab = ProjectSettings::getDefaultViewType();
+        }
 
         cmd_area->addButton(cmd, this);
     }
