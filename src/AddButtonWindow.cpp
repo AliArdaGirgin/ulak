@@ -25,7 +25,6 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
 
     // Validators for delay value
-    QIntValidator *timing_valid = new QIntValidator(0,std::numeric_limits<int>::max());
 
     // Common widgets for all command types
     QLabel *name_label = new QLabel("Name",this);
@@ -53,11 +52,13 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
     QLabel *delay_label = new QLabel("Delay(ms)");
     delay_text  = new QLineEdit("0");
-    delay_text->setValidator(timing_valid);
+    delay_valid = new QIntValidator(0,std::numeric_limits<int>::max());
+    delay_text->setValidator(delay_valid);
 
     period_label = new QLabel("Period(ms)");
     period_text = new QLineEdit("100");
-    period_text->setValidator(timing_valid);
+    period_valid = new QIntValidator(COMMAND_AREA_TIMER_RESOLUTION,std::numeric_limits<int>::max());
+    period_text->setValidator(period_valid);
 
     trigger_label = new QLabel("Trigger");
     trigger_cbox = new QComboBox();
@@ -107,29 +108,41 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
 
 void AddButtonWindow::buttonAdded(){
     COMMAND_TYPE type = static_cast<COMMAND_TYPE>(command_cbox->currentIndex());
-    QMessageBox *msg = new QMessageBox;
 
     // Check name and data fileds
     if(data_tabbedText->isDataEmpty() || name_text->text().isEmpty()){
+        QMessageBox *msg = new QMessageBox;
         msg->setText("Name and/or data can not be empty");
-        msg->exec()
-            ;
-    // Check period if command is periodic
-    }else if(type == COMMAND_TYPE::PERIODIC && period_text->text().toInt() == 0){
-        QString str("Period min =");
+        msg->exec();
+
+    // Check if delay is compatible with resolution
+    }else if(delay_text->text().toInt()%COMMAND_AREA_TIMER_RESOLUTION != 0){
+        QString str("Delay must be multiple of ");
         str += QString::number(COMMAND_AREA_TIMER_RESOLUTION);
-        str += "ms";
+        str += " ms";
+        QMessageBox *msg = new QMessageBox;
         msg->setText(str);
         msg->exec();
 
-    // Check read data if command is read trigger
+    // Check if period is compatible with resolution
+    }else if(type == COMMAND_TYPE::PERIODIC &&
+               (period_text->text().toInt() == 0 ||
+                period_text->text().toInt()%COMMAND_AREA_TIMER_RESOLUTION != 0)){
+        QString str("Period must be bigger than 0 and multiple of ");
+        str += QString::number(COMMAND_AREA_TIMER_RESOLUTION);
+        str += " ms";
+        QMessageBox *msg = new QMessageBox;
+        msg->setText(str);
+        msg->exec();
+
+    // Check read data is empty if command is read trigger
     }else if(trigger_cbox->currentIndex() == static_cast<int>(TRIGGER_TYPE::READ_TRIGGER) &&
             read_data_text->isDataEmpty()){
+        QMessageBox *msg = new QMessageBox;
         msg->setText("Read data cant be empty");
         msg->exec();
 
     }else{
-        delete msg;
         Command_t cmd;
         cmd.name = name_text->text();
         cmd.cmd_type = type;
