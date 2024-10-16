@@ -16,15 +16,11 @@
 #include "Conf.h"
 
 AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
-
     setWindowTitle("Add Command");
     // Block input to other windows
     setWindowModality(Qt::ApplicationModal);
     // Always on top of main window
     setWindowFlags(Qt::WindowStaysOnTopHint);
-
-
-    // Validators for delay value
 
     // Common widgets for all command types
     QLabel *name_label = new QLabel("Name",this);
@@ -75,7 +71,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     // if this is a settings window set initial state
     if(cmd) setInitials(cmd);
 
-    // Layout, stack widget changes size
+    // Layout
     layout = new QGridLayout();
     layout->setSizeConstraint(QLayout::SetFixedSize);
     layout->addWidget(name_label,0,0,Qt::AlignTop);
@@ -97,6 +93,8 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     layout->addWidget(ok_button,8,0);
     layout->addWidget(cancel_button,8,1);
     setLayout(layout);
+
+    // Set visibility for different command and trigger types
     commandTypeChanged(command_cbox->currentIndex());
     triggerTypeChanged(trigger_cbox->currentIndex());
 
@@ -139,7 +137,7 @@ void AddButtonWindow::buttonAdded(){
     }else if(trigger_cbox->currentIndex() == static_cast<int>(TRIGGER_TYPE::READ_TRIGGER) &&
             read_data_text->isDataEmpty()){
         QMessageBox *msg = new QMessageBox;
-        msg->setText("Read data cant be empty");
+        msg->setText("Read data cant be empty with read trigger type");
         msg->exec();
 
     }else{
@@ -147,12 +145,13 @@ void AddButtonWindow::buttonAdded(){
         cmd.name = name_text->text();
         cmd.cmd_type = type;
         cmd.data = data_tabbedText->getData();
-        cmd.last_tab = data_tabbedText->currentIndex();
+        cmd.last_tab = static_cast<VIEW_TYPE>(data_tabbedText->currentIndex());
         cmd.linefeed = static_cast<LINEFEED_TYPE>(linefeed_selection->currentIndex());
         cmd.delay = delay_text->text().toInt();
         cmd.period = period_text->text().toInt();
         cmd.trig_type = static_cast<TRIGGER_TYPE>(trigger_cbox->currentIndex());
         cmd.read_data = read_data_text->getData();
+        cmd.read_last_tab = static_cast<VIEW_TYPE>(read_data_text->currentIndex());
         emit onButtonAdded(cmd);
         this->close();
     }
@@ -162,7 +161,7 @@ void AddButtonWindow::setInitials(Command *cmd){
     name_text->setText(cmd->getName());
 
     data_tabbedText->setData(cmd->getData());
-    data_tabbedText->setCurrentIndex(cmd->getDataTab());
+    data_tabbedText->setCurrentIndex(static_cast<int>(cmd->getDataTab()));
     data_tabbedText->update();
 
     linefeed_selection->setCurrentIndex( static_cast<int>(cmd->getLineFeed()));
@@ -176,7 +175,7 @@ void AddButtonWindow::setInitials(Command *cmd){
     trigger_cbox->setCurrentIndex( static_cast<int>(cmd->getTriggerType()));
 
     read_data_text->setData(cmd->getReadData());
-    read_data_text->setCurrentIndex( cmd->getReadDataTab());
+    read_data_text->setCurrentIndex( static_cast<int>(cmd->getReadDataTab()));
     read_data_text->update();
 }
 
@@ -191,6 +190,10 @@ void AddButtonWindow::commandTypeChanged(int index){
         period_label->setVisible(true);
         period_text->setVisible(true);
         break;
+
+    case COMMAND_TYPE::MAX:
+    default:
+        break;
     }
 }
 
@@ -203,6 +206,9 @@ void AddButtonWindow::triggerTypeChanged(int index){
     case TRIGGER_TYPE::READ_TRIGGER:
         read_data_label->setVisible(true);
         read_data_text->setVisible(true);
+        break;
+    case TRIGGER_TYPE::MAX:
+    default:
         break;
     }
 }

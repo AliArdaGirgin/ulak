@@ -183,5 +183,8 @@ void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
         case LINEFEED_TYPE::NULL_TERMINATOR:
             dt.append('\0');
             break;
+        case LINEFEED_TYPE::MAX:
+        default:
+            break;
     }
 }
