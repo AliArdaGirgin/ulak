@@ -1,4 +1,4 @@
-QT       += core gui serialport
+QT       += core gui serialport testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,6 +38,8 @@ HEADERS += \
     RepresentableTextEdit.h \
     TabbedText.h
 RESOURCES = ../resources/resources.qrc
+
+INCLUDEPATH += ../test
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

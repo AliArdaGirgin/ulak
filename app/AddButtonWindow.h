@@ -13,9 +13,11 @@
 #include "TabbedText.h"
 #include "Command.h"
 #include "DataType.h"
+#include "test_defs.h"
 
 class AddButtonWindow:public QWidget{
     Q_OBJECT
+    friend Test_AddButtonWindow;
     public:
         AddButtonWindow(QWidget *parent=0, Command *cmd =0);
     signals:

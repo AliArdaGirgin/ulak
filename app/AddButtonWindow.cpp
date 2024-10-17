@@ -15,7 +15,9 @@
 #include "ProjectSettings.h"
 #include "Conf.h"
 
+
 AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
+
     setWindowTitle("Add Command");
     // Block input to other windows
     setWindowModality(Qt::ApplicationModal);
