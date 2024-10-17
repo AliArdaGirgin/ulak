@@ -17,6 +17,8 @@ ProjectSettings::ProjectSettings(){
     setWindowModality(Qt::ApplicationModal);
     // Always on top of main window
     setWindowFlags(Qt::WindowStaysOnTopHint);
+    // Delete on close
+    setAttribute(Qt::WA_DeleteOnClose);
 
     // default view type
     QLabel *default_data_type_label = new QLabel("Data Type");

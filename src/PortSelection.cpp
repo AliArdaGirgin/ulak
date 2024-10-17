@@ -15,6 +15,8 @@ PortSelection::PortSelection(PortHandler *pHandler, QWidget * parent):QTabWidget
     // Always on top of main window
     setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    setAttribute(Qt::WA_DeleteOnClose);
+
     PortCommSelection *commPort = new PortCommSelection(this);
     addTab(commPort,"COMM");
 

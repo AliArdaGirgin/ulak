@@ -21,6 +21,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     setWindowModality(Qt::ApplicationModal);
     // Always on top of main window
     setWindowFlags(Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     // Common widgets for all command types
     QLabel *name_label = new QLabel("Name",this);

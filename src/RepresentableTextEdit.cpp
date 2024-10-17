@@ -22,6 +22,7 @@ void AsciiText::keyPressEvent(QKeyEvent* event){
         QMessageBox *msg = new QMessageBox();
         msg->setText("Modifiying binary data from ascii edit is not allowed");
         msg->exec();
+        delete msg;
         return;
     }
     QTextEdit::keyPressEvent(event);

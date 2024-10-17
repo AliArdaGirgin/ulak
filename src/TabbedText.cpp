@@ -13,6 +13,7 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
     AsciiText *ascii = new AsciiText(this, data);
     HexText   *hex   = new HexText(this, data);
 
+    // ownership of tabs transfer to QTabWidget
     ascii_index = addTab(ascii, VIEW_TYPE_ASCII_NAME);
     hex_index = addTab(hex, VIEW_TYPE_HEX_NAME);
 

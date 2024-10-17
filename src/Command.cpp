@@ -25,7 +25,6 @@ Command::Command(Command_t cmd_, QWidget *parent):
     delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
 
     // Set up buttons
     start_button = new QPushButton(cmd.name,this);
@@ -45,6 +44,7 @@ Command::Command(Command_t cmd_, QWidget *parent):
     del_button->setIcon(QIcon(":/delete.png"));
     del_button->setFixedSize(40, del_button->height());
 
+    QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
     layout->addWidget(start_button);
     layout->addWidget(stop_button);
@@ -79,6 +79,7 @@ void Command::activate(){
         QMessageBox *msg = new QMessageBox();
         msg->setText("No Connection");
         msg->exec();
+        delete msg;
 
     }else{
         current_state  = COMMAND_STATE::ACTIVE;

@@ -88,6 +88,7 @@ void MainWindow::onProjSave(void){
         QMessageBox *msg = new QMessageBox;
         msg->setText("Failed to open file");
         msg->exec();
+        delete msg;
         return;
     }
     // Json array to hold saved data
@@ -356,6 +357,7 @@ void MainWindow::onClear(void){
 
 void MainWindow::drawMenu(void){
     corner_widget = new CommRightCornerWidget(this);
+    // ownership given to menubar
     menuBar()->setCornerWidget(corner_widget, Qt::TopRightCorner);
 
     QMenu *proj = menuBar()->addMenu("&Project");
