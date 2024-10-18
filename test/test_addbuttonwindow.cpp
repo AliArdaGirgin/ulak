@@ -146,5 +146,4 @@ void Test_AddButtonWindow::cleanupTestCase(){
 }
 
 QTEST_MAIN(Test_AddButtonWindow)
-#include "test_addbuttonwindow.moc"
 
