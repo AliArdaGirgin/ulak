@@ -30,4 +30,17 @@ private slots:
     void test_linefeed_types();
     void cleanupTestCase();
 };
+
+class Test_DataArea: public QObject{
+    Q_OBJECT
+private:
+    void verify_date(QString);
+    void verify_time(QString);
+private slots:
+    void initTestCase();
+    void test_timestamp_update();
+    void test_timestamp_formats();
+    void test_tab_switch();
+    void cleanupTestCase();
+};
 #endif // TEST_DEFS_H

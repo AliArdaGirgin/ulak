@@ -16,6 +16,7 @@
 #include <functional>
 #include "PortHandler.h"
 #include "DataType.h"
+#include "test_defs.h"
 
 struct TimestampedData{
     DATA_TYPE type;
@@ -25,6 +26,7 @@ struct TimestampedData{
 
 class DataArea : public QWidget{
     Q_OBJECT
+    friend Test_DataArea;
     public:
         DataArea(PortHandler *pHandler,QWidget *parent = 0);
     public slots:
@@ -52,8 +54,9 @@ class DataArea : public QWidget{
         bool timestampChanged;
         std::chrono::time_point<std::chrono::system_clock> time_prog_start;
         void textFieldUpdate(QTextEdit*, std::function<QString(QByteArray&)>);
-        QString getTimestamp();
+        QString getTimestamp(TIMESTAMP_FORMAT_TYPE);
 };
+
 
 
 

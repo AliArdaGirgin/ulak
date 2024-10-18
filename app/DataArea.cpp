@@ -20,9 +20,8 @@
 #include "DataType.h"
 #include "ProjectSettings.h"
 
-DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
-    QWidget(parent),port_handler(pHandler){
-    layout = new QGridLayout();
+DataArea::DataArea(PortHandler *pHandler,QWidget *parent):QWidget(parent),port_handler(pHandler){
+
     tabbed = new QTabWidget();
     ascii  = new QTextEdit();
     ascii->setReadOnly(true);
@@ -42,6 +41,7 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(DATA_AREA_TIMESTAMP_UPDATE_PERIOD);
 
+    layout = new QGridLayout();
     layout->addWidget(tabbed,0,1);
     layout->setColumnStretch(1,10);
     layout->setSizeConstraint(QLayout::SetMaximumSize);
@@ -49,6 +49,7 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):
 
     connect(tabbed, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
+    // get current time to be used in time_stamp_format
     time_prog_start = std::chrono::system_clock::now();
 }
 
@@ -56,7 +57,7 @@ void DataArea::write(QByteArray data_in, DATA_TYPE dataType){
     TimestampedData dt;
     QString temp;
 
-    // insetr new row, if first data or data type changed or timestamp changed
+    // insert new row, if it is first data, data type changed or timestamp changed
     if(!data.size() || data.back().type != dataType || timestampChanged){
         timestampChanged = false;
         dt.dt = data_in;
@@ -64,12 +65,12 @@ void DataArea::write(QByteArray data_in, DATA_TYPE dataType){
         dt.type = dataType;
         data.push_back(dt);
 
-    // if not, append to last roe
+    // if not, append to last row
     }else{
         data.back().dt.append(data_in);
     }
 
-    //
+    // add to current view_type
     if(current_index == ascii_index){
         textFieldUpdate(ascii, [](QByteArray& ba){ return QString(ba);});
     }else if(current_index == hex_index){
@@ -89,6 +90,8 @@ void DataArea::clear(){
 }
 
 void DataArea::save(){
+
+    // Check data size
     int dataSize = 0;
     if(current_index == ascii_index)
         dataSize = ascii->toPlainText().length();
@@ -102,6 +105,7 @@ void DataArea::save(){
         return;
     }
 
+    // get file
     QString  file_name = QFileDialog::getSaveFileName(this,tr("Open File"),"","All Files(*)");
     if(file_name.isEmpty())
         return;
@@ -110,6 +114,8 @@ void DataArea::save(){
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
         return;
     }
+
+    // write
     if(current_index == ascii_index)
         file.write( ascii->toPlainText().toLocal8Bit() );
     else
@@ -130,11 +136,11 @@ void DataArea::tabChanged(int tab){
 }
 
 void DataArea::run(){
-    lastTimestamp = getTimestamp();
+    lastTimestamp = getTimestamp(ProjectSettings::getDefaultTimestampFormat());
     timestampChanged = true;
 }
 
-QString DataArea::getTimestamp(){
+QString DataArea::getTimestamp(TIMESTAMP_FORMAT_TYPE format){
     QString ret;
 
     using namespace std::chrono;
@@ -146,7 +152,7 @@ QString DataArea::getTimestamp(){
     // Hold ms since
     time_point<system_clock> ms_now = system_clock::now();
 
-    switch(ProjectSettings::getDefaultTimestampFormat()){
+    switch(format){
         case TIMESTAMP_FORMAT_TYPE::DATE:
             ss << std::put_time(std::localtime(&t), "%Y-%m-%d");
             ret = QString::fromStdString(ss.str());
@@ -207,7 +213,7 @@ void DataArea::textFieldUpdate(QTextEdit* te, std::function<QString(QByteArray&)
             temp.append("[RX] ");
         temp.append( m.timestamp );
 
-        // write type and timestanp with colors
+        // write type and timestamp with colors
         if(m.type == DATA_TYPE::TX)
             te->setTextColor(Qt::red);
         else

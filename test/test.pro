@@ -20,7 +20,8 @@ SOURCES +=  \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
     ../app/TabbedText.cpp \
-    test_command.cpp
+    test_command.cpp \
+    test_dataarea.cpp
 
 HEADERS += \
     test_defs.h \
