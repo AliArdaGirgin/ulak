@@ -18,4 +18,16 @@ private slots:
 private:
     QTimer *timer;
 };
+
+class Test_Command: public QObject{
+    Q_OBJECT
+private slots:
+    void initTestCase();
+    void test_oneshot_cmd();
+    void test_delay_cmd();
+    void test_periodic_cmd();
+    void test_readtrigger_cmd();
+    void test_linefeed_types();
+    void cleanupTestCase();
+};
 #endif // TEST_DEFS_H

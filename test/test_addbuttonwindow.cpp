@@ -145,5 +145,3 @@ void Test_AddButtonWindow::cleanupTestCase(){
     while(timer->isActive());
 }
 
-QTEST_MAIN(Test_AddButtonWindow)
-

@@ -4,9 +4,11 @@
 #include <QPushButton>
 #include <QObject>
 #include "DataType.h"
+#include "test_defs.h"
 
 class Command:public QWidget{
     Q_OBJECT
+    friend Test_Command;
     public:
         Command(Command_t cmd_, QWidget *parent = 0);
         QString getName(){ return start_button->text();}

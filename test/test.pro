@@ -7,6 +7,7 @@ TEMPLATE = app
 INCLUDEPATH += ../app
 
 SOURCES +=  \
+    main.cpp \
     test_addbuttonwindow.cpp \
     ../app/AddButtonWindow.cpp \
     ../app/Command.cpp \
@@ -19,6 +20,7 @@ SOURCES +=  \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
     ../app/TabbedText.cpp \
+    test_command.cpp
 
 HEADERS += \
     test_defs.h \
