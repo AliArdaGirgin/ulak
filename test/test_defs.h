@@ -27,6 +27,7 @@ private slots:
     void test_delay_cmd();
     void test_periodic_cmd();
     void test_readtrigger_cmd();
+    void test_readtrigger_cont();
     void test_linefeed_types();
     void cleanupTestCase();
 };

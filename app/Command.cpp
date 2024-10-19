@@ -128,40 +128,47 @@ void Command::settings(){
 }
 
 void Command::run(){
-    bool write_data = false;
+    int write_data = 0;
     if(current_state == COMMAND_STATE::ACTIVE){
         if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::MANUAL){
             if(--delay_counter <= 0){
                 // send data
                 delay_counter = 0;
-                write_data = true;
+                write_data = 1;
                 stop();
             }
         }else if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
             if(trigger_count>0 && --delay_counter <= 0){
                 // data send
                 delay_counter = 0;
-                write_data = true;
+                write_data = trigger_count;
                 stop();
             }
+        }else if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT){
+            if(trigger_count > 0 && --delay_counter <= 0){
+                delay_counter = 0;
+                write_data = trigger_count;
+                trigger_count = 0;
+            }
+
         }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && cmd.trig_type == TRIGGER_TYPE::MANUAL){
             if(--delay_counter <= 0 && --periodic_counter == 0){
                 // data send
-                write_data = true;
+                write_data = 1;
                 delay_counter = 0;
                 periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
             }
 
-        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
+        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && (cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER || cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT)){
             if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter == 0){
                 // data send
-                write_data = true;
+                write_data = 1;
                 delay_counter = 0;
                 periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
             }
         }
 
-        if(write_data){
+        while(write_data-- > 0){
             emit send(cmd.data, DATA_TYPE::TX);
             emit send(linefeed_data, DATA_TYPE::TX);
         }
@@ -188,4 +195,11 @@ void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
         default:
             break;
     }
+}
+bool Command::isTriggerType(){
+    if(cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER ||
+       cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT)
+        return true;
+    else
+        return false;
 }

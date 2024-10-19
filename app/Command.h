@@ -26,6 +26,7 @@ class Command:public QWidget{
         void triggered(void){--trigger_count;}
         bool isTriggered(void){return trigger_count <= 0 ? false : true;}
         TRIGGER_TYPE getTriggerType(){return cmd.trig_type;}
+        bool isTriggerType();
         void run();
 
     public slots:

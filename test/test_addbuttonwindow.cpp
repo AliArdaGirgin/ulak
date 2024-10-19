@@ -34,7 +34,7 @@ void Test_AddButtonWindow::test_command_create(){
     w.command_cbox->setCurrentIndex(static_cast<int>(COMMAND_TYPE::PERIODIC));
     w.delay_text->setText("12340");
     w.period_text->setText("4560");
-    w.trigger_cbox->setCurrentIndex(static_cast<int>(TRIGGER_TYPE::READ_TRIGGER));
+    w.trigger_cbox->setCurrentIndex(static_cast<int>(TRIGGER_TYPE::READ_TRIGGER_CONT));
     w.read_data_text->setData("ReadData");
     w.read_data_text->setCurrentIndex(static_cast<int>(VIEW_TYPE::HEX));
     // Click Ok
@@ -49,7 +49,7 @@ void Test_AddButtonWindow::test_command_create(){
     QCOMPARE(cmd.linefeed, LINEFEED_TYPE::CR);
     QCOMPARE(cmd.delay, 12340);
     QCOMPARE(cmd.period, 4560);
-    QCOMPARE(cmd.trig_type, TRIGGER_TYPE::READ_TRIGGER);
+    QCOMPARE(cmd.trig_type, TRIGGER_TYPE::READ_TRIGGER_CONT);
     QCOMPARE(cmd.read_data, "ReadData");
     QCOMPARE(cmd.read_last_tab, VIEW_TYPE::HEX);
 }

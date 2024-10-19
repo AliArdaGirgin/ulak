@@ -63,6 +63,7 @@ AddButtonWindow::AddButtonWindow(QWidget *parent, Command *cmd):QWidget(parent){
     trigger_cbox = new QComboBox();
     trigger_cbox->addItem(TRIGGER_TYPE_MANUAL_NAME);
     trigger_cbox->addItem(TRIGGER_TYPE_READTRIGGER_NAME );
+    trigger_cbox->addItem(TRIGGER_TYPE_READTRIGGER_CONT_NAME );
 
     read_data_label = new QLabel("Read Data");
     read_data_text = new TabbedText(this);
@@ -207,6 +208,7 @@ void AddButtonWindow::triggerTypeChanged(int index){
         read_data_text->setVisible(false);
         break;
     case TRIGGER_TYPE::READ_TRIGGER:
+    case TRIGGER_TYPE::READ_TRIGGER_CONT:
         read_data_label->setVisible(true);
         read_data_text->setVisible(true);
         break;

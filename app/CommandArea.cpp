@@ -61,7 +61,7 @@ void CommandArea::dataRead(QByteArray data, DATA_TYPE dtype){
         return;
     for(auto &command:command_pool){
         if(command != nullptr && command->getState()==COMMAND_STATE::ACTIVE){
-            if(command->getTriggerType() == TRIGGER_TYPE::READ_TRIGGER)
+            if(command->isTriggerType())
                 command->dataRead(data);
         }
     }

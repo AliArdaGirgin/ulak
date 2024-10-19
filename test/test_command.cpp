@@ -106,7 +106,14 @@ void Test_Command::test_readtrigger_cmd(){
     DATA_TYPE  t = qvariant_cast<DATA_TYPE>(args.at(1));
     QCOMPARE(t, DATA_TYPE::TX);
     QCOMPARE(dt, "OneShotReadTrigger");
+    spy.takeFirst(); // clear spy
 
+    // Correct data but trig type is not continous command passive, should not emit
+    arr = "Trigger";
+    c.dataRead(arr);
+    c.run();
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(c.current_state, COMMAND_STATE::PASSIVE);
 }
 void Test_Command::test_periodic_cmd(){
     // Create command
@@ -150,6 +157,60 @@ void Test_Command::test_periodic_cmd(){
     t = qvariant_cast<DATA_TYPE>(args.at(1));
     QCOMPARE(t, DATA_TYPE::TX);
     QCOMPARE(dt, "PeriodicManual");
+}
+
+void Test_Command::test_readtrigger_cont(){
+    // Create command
+    Command_t cmd;
+    cmd.name = "Test";
+    cmd.data = "OneShotReadTrigger";
+    cmd.cmd_type = COMMAND_TYPE::ONE_SHOT;
+    cmd.delay = 0;
+    cmd.trig_type = TRIGGER_TYPE::READ_TRIGGER_CONT;
+    cmd.read_data = "Trigger";
+    Command c(cmd);
+    c.current_state = COMMAND_STATE::ACTIVE;
+
+    // set signal spy
+    QSignalSpy spy(&c, SIGNAL(send(QByteArray, DATA_TYPE)));
+
+    // run once should not emit the signals
+    c.run();
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(c.current_state, COMMAND_STATE::ACTIVE);
+
+    // Random data Should not emit signal
+    QByteArray arr = "asdasdasdasdasdasdasd";
+    c.dataRead(arr);
+    c.run();
+    QCOMPARE(spy.count(), 0);
+    QCOMPARE(c.current_state, COMMAND_STATE::ACTIVE);
+
+    // Should emit signal
+    arr = "Trigger";
+    c.dataRead(arr);
+    c.run();
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(c.current_state, COMMAND_STATE::ACTIVE);
+    QList<QVariant> args = spy.takeFirst();
+    QByteArray dt = args.at(0).toByteArray();
+    DATA_TYPE  t = qvariant_cast<DATA_TYPE>(args.at(1));
+    QCOMPARE(t, DATA_TYPE::TX);
+    QCOMPARE(dt, "OneShotReadTrigger");
+    spy.takeFirst(); // clear spy
+
+    // Still active, Should emit the signal again
+    arr = "Trigger";
+    c.dataRead(arr);
+    c.run();
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(c.current_state, COMMAND_STATE::ACTIVE);
+    args = spy.takeFirst();
+    dt = args.at(0).toByteArray();
+    t = qvariant_cast<DATA_TYPE>(args.at(1));
+    QCOMPARE(t, DATA_TYPE::TX);
+    QCOMPARE(dt, "OneShotReadTrigger");
+    spy.takeFirst();
 }
 void Test_Command::test_linefeed_types(){
 
