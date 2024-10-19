@@ -27,7 +27,7 @@ class Command:public QWidget{
         bool isTriggered(void){return trigger_count <= 0 ? false : true;}
         TRIGGER_TYPE getTriggerType(){return cmd.trig_type;}
         bool isTriggerType();
-        void run();
+        std::function<void(Command*)> proc = &Command::proc_dummy;
 
     public slots:
         void activate();
@@ -55,6 +55,14 @@ class Command:public QWidget{
         int delay_counter;
         int periodic_counter;
         void setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln);
+        void sendData(int times);
+        void proc_set(COMMAND_TYPE ct, TRIGGER_TYPE tt);
+        void proc_dummy();
+        void proc_oneshot_manual();
+        void proc_oneshot_readtrigger();
+        void proc_oneshot_readtrigger_cont();
+        void proc_periodic_manual();
+        void proc_periodic_readtrigger();
 };
 
 #endif

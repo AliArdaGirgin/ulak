@@ -25,8 +25,10 @@ DataArea::DataArea(PortHandler *pHandler,QWidget *parent):QWidget(parent),port_h
     tabbed = new QTabWidget();
     ascii  = new QTextEdit();
     ascii->setReadOnly(true);
+    ascii->setUndoRedoEnabled(false);
     hex    = new QTextEdit();
     hex->setReadOnly(true);
+    hex->setUndoRedoEnabled(false);
 
     ascii_index = tabbed->addTab(ascii, VIEW_TYPE_ASCII_NAME);
     hex_index   = tabbed->addTab(hex, VIEW_TYPE_HEX_NAME);

@@ -76,11 +76,10 @@ void CommandArea::onAddButton(){
     add_button_window->show();
 }
 void CommandArea::run(){
-    QByteArray dt;
     for(auto &command:command_pool){
         // Command not deleted
-        if(command != nullptr){
-            command->run();
+        if(command){
+            command->proc(command);
         }
     }
 }

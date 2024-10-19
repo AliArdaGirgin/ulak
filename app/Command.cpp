@@ -21,10 +21,12 @@ Command::Command(Command_t cmd_, QWidget *parent):
     trigger_count = 0;
     current_state = COMMAND_STATE::PASSIVE;
 
+    // set run function
+    proc_set(cmd.cmd_type, cmd.trig_type);
+
     // set counter values to match with command area timer resolution
     delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
-
 
     // Set up buttons
     start_button = new QPushButton(cmd.name,this);
@@ -61,6 +63,9 @@ Command::Command(Command_t cmd_, QWidget *parent):
 void Command::update(Command_t cmd_, QWidget *parent)
 {
     cmd = cmd_;
+    // set run function
+    proc_set(cmd.cmd_type, cmd.trig_type);
+
     setLinefeedData(linefeed_data, cmd.linefeed);
     delay_counter = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
     periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
@@ -127,54 +132,6 @@ void Command::settings(){
     addButton->show();
 }
 
-void Command::run(){
-    int write_data = 0;
-    if(current_state == COMMAND_STATE::ACTIVE){
-        if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::MANUAL){
-            if(--delay_counter <= 0){
-                // send data
-                delay_counter = 0;
-                write_data = 1;
-                stop();
-            }
-        }else if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER){
-            if(trigger_count>0 && --delay_counter <= 0){
-                // data send
-                delay_counter = 0;
-                write_data = trigger_count;
-                stop();
-            }
-        }else if(cmd.cmd_type == COMMAND_TYPE::ONE_SHOT && cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT){
-            if(trigger_count > 0 && --delay_counter <= 0){
-                delay_counter = 0;
-                write_data = trigger_count;
-                trigger_count = 0;
-            }
-
-        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && cmd.trig_type == TRIGGER_TYPE::MANUAL){
-            if(--delay_counter <= 0 && --periodic_counter == 0){
-                // data send
-                write_data = 1;
-                delay_counter = 0;
-                periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
-            }
-
-        }else if(cmd.cmd_type == COMMAND_TYPE::PERIODIC && (cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER || cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT)){
-            if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter == 0){
-                // data send
-                write_data = 1;
-                delay_counter = 0;
-                periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
-            }
-        }
-
-        while(write_data-- > 0){
-            emit send(cmd.data, DATA_TYPE::TX);
-            emit send(linefeed_data, DATA_TYPE::TX);
-        }
-    }
-}
-
 void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
     switch(ln){
         case LINEFEED_TYPE::NONE:
@@ -197,9 +154,87 @@ void Command::setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln){
     }
 }
 bool Command::isTriggerType(){
-    if(cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER ||
-       cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT)
-        return true;
-    else
-        return false;
+    return (cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER ||
+            cmd.trig_type == TRIGGER_TYPE::READ_TRIGGER_CONT);
 }
+
+void Command::sendData(int times){
+    while(times-- > 0){
+        emit send(cmd.data, DATA_TYPE::TX);
+        emit send(linefeed_data, DATA_TYPE::TX);
+    }
+}
+void Command::proc_set(COMMAND_TYPE ct, TRIGGER_TYPE tt){
+    proc = &Command::proc_dummy;
+
+    if(ct == COMMAND_TYPE::ONE_SHOT && tt == TRIGGER_TYPE::MANUAL){
+        proc = &Command::proc_oneshot_manual;
+
+    }else if(ct == COMMAND_TYPE::ONE_SHOT && tt == TRIGGER_TYPE::READ_TRIGGER){
+        proc = &Command::proc_oneshot_readtrigger;
+
+    }else if(ct == COMMAND_TYPE::ONE_SHOT && tt == TRIGGER_TYPE::READ_TRIGGER_CONT){
+        proc = &Command::proc_oneshot_readtrigger_cont;
+
+    }else if(ct == COMMAND_TYPE::PERIODIC && tt == TRIGGER_TYPE::MANUAL){
+        proc = &Command::proc_periodic_manual;
+
+    }else if(ct == COMMAND_TYPE::PERIODIC && (tt == TRIGGER_TYPE::READ_TRIGGER || tt == TRIGGER_TYPE::READ_TRIGGER_CONT)){
+        proc = &Command::proc_periodic_readtrigger;
+    }
+}
+
+void Command::proc_dummy(){
+    qDebug() << "Proc dummy called";
+}
+
+void Command::proc_oneshot_manual(){
+    if(current_state != COMMAND_STATE::ACTIVE)
+        return;
+    if(--delay_counter <= 0){
+        // send data
+        delay_counter = 0;
+        sendData(1);
+        stop();
+     }
+}
+void Command::proc_oneshot_readtrigger(){
+    if(current_state != COMMAND_STATE::ACTIVE)
+        return;
+    if(trigger_count>0 && --delay_counter <= 0){
+        // data send
+        delay_counter = 0;
+        sendData(1);
+        stop();
+    }
+}
+void Command::proc_oneshot_readtrigger_cont(){
+    if(current_state != COMMAND_STATE::ACTIVE)
+        return;
+    if(trigger_count > 0 && --delay_counter <= 0){
+        delay_counter = 0;
+        sendData(trigger_count);
+        trigger_count = 0;
+    }
+}
+void Command::proc_periodic_manual(){
+    if(current_state != COMMAND_STATE::ACTIVE)
+        return;
+    if(--delay_counter <= 0 && --periodic_counter == 0){
+        // data send
+        sendData(1);
+        delay_counter = 0;
+        periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+    }
+}
+void Command::proc_periodic_readtrigger(){ // also read_periodic_trigger_cont
+    if(current_state != COMMAND_STATE::ACTIVE)
+        return;
+    if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter == 0){
+        // data send
+        sendData(1);
+        delay_counter = 0;
+        periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+    }
+}
+
