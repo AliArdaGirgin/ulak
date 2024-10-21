@@ -3,7 +3,7 @@
 
 #include <QApplication>
 #include <QMainWindow>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QTextEdit>
 #include <QGroupBox>
 #include <QScrollArea>
@@ -18,6 +18,7 @@
 #include "DataArea.h"
 #include "PortSelection.h"
 #include "AddButtonWindow.h"
+#include "DirectArea.h"
 
 class CommRightCornerWidget: public QWidget{
     Q_OBJECT
@@ -58,10 +59,12 @@ class MainWindow : public QMainWindow{
         void onProjClose();
         void onClear();
     private:
+        QGridLayout *layout;
         CommandArea *cmd_area;
         QScrollArea *cmd_scroll;
         DataArea *data_area;
         QScrollArea *data_scroll;
+        DirectArea * direct_area;
         PortSelection *sel;
         AddButtonWindow *addButton;
         PortHandler *port_handler;

@@ -13,8 +13,8 @@
 #include <climits>
 #include <cstdio>
 
-
 void AsciiText::keyPressEvent(QKeyEvent* event){
+
 
     // if non-ascii data exist in underlying bytearray do not allow
     // modification from ascii view
@@ -26,6 +26,15 @@ void AsciiText::keyPressEvent(QKeyEvent* event){
         return;
     }
     QTextEdit::keyPressEvent(event);
+
+    // emit these, after event processed
+    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+        emit onEnterPressed();
+    if(event->key() == Qt::Key_Up)
+        emit onUpDownArrowKey(1);
+    if(event->key() == Qt::Key_Down)
+        emit onUpDownArrowKey(0);
+
     data = toPlainText().toLocal8Bit();
 }
 
@@ -52,10 +61,19 @@ bool AsciiText::isDataAscii() const{
     return true;
 }
 
+
+
 void HexText::keyPressEvent(QKeyEvent *event){
     int key = event->key();
     int blocked = false;
     int propagate = false;
+
+    if(key == Qt::Key_Return || key == Qt::Key_Enter)
+        emit onEnterPressed();
+    if(key == Qt::Key_Up)
+        emit onUpDownArrowKey(1);
+    if(key == Qt::Key_Down)
+        emit onUpDownArrowKey(0);
 
     // 0,1....9
     if(key >= Qt::Key_0 && key <= Qt::Key_9){

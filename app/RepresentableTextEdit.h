@@ -26,6 +26,10 @@ class AsciiText : public IRepresantableTextEdit{
         void keyPressEvent(QKeyEvent* event) override;
         void update() override;
         void clear() override;
+
+    signals:
+        void onEnterPressed();
+        void onUpDownArrowKey(int up);
     private:
         bool isDataAscii() const;
 };
@@ -37,6 +41,10 @@ class HexText : public IRepresantableTextEdit{
         void keyPressEvent(QKeyEvent *event) override;
         void update() override;
         void clear() override;
+
+    signals:
+        void onEnterPressed();
+        void onUpDownArrowKey(int up);
     private:
         void updateData(const std::string& str);
         const std::map<char, unsigned char> hexCharToByte{

@@ -14,6 +14,7 @@ SOURCES += \
     Command.cpp \
     CommandArea.cpp \
     DataArea.cpp \
+    DirectArea.cpp \
     MainWindow.cpp \
     PortCommSelection.cpp \
     PortHandler.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     Conf.h \
     DataArea.h \
     DataType.h \
+    DirectArea.h \
     MainWindow.h \
     PortCommSelection.h \
     PortHandler.h \

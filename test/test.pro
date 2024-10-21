@@ -20,6 +20,7 @@ SOURCES +=  \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
     ../app/TabbedText.cpp \
+    ../app/DirectArea.cpp \
     test_command.cpp \
     test_dataarea.cpp
 
@@ -37,6 +38,7 @@ HEADERS += \
     ../app/PortSelection.h \
     ../app/ProjectSettings.h \
     ../app/RepresentableTextEdit.h \
-    ../app/TabbedText.h
+    ../app/TabbedText.h \
+    ../app/DirectArea.h
 
 RESOURCES = ../resources/resources.qrc

@@ -14,7 +14,6 @@
 #include <QTime>
 #include <QTimer>
 #include <functional>
-#include "PortHandler.h"
 #include "DataType.h"
 #include "test_defs.h"
 
@@ -28,7 +27,7 @@ class DataArea : public QWidget{
     Q_OBJECT
     friend Test_DataArea;
     public:
-        DataArea(PortHandler *pHandler,QWidget *parent = 0);
+        DataArea(QWidget *parent = 0);
     public slots:
         void write(QByteArray data_in, DATA_TYPE dataType);
         void clear();
@@ -40,7 +39,6 @@ class DataArea : public QWidget{
     private:
         QByteArray  time_stamp;
         QGridLayout *layout;
-        PortHandler *port_handler;
         QTabWidget  *tabbed;
         QTimer      *timer;
         QString     lastTimestamp;

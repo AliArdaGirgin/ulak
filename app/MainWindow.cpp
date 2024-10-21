@@ -18,6 +18,7 @@
 #include "PortSelection.h"
 #include "CommandArea.h"
 #include "DataArea.h"
+#include "DirectArea.h"
 #include "PortHandler.h"
 #include "ProjectSettings.h"
 #include "DataType.h"
@@ -32,20 +33,26 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
 
     port_handler = new PortHandler(this);
 
-    cmd_area = new CommandArea(port_handler, central);
+    cmd_area = new CommandArea(central);
     cmd_scroll = new QScrollArea(this);
     cmd_scroll->setFixedWidth(350);
     cmd_scroll->setWidgetResizable(true);
     cmd_scroll->setWidget(cmd_area);
 
-    data_area = new DataArea(port_handler,central);
+    data_area = new DataArea(central);
     data_scroll = new QScrollArea(this);
     data_scroll->setWidgetResizable(true);
     data_scroll->setWidget(data_area);
 
-    QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight,central);
-    layout->addWidget(cmd_scroll);
-    layout->addWidget(data_scroll);
+    direct_area = new DirectArea(central);
+    //direct_area->adjustSize();
+
+    layout = new QGridLayout(central);
+    layout->addWidget(cmd_scroll, 0, 0);
+    layout->addWidget(data_scroll, 0, 1);
+    layout->setRowStretch(0, 2);
+    layout->addWidget(direct_area, 1, 0, 1, 2);
+    layout->setRowStretch(1, 0);
 
     central->setLayout(layout);
     setCentralWidget(central);
@@ -54,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     connect(this, SIGNAL(cleared()), data_area, SLOT(clear()));
     connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
     connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  port_handler, SLOT(write(QByteArray, DATA_TYPE)));
+    connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  port_handler, SLOT(write(QByteArray, DATA_TYPE)));
+    connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray, DATA_TYPE)));
     connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
     connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
     connect(port_handler, SIGNAL(portStateChanged(bool,QString)), corner_widget, SLOT(setState(bool,QString)));

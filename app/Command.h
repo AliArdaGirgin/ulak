@@ -10,6 +10,7 @@ class Command:public QWidget{
     Q_OBJECT
     friend Test_Command;
     public:
+        static void setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln);
         Command(Command_t cmd_, QWidget *parent = 0);
         QString getName(){ return start_button->text();}
         COMMAND_TYPE getCommandType(){return cmd.cmd_type;}
@@ -54,7 +55,6 @@ class Command:public QWidget{
         int trigger_count;
         int delay_counter;
         int periodic_counter;
-        void setLinefeedData(QByteArray &dt, LINEFEED_TYPE ln);
         void sendData(int times);
         void proc_set(COMMAND_TYPE ct, TRIGGER_TYPE tt);
         void proc_dummy();

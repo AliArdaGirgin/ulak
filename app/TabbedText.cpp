@@ -24,6 +24,10 @@ TabbedText::TabbedText(QWidget *parent):QTabWidget(parent){
         setCurrentIndex(hex_index);
 
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabbedChanged(int)));
+    connect(static_cast<IRepresantableTextEdit*>(widget(ascii_index)), SIGNAL(onEnterPressed()), this, SIGNAL(onEnterPressed()));
+    connect(static_cast<IRepresantableTextEdit*>(widget(hex_index)),   SIGNAL(onEnterPressed()), this, SIGNAL(onEnterPressed()));
+    connect(static_cast<IRepresantableTextEdit*>(widget(ascii_index)), SIGNAL(onUpDownArrowKey(int)), this, SIGNAL(onUpDownArrowKey(int)));
+    connect(static_cast<IRepresantableTextEdit*>(widget(hex_index)),   SIGNAL(onUpDownArrowKey(int)), this, SIGNAL(onUpDownArrowKey(int)));
 }
 
 void TabbedText::tabbedChanged(int index_in){
@@ -54,4 +58,13 @@ void TabbedText::addData(QByteArray &data_in){
 
 void TabbedText::update(){
     static_cast<IRepresantableTextEdit*>(currentWidget())->update();
+}
+
+void TabbedText::setTextHeight(int h){
+    setMaximumHeight(h);
+    setMinimumHeight(h);
+}
+
+void TabbedText::setCursor(QTextCursor::MoveOperation tc){
+    static_cast<IRepresantableTextEdit*>(currentWidget())->moveCursor(tc);
 }

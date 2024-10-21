@@ -14,13 +14,12 @@
 #include <iomanip>
 
 #include "DataArea.h"
-#include "PortHandler.h"
 #include "DataType.h"
 #include "Conf.h"
 #include "DataType.h"
 #include "ProjectSettings.h"
 
-DataArea::DataArea(PortHandler *pHandler,QWidget *parent):QWidget(parent),port_handler(pHandler){
+DataArea::DataArea(QWidget *parent):QWidget(parent){
 
     tabbed = new QTabWidget();
     ascii  = new QTextEdit();

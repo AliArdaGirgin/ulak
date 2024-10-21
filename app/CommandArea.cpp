@@ -9,11 +9,10 @@
 #include "AddButtonWindow.h"
 #include "CommandArea.h"
 #include "Command.h"
-#include "PortHandler.h"
 #include "DataType.h"
 #include "Conf.h"
 
-CommandArea::CommandArea(PortHandler *pHandler, QWidget *parent):QWidget(parent),port_handler(pHandler){
+CommandArea::CommandArea(QWidget *parent):QWidget(parent){
     timer  = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(COMMAND_AREA_TIMER_RESOLUTION);
