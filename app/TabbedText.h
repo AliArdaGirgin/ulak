@@ -9,8 +9,11 @@
 #include <QPushButton>
 #include <QChar>
 
+#include "test_defs.h"
+
 class TabbedText : public QTabWidget{
     Q_OBJECT
+    friend Test_DirectArea;
     public:
         TabbedText(QWidget *parent=nullptr);
         bool isDataEmpty();

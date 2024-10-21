@@ -10,12 +10,15 @@
 
 #include "TabbedText.h"
 #include "DataType.h"
+#include "test_defs.h"
 
 class DirectArea : public QWidget
 {
     Q_OBJECT
+    friend Test_DirectArea;
 public:
-    DirectArea(QWidget *parent);
+    DirectArea(QWidget *parent = nullptr);
+    void clearHistory();
 public slots:
     void enterPressed();
     void upDownArrowKeyPressed(int up);
@@ -32,6 +35,7 @@ private:
     QHBoxLayout *layout;
     std::deque<QByteArray*> history;
     int history_cnt;
+    bool check_comm; // needed for testing
     void addToHistory(QByteArray* dt);
 };
 

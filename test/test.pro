@@ -22,7 +22,8 @@ SOURCES +=  \
     ../app/TabbedText.cpp \
     ../app/DirectArea.cpp \
     test_command.cpp \
-    test_dataarea.cpp
+    test_dataarea.cpp \
+    test_directarea.cpp
 
 HEADERS += \
     test_defs.h \

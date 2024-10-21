@@ -44,4 +44,12 @@ private slots:
     void test_tab_switch();
     void cleanupTestCase();
 };
+
+class Test_DirectArea: public QObject{
+    Q_OBJECT
+private slots:
+    void test_ascii_send();
+    void test_hex_send();
+    void test_history();
+};
 #endif // TEST_DEFS_H

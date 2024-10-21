@@ -13,6 +13,7 @@
 
 DirectArea::DirectArea(QWidget *parent): QWidget{parent}
 {
+    check_comm = true;
     history_cnt = 0;
     QLabel *name = new QLabel("Enter: ");
     edit = new TabbedText();
@@ -51,7 +52,7 @@ DirectArea::DirectArea(QWidget *parent): QWidget{parent}
 }
 
 void DirectArea::onSendButton(){
-    if(!PortHandler::commExists()){
+    if(check_comm && !PortHandler::commExists()){
         QMessageBox *msg = new QMessageBox();
         msg->setText("No Connection");
         msg->exec();
@@ -93,4 +94,8 @@ void DirectArea::addToHistory(QByteArray* dt){
         history.pop_front();
     }
     history_cnt = history.size();
+}
+void DirectArea::clearHistory(){
+    history.clear();
+    history_cnt = 0;
 }

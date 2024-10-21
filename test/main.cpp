@@ -10,6 +10,7 @@ int main(int argc, char *argv[]){
     status |= QTest::qExec(new Test_AddButtonWindow, argc, argv);
     status |= QTest::qExec(new Test_Command, argc, argv);
     status |= QTest::qExec(new Test_DataArea, argc, argv);
+    status |= QTest::qExec(new Test_DirectArea, argc, argv);
 
     if(status){
         qDebug() << "Some tests failed";
