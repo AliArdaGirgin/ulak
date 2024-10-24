@@ -6,7 +6,9 @@
 
 int main(int argc, char *argv[]){
     QApplication app(argc, argv);
-
+#ifdef Q_OS_WIN
+    QApplication::setStyle("fusion");
+#endif
     // add application wide stylesheet
     QFile stylesheet_file(":/stylesheet.css");
     if(!stylesheet_file.open(QIODevice::ReadOnly)){
