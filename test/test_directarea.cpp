@@ -117,7 +117,7 @@ void Test_DirectArea::test_history(){
             QTest::keyClicks(da.edit->currentWidget(), QString::number(i));
             QTest::keyClick(da.edit->currentWidget(), Qt::Key_Return);
         }
-        QCOMPARE(da.history.size(), DIRECT_AREA_HISTORY_SIZE);
+        QCOMPARE(static_cast<int>(da.history.size()), DIRECT_AREA_HISTORY_SIZE);
 
         for(int i=DIRECT_AREA_HISTORY_SIZE-1; i>=0; i--){
             QTest::keyClick(da.edit->currentWidget(), Qt::Key_Up);
