@@ -1,30 +1,30 @@
-#ifndef PORT_HANDLER_H
-#define PORT_HANDLER_H
+#ifndef PORTHANDLER_COMM_H
+#define PORTHANDLER_COMM_H
 
 #include <QObject>
 #include <QSerialPort>
 #include <QByteArray>
 #include <QTimer>
 #include "DataType.h"
+#include "PortHandler_Base.h"
 
 
-class PortHandler:public QObject{
+class PortHandler_Comm:public PortHandler_Base{
     Q_OBJECT
     public:
-        PortHandler(QObject *parent=0);
-        static bool commExists();
+        PortHandler_Comm();
+        void disconnect() override;
         bool setPort(QSerialPort *port_in);
-        bool removePort();
+        QString getPortName() override;
     signals:
         void read(QByteArray data, DATA_TYPE dtype);
-        void portStateChanged(bool state, QString name);
     public slots:
-        void write(QByteArray data, DATA_TYPE);
+        void write(QByteArray data, DATA_TYPE) override;
 
     private slots:
         void run();
     private:
-        static QSerialPort *current_port;
+        QSerialPort *current_port;
         QTimer *timer;
         char read_data[1024];
 

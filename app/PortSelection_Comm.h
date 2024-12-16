@@ -9,6 +9,7 @@
 #include <QObject>
 #include "CommandArea.h"
 #include "DataArea.h"
+#include "PortHandler_Base.h"
 
 class PortCommSelection : public QWidget{ 
     Q_OBJECT
@@ -18,7 +19,7 @@ class PortCommSelection : public QWidget{
     
     signals:
         void closed();
-        void opened(QSerialPort *);
+        void opened(PortHandler_Base *);
     
     private slots:
         void portSelected();

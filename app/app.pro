@@ -16,9 +16,10 @@ SOURCES += \
     DataArea.cpp \
     DirectArea.cpp \
     MainWindow.cpp \
-    PortCommSelection.cpp \
-    PortHandler.cpp \
+    PortHandler_Base.cpp \
+    PortHandler_Comm.cpp \
     PortSelection.cpp \
+    PortSelection_Comm.cpp \
     ProjectSettings.cpp \
     RepresentableTextEdit.cpp \
     TabbedText.cpp \
@@ -33,9 +34,10 @@ HEADERS += \
     DataType.h \
     DirectArea.h \
     MainWindow.h \
-    PortCommSelection.h \
-    PortHandler.h \
+    PortHandler_Base.h \
+    PortHandler_Comm.h \
     PortSelection.h \
+    PortSelection_Comm.h \
     ProjectSettings.h \
     RepresentableTextEdit.h \
     TabbedText.h

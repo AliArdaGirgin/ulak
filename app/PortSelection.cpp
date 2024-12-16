@@ -1,11 +1,12 @@
 #include <QWidget>
 #include <QTabWidget>
 #include "PortSelection.h"
-#include "PortCommSelection.h"
-#include "PortHandler.h"
+#include "PortSelection_Comm.h"
+#include "PortHandler_Base.h"
 #include <QSerialPort>
 
-PortSelection::PortSelection(PortHandler *pHandler, QWidget * parent):QTabWidget(parent),port_handler(pHandler){
+PortSelection::PortSelection(QWidget* parent):
+    QTabWidget(){
 
     setWindowTitle("Port");
 
@@ -21,17 +22,16 @@ PortSelection::PortSelection(PortHandler *pHandler, QWidget * parent):QTabWidget
     addTab(commPort,"COMM");
 
     connect(commPort, SIGNAL(closed()), this, SLOT(cancel()));
-    connect(commPort, SIGNAL(opened(QSerialPort*)), this, SLOT(open(QSerialPort*)));
+    connect(commPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
+    connect(commPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
 }
 
-void PortSelection::open(QSerialPort *port_in){
-    if(port_handler->commExists()){
-        port_handler->removePort();
-    }
-    port_handler->setPort(port_in);
+void PortSelection::open(PortHandler_Base *port_in){
+    (void)port_in;
     this->close();
 }
 
 void PortSelection::cancel(){
     this->close();
 }
+

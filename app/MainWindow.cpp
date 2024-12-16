@@ -19,7 +19,7 @@
 #include "CommandArea.h"
 #include "DataArea.h"
 #include "DirectArea.h"
-#include "PortHandler.h"
+#include "PortHandler_Base.h"
 #include "ProjectSettings.h"
 #include "DataType.h"
 #include "Conf.h"
@@ -29,9 +29,8 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     setWindowTitle("Ulak");
     drawMenu();
     resize(1200,600);
+    pHandler = nullptr;
     QWidget *central = new QWidget(this);
-
-    port_handler = new PortHandler(this);
 
     cmd_area = new CommandArea(central);
     cmd_scroll = new QScrollArea(this);
@@ -60,23 +59,18 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent){
     connect(this, SIGNAL(saved()), data_area, SLOT(save()));
     connect(this, SIGNAL(cleared()), data_area, SLOT(clear()));
     connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
-    connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  port_handler, SLOT(write(QByteArray, DATA_TYPE)));
-    connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  port_handler, SLOT(write(QByteArray, DATA_TYPE)));
     connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  data_area, SLOT(write(QByteArray, DATA_TYPE)));
-    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
-    connect(port_handler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
-    connect(port_handler, SIGNAL(portStateChanged(bool,QString)), corner_widget, SLOT(setState(bool,QString)));
-    connect(port_handler, SIGNAL(portStateChanged(bool,QString)), this, SLOT(setPortState(bool,QString)));
 }
 
 void MainWindow::portSelect(void){
-    sel = new PortSelection(port_handler);
+    sel = new PortSelection(this);
     sel->show();
 }
 
 void MainWindow::portClose(void){
-    if(port_handler->commExists()){
-        port_handler->removePort();
+    if(pHandler){
+        pHandler->disconnect();
+        setPortState(nullptr);
     }
 }
 
@@ -413,13 +407,14 @@ void MainWindow::onProjSettings(){
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
-    if(port_handler->commExists())
-        port_handler->removePort();
+    if(pHandler){
+        pHandler->disconnect();
+        setPortState(nullptr);
+    }
     event->accept();
 }
 
 CommRightCornerWidget::CommRightCornerWidget(QWidget* parent_): parent(parent_){
-    state = 0;
     layout = new QGridLayout();
     comm_name = new QLabel("None");
 
@@ -435,8 +430,7 @@ CommRightCornerWidget::CommRightCornerWidget(QWidget* parent_): parent(parent_){
     setLayout(layout);
 }
 
-void CommRightCornerWidget::setState(bool state_, QString name){
-    state = state_;
+void CommRightCornerWidget::setState(bool state, QString name){
     if(state){
         comm_name->setText(name);
         comm_state->setPixmap(icon_active->pixmap(QSize(16,16)));
@@ -451,14 +445,28 @@ void CommRightCornerWidget::setState(bool state_, QString name){
     QSize s = parent->size();
     s.rwidth() += 1;
     parent->resize(s);
+    s.rwidth() -= 1;
+    parent->resize(s);
 }
 
-void MainWindow::setPortState(bool state, QString name){
-    (void) name;
-    if(state)
+void MainWindow::setPortState(PortHandler_Base* port){
+    if(port){
+        pHandler = port;
+        connect(cmd_area,     SIGNAL(send(QByteArray,DATA_TYPE)),  pHandler, SLOT(write(QByteArray, DATA_TYPE)));
+        connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  pHandler, SLOT(write(QByteArray, DATA_TYPE)));
+        connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
+        connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
+
+        corner_widget->setState(true, pHandler->getPortName());
         port_close->setEnabled(true);
-    else
+    }else{
+        // disconnect all signals connected to pHandler
+        disconnect(pHandler, nullptr, nullptr, nullptr);
+        corner_widget->setState(false, "");
         port_close->setEnabled(false);
+        delete pHandler;
+        pHandler = nullptr;
+    }
 }
 
 

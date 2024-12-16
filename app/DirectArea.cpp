@@ -7,9 +7,9 @@
 #include "DirectArea.h"
 #include "DataType.h"
 #include "ProjectSettings.h"
-#include "PortHandler.h"
 #include "Command.h"
 #include "Conf.h"
+#include "PortHandler_Base.h"
 
 DirectArea::DirectArea(QWidget *parent): QWidget{parent}
 {
@@ -52,7 +52,7 @@ DirectArea::DirectArea(QWidget *parent): QWidget{parent}
 }
 
 void DirectArea::onSendButton(){
-    if(check_comm && !PortHandler::commExists()){
+    if(check_comm && !PortHandler_Base::isOpen()){
         QMessageBox *msg = new QMessageBox();
         msg->setText("No Connection");
         msg->exec();

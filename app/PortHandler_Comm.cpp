@@ -1,56 +1,59 @@
 #include <QObject>
 #include <QByteArray>
-#include "PortHandler.h"
 #include <QSerialPort>
 #include <QTimer>
+#include <QDebug>
+
 #include "DataType.h"
 #include "Conf.h"
+#include "PortHandler_Comm.h"
 
-QSerialPort *PortHandler::current_port = nullptr;
-
-PortHandler::PortHandler(QObject *parent):QObject(parent){
+PortHandler_Comm::PortHandler_Comm(){
+    current_port = nullptr;
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(PORT_HANDLER_READ_PERIOD);
 }
 
-bool PortHandler::commExists(){
-    if( !current_port)
-        return false;
-    return current_port->isOpen();
-}
 
-bool PortHandler::removePort(){
+void PortHandler_Comm::disconnect(){
     if(current_port){
         current_port->close();
         while(current_port->openMode() != QIODevice::NotOpen){
             ;
         }
         current_port = nullptr;
-        emit portStateChanged(false, "");
-        return true;
-    }else{
-        emit portStateChanged(false, "");
-        return false;
+        open = false;
     }
 }
 
-bool PortHandler::setPort(QSerialPort *port_in){
+bool PortHandler_Comm::setPort(QSerialPort *port_in){
+    if(!port_in->isOpen())
+        return false;
+
     if(current_port)
-        removePort();
+        disconnect();
 
     current_port = port_in;
-    emit portStateChanged(true, current_port->portName());
+    open = true;
     return true;
 }
 
-void PortHandler::write(QByteArray data, DATA_TYPE t){
+QString PortHandler_Comm::getPortName(){
+    if(current_port)
+        return current_port->portName();
+    else
+        return "";
+}
+void PortHandler_Comm::write(QByteArray data, DATA_TYPE t){
     (void)t;
     if(current_port)
-        current_port->write(data);
+        if(current_port->write(data) < 0){
+            qDebug() << "failed to write to port, closing";
+        }
 }
 
-void PortHandler::run(){
+void PortHandler_Comm::run(){
     if(!current_port)
         return;
     qint64 sz = 0;

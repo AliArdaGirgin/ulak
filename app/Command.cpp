@@ -7,7 +7,7 @@
 #include "AddButtonWindow.h"
 #include <QMessageBox>
 #include <QIcon>
-#include "PortHandler.h"
+#include "PortHandler_Comm.h"
 #include "Conf.h"
 #include "DataType.h"
 
@@ -80,7 +80,7 @@ void Command::update(Command_t cmd_, QWidget *parent)
 
 void Command::activate(){
     // Warning if there is no open connection
-    if(!PortHandler::commExists()){
+    if(!PortHandler_Base::isOpen()){
         QMessageBox *msg = new QMessageBox();
         msg->setText("No Connection");
         msg->exec();

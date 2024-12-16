@@ -19,13 +19,12 @@
 #include "PortSelection.h"
 #include "AddButtonWindow.h"
 #include "DirectArea.h"
+#include "PortHandler_Base.h"
 
 class CommRightCornerWidget: public QWidget{
     Q_OBJECT
     public:
         CommRightCornerWidget(QWidget *parent);
-
-    public slots:
         void setState(bool state_, QString name = "");
 
     private:
@@ -35,7 +34,6 @@ class CommRightCornerWidget: public QWidget{
         QLabel *comm_state;
         QIcon  *icon_active;
         QIcon  *icon_passive;
-        bool state;
 };
 
 class MainWindow : public QMainWindow{
@@ -47,7 +45,7 @@ class MainWindow : public QMainWindow{
         void saved();
         void cleared();
     public slots:
-        void setPortState(bool state, QString);
+        void setPortState(PortHandler_Base*);
         void portSelect();
         void portClose();
 
@@ -67,11 +65,11 @@ class MainWindow : public QMainWindow{
         DirectArea * direct_area;
         PortSelection *sel;
         AddButtonWindow *addButton;
-        PortHandler *port_handler;
         QAction *port_close;
         QString save_file_name;
         QAction *proj_close;
         CommRightCornerWidget *corner_widget;
+        PortHandler_Base* pHandler;
         void drawMenu(void);
 };
 

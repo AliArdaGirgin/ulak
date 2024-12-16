@@ -14,8 +14,9 @@ SOURCES +=  \
     ../app/CommandArea.cpp \
     ../app/DataArea.cpp \
     ../app/MainWindow.cpp \
-    ../app/PortCommSelection.cpp \
-    ../app/PortHandler.cpp \
+    ../app/PortSelection_Comm.cpp \
+    ../app/PortHandler_Base.cpp \
+    ../app/PortHandler_Comm.cpp \
     ../app/PortSelection.cpp \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
@@ -34,8 +35,9 @@ HEADERS += \
     ../app/DataArea.h \
     ../app/DataType.h \
     ../app/MainWindow.h \
-    ../app/PortCommSelection.h \
-    ../app/PortHandler.h \
+    ../app/PortSelection_Comm.h \
+    ../app/PortHandler_Base.h \
+    ../app/PortHandler_Comm.h \
     ../app/PortSelection.h \
     ../app/ProjectSettings.h \
     ../app/RepresentableTextEdit.h \

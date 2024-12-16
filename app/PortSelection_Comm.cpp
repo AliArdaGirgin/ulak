@@ -6,7 +6,8 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QDebug>
-#include "PortCommSelection.h"
+#include "PortSelection_Comm.h"
+#include "PortHandler_Comm.h"
 
 
 PortCommSelection::PortCommSelection(QWidget *parent):QWidget(parent){
@@ -101,7 +102,9 @@ void PortCommSelection::portSelected(void){
         mbox.exec(); 
         button_ok->setEnabled(true);
     }else{
-        emit opened(port);
+        PortHandler_Comm* comm_port = new PortHandler_Comm();
+        comm_port->setPort(port);
+        emit opened(comm_port);
     }
 }
 
