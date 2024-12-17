@@ -1,9 +1,11 @@
 #include <QWidget>
 #include <QTabWidget>
+#include <QSerialPort>
+
 #include "PortSelection.h"
 #include "PortSelection_Comm.h"
+#include "PortSelection_TCP.h"
 #include "PortHandler_Base.h"
-#include <QSerialPort>
 
 PortSelection::PortSelection(QWidget* parent):
     QTabWidget(){
@@ -19,9 +21,10 @@ PortSelection::PortSelection(QWidget* parent):
     setAttribute(Qt::WA_DeleteOnClose);
 
     PortCommSelection *commPort = new PortCommSelection(this);
+    PortSelection_TCP *tcpPort = new PortSelection_TCP(this);
     addTab(commPort,"COMM");
+    addTab(tcpPort, "TCP");
 
-    connect(commPort, SIGNAL(closed()), this, SLOT(cancel()));
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
 }

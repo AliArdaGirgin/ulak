@@ -18,12 +18,11 @@ class PortCommSelection : public QWidget{
         bool isOpen();
     
     signals:
-        void closed();
         void opened(PortHandler_Base *);
     
     private slots:
         void portSelected();
-        void windowClosed();
+        void onCancelled();
     private:
         QSerialPort *port;
         QComboBox *cbox_port;
@@ -37,6 +36,7 @@ class PortCommSelection : public QWidget{
         QMessageBox *mbox;
         CommandArea *cmdArea;
         DataArea *dataArea;
+        QWidget* parent;
         void ComboSetIndex(QComboBox *combo, QString text);
 };
 

@@ -1,5 +1,6 @@
 QT += testlib
 QT += gui core widgets serialport
+QT += network
 CONFIG += qt warn_on depend_includepath testcase
 
 TEMPLATE = app
@@ -15,6 +16,7 @@ SOURCES +=  \
     ../app/DataArea.cpp \
     ../app/MainWindow.cpp \
     ../app/PortSelection_Comm.cpp \
+    ../app/PortSelection_TCP.cpp \
     ../app/PortHandler_Base.cpp \
     ../app/PortHandler_Comm.cpp \
     ../app/PortSelection.cpp \
@@ -36,6 +38,7 @@ HEADERS += \
     ../app/DataType.h \
     ../app/MainWindow.h \
     ../app/PortSelection_Comm.h \
+    ../app/PortSelection_TCP.h \
     ../app/PortHandler_Base.h \
     ../app/PortHandler_Comm.h \
     ../app/PortSelection.h \

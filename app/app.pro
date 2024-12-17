@@ -1,4 +1,4 @@
-QT       += core gui serialport
+QT       += core gui serialport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,8 +18,10 @@ SOURCES += \
     MainWindow.cpp \
     PortHandler_Base.cpp \
     PortHandler_Comm.cpp \
+    PortHandler_TCP.cpp \
     PortSelection.cpp \
     PortSelection_Comm.cpp \
+    PortSelection_TCP.cpp \
     ProjectSettings.cpp \
     RepresentableTextEdit.cpp \
     TabbedText.cpp \
@@ -36,8 +38,10 @@ HEADERS += \
     MainWindow.h \
     PortHandler_Base.h \
     PortHandler_Comm.h \
+    PortHandler_TCP.h \
     PortSelection.h \
     PortSelection_Comm.h \
+    PortSelection_TCP.h \
     ProjectSettings.h \
     RepresentableTextEdit.h \
     TabbedText.h

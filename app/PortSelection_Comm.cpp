@@ -10,7 +10,7 @@
 #include "PortHandler_Comm.h"
 
 
-PortCommSelection::PortCommSelection(QWidget *parent):QWidget(parent){
+PortCommSelection::PortCommSelection(QWidget *parent_):parent(parent_){
     QGridLayout *grid = new QGridLayout(this);
 
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
@@ -82,8 +82,8 @@ PortCommSelection::PortCommSelection(QWidget *parent):QWidget(parent){
     setWindowTitle("Serial Port Selection");
     resize(300,400);
 
-    connect(button_cancel,SIGNAL(clicked()), this, SLOT(windowClosed()));
-    connect(button_ok,    SIGNAL(pressed()), this, SLOT(portSelected()));
+    connect(button_cancel,SIGNAL(clicked()), this, SLOT(onCancelled()));
+    connect(button_ok,    SIGNAL(clicked()), this, SLOT(portSelected()));
 }
 
 void PortCommSelection::portSelected(void){
@@ -108,8 +108,8 @@ void PortCommSelection::portSelected(void){
     }
 }
 
-void PortCommSelection::windowClosed(){
-    emit closed();
+void PortCommSelection::onCancelled(){
+    parent->close();
 }
 
 void PortCommSelection::ComboSetIndex(QComboBox *combo, QString text){
