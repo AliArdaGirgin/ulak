@@ -10,6 +10,7 @@
 #include <QHostInfo>
 #include <QComboBox>
 #include <QKeyEvent>
+#include "PortHandler_Base.h"
 
 class PortSelection_TCP: public QWidget{
     Q_OBJECT
@@ -21,8 +22,12 @@ class PortSelection_TCP: public QWidget{
         void onOk();
         void onDnsLookup();
         void onIpClear();
+        void onConnected();
+        void onErrorOccurred(QAbstractSocket::SocketError);
     protected:
         void keyPressEvent(QKeyEvent* event) override;
+    signals:
+        void opened(PortHandler_Base*);
     private:
         QGridLayout *layout;
         QLineEdit* address;

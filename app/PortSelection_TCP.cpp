@@ -1,6 +1,9 @@
 #include <QLabel>
 #include <QIntValidator>
+#include <QMessageBox>
+
 #include "PortSelection_TCP.h"
+#include "PortHandler_TCP.h"
 
 PortSelection_TCP::PortSelection_TCP(QWidget* parent_):
     parent(parent_), ip_text(true){
@@ -44,6 +47,10 @@ PortSelection_TCP::PortSelection_TCP(QWidget* parent_):
     layout->addWidget(ok, 3, 0);
     layout->addWidget(cancel, 3, 1);
     setLayout(layout);
+
+    socket = new QTcpSocket();
+    connect(socket, SIGNAL(connected()), this, SLOT(onConnected()));
+    connect(socket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
 
     connect(dns_lookup, SIGNAL(clicked()), this, SLOT(onDnsLookup()));
     connect(ip_clear,   SIGNAL(clicked()), this, SLOT(onIpClear()));
@@ -93,7 +100,6 @@ void PortSelection_TCP::onDnsLookupResults(const QHostInfo& info){
         ip_cbox->setEnabled(true);
         return;
     }
-
     auto ip_addr = info.addresses();
     if(ip_addr.length() == 1){ // if only one address, line edit
         ip_line_edit->setText(ip_addr.back().toString());
@@ -124,6 +130,28 @@ void PortSelection_TCP::onDnsLookupResults(const QHostInfo& info){
     ip_line_edit->setEnabled(true);
     ip_cbox->setEnabled(true);
 }
-void PortSelection_TCP::onOk(){
 
+void PortSelection_TCP::onErrorOccurred(QAbstractSocket::SocketError err){
+    QMessageBox mbox;
+    QString message("QAbstractSocket::SocketError= ");
+    message += QString::number((int)err);
+    mbox.setText(message);
+    mbox.exec();
+}
+
+void PortSelection_TCP::onOk(){
+    ok->setEnabled(false);
+    QString host;
+    if(ip_text){
+        host = ip_line_edit->text();
+    }else{
+        host = ip_cbox->currentText();
+    }
+    socket->connectToHost(host, port->text().toUShort(), QIODeviceBase::ReadWrite, QAbstractSocket::AnyIPProtocol);
+}
+
+void PortSelection_TCP::onConnected(){
+    PortHandler_TCP* port = new PortHandler_TCP();
+    if(port->setSocket(socket))
+        emit opened(port);
 }

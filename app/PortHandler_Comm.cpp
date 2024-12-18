@@ -56,9 +56,7 @@ void PortHandler_Comm::write(QByteArray data, DATA_TYPE t){
 void PortHandler_Comm::run(){
     if(!current_port)
         return;
-    qint64 sz = 0;
-    sz = current_port->read(read_data,1024);
-    if(sz > 0){
+    qint64 sz = current_port->read(read_data,1024);
+    if(sz > 0)
         emit read(QByteArray(read_data, sz), DATA_TYPE::RX);
-    }
 }

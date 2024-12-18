@@ -27,6 +27,8 @@ PortSelection::PortSelection(QWidget* parent):
 
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
+    connect(tcpPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
+    connect(tcpPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
 }
 
 void PortSelection::open(PortHandler_Base *port_in){

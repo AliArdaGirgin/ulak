@@ -15,11 +15,12 @@ SOURCES +=  \
     ../app/CommandArea.cpp \
     ../app/DataArea.cpp \
     ../app/MainWindow.cpp \
+    ../app/PortSelection.cpp \
     ../app/PortSelection_Comm.cpp \
     ../app/PortSelection_TCP.cpp \
     ../app/PortHandler_Base.cpp \
     ../app/PortHandler_Comm.cpp \
-    ../app/PortSelection.cpp \
+    ../app/PortHandler_TCP.cpp \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
     ../app/TabbedText.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     ../app/PortSelection_TCP.h \
     ../app/PortHandler_Base.h \
     ../app/PortHandler_Comm.h \
+    ../app/PortHandler_TCP.h \
     ../app/PortSelection.h \
     ../app/ProjectSettings.h \
     ../app/RepresentableTextEdit.h \

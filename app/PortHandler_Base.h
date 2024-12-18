@@ -13,7 +13,7 @@ public:
     virtual void write(QByteArray data, DATA_TYPE dtype) = 0;
     virtual QString getPortName() = 0;
 signals:
-    void read(QByteArray data, DATA_TYPE dtype);
+    void closed();
 protected:
     static bool open;
 };
