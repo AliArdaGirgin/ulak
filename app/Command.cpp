@@ -92,7 +92,7 @@ void Command::activate(){
         settings_button->setEnabled(false);
         del_button->setEnabled(false);
         stop_button->setEnabled(true);
-        periodic_counter = cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
+        periodic_counter = 0; //cmd.period/COMMAND_AREA_TIMER_RESOLUTION;
         delay_counter  = cmd.delay/COMMAND_AREA_TIMER_RESOLUTION;
         current_match = 0;
         trigger_count = 0;
@@ -220,7 +220,7 @@ void Command::proc_oneshot_readtrigger_cont(){
 void Command::proc_periodic_manual(){
     if(current_state != COMMAND_STATE::ACTIVE)
         return;
-    if(--delay_counter <= 0 && --periodic_counter == 0){
+    if(--delay_counter <= 0 && --periodic_counter <= 0){
         // data send
         sendData(1);
         delay_counter = 0;
@@ -230,7 +230,7 @@ void Command::proc_periodic_manual(){
 void Command::proc_periodic_readtrigger(){ // also read_periodic_trigger_cont
     if(current_state != COMMAND_STATE::ACTIVE)
         return;
-    if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter == 0){
+    if(trigger_count > 0 && --delay_counter <= 0 && --periodic_counter <= 0){
         // data send
         sendData(1);
         delay_counter = 0;

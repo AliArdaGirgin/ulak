@@ -20,10 +20,15 @@ void PortHandler_TCP::disconnect(){
 }
 
 QString PortHandler_TCP::getPortName(){
-    if(current_socket)
-        return current_socket->peerAddress().toString();
-    else
-        return "";
+    QString name = "";
+    if(current_socket){
+        name += "TCP-Client: ";
+        name += current_socket->peerAddress().toString();
+        name += "(";
+        name += QString::number(current_socket->peerPort());
+        name += ")";
+    }
+    return name;
 }
 
 bool PortHandler_TCP::setSocket(QTcpSocket* socket){
@@ -46,7 +51,7 @@ void PortHandler_TCP::write(QByteArray data, DATA_TYPE dtype){
 void PortHandler_TCP::run(){
     if(!current_socket)
         return;
-    qint64 sz= current_socket->read(read_data, 1024);
+    qint64 sz= current_socket->read(read_buffer, 1024);
     if(sz > 0)
-        emit read(QByteArray(read_data, sz), DATA_TYPE::RX);
+        emit read(QByteArray(read_buffer, sz), DATA_TYPE::RX);
 }

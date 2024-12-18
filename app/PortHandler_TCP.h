@@ -24,6 +24,5 @@ class PortHandler_TCP:public PortHandler_Base{
     private:
         QTcpSocket* current_socket;
         QTimer* timer;
-        char read_data[1024];
 };
 #endif // PORTHANDLER_TCP_H

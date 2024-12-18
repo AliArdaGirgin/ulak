@@ -40,10 +40,12 @@ bool PortHandler_Comm::setPort(QSerialPort *port_in){
 }
 
 QString PortHandler_Comm::getPortName(){
-    if(current_port)
-        return current_port->portName();
-    else
-        return "";
+    QString name = "";
+    if(current_port){
+        name += "COMM: ";
+        name += current_port->portName();
+    }
+    return name;
 }
 void PortHandler_Comm::write(QByteArray data, DATA_TYPE t){
     (void)t;
@@ -56,7 +58,7 @@ void PortHandler_Comm::write(QByteArray data, DATA_TYPE t){
 void PortHandler_Comm::run(){
     if(!current_port)
         return;
-    qint64 sz = current_port->read(read_data,1024);
+    qint64 sz = current_port->read(read_buffer,1024);
     if(sz > 0)
-        emit read(QByteArray(read_data, sz), DATA_TYPE::RX);
+        emit read(QByteArray(read_buffer, sz), DATA_TYPE::RX);
 }

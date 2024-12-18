@@ -26,7 +26,6 @@ class PortHandler_Comm:public PortHandler_Base{
     private:
         QSerialPort *current_port;
         QTimer *timer;
-        char read_data[1024];
 
 };
 #endif

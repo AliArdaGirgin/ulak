@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QByteArray>
 #include "DataType.h"
+#include "Conf.h"
 
 class PortHandler_Base: public QObject{
 public:
@@ -16,5 +17,7 @@ signals:
     void closed();
 protected:
     static bool open;
+    char read_buffer[BUFFER_SIZE];
+    char write_buffer[BUFFER_SIZE];
 };
 #endif // PORTHANDLER_BASE_H

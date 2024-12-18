@@ -20,22 +20,14 @@ class PortSelection_TCP: public QWidget{
     private slots:
         void onCancel();
         void onOk();
-        void onDnsLookup();
-        void onIpClear();
         void onConnected();
         void onErrorOccurred(QAbstractSocket::SocketError);
-    protected:
-        void keyPressEvent(QKeyEvent* event) override;
     signals:
         void opened(PortHandler_Base*);
     private:
         QGridLayout *layout;
         QLineEdit* address;
-        QPushButton* dns_lookup;
         QLineEdit* port;
-        QLineEdit* ip_line_edit;
-        QComboBox* ip_cbox;
-        QPushButton *ip_clear;
         QPushButton* ok;
         QPushButton* cancel;
         QWidget* parent;

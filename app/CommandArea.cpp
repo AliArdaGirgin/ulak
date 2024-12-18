@@ -74,6 +74,7 @@ void CommandArea::onAddButton(){
     );
     add_button_window->show();
 }
+
 void CommandArea::run(){
     for(auto &command:command_pool){
         // Command not deleted

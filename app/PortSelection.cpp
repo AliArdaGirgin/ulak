@@ -23,7 +23,7 @@ PortSelection::PortSelection(QWidget* parent):
     PortCommSelection *commPort = new PortCommSelection(this);
     PortSelection_TCP *tcpPort = new PortSelection_TCP(this);
     addTab(commPort,"COMM");
-    addTab(tcpPort, "TCP");
+    addTab(tcpPort, "TCP-Client");
 
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
