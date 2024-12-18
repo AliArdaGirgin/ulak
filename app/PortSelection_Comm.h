@@ -11,10 +11,10 @@
 #include "DataArea.h"
 #include "PortHandler_Base.h"
 
-class PortCommSelection : public QWidget{ 
+class PortSelection_Comm : public QWidget{
     Q_OBJECT
     public:
-        PortCommSelection(QWidget *parent = 0);
+        PortSelection_Comm(QWidget *parent = 0);
         bool isOpen();
     
     signals:

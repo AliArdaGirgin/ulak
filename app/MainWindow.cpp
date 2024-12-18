@@ -69,8 +69,17 @@ void MainWindow::portSelect(void){
 
 void MainWindow::portClose(void){
     if(pHandler){
-        pHandler->disconnect();
+        pHandler->port_disconnect();
         setPortState(nullptr);
+    }
+}
+
+void MainWindow::portClose(QString message){
+    QMessageBox mbox;
+    if(pHandler){
+        mbox.setText(message);
+        mbox.exec();
+        portClose();
     }
 }
 
@@ -408,7 +417,7 @@ void MainWindow::onProjSettings(){
 
 void MainWindow::closeEvent(QCloseEvent *event){
     if(pHandler){
-        pHandler->disconnect();
+        pHandler->port_disconnect();
         setPortState(nullptr);
     }
     event->accept();
@@ -456,6 +465,7 @@ void MainWindow::setPortState(PortHandler_Base* port){
         connect(direct_area,  SIGNAL(send(QByteArray,DATA_TYPE)),  pHandler, SLOT(write(QByteArray, DATA_TYPE)));
         connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
         connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
+        connect(pHandler, SIGNAL(closed(QString)), this, SLOT(portClose(QString)));
 
         corner_widget->setState(true, pHandler->getPortName());
         port_close->setEnabled(true);

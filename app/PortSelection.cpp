@@ -20,23 +20,29 @@ PortSelection::PortSelection(QWidget* parent):
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    PortCommSelection *commPort = new PortCommSelection(this);
-    PortSelection_TCP *tcpPort = new PortSelection_TCP(this);
+    commPort = new PortSelection_Comm(this);
+    tcpPort =  new PortSelection_TCP(this);
     addTab(commPort,"COMM");
     addTab(tcpPort, "TCP-Client");
 
+    // parent = MainWindow
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
     connect(commPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
+
     connect(tcpPort, SIGNAL(opened(PortHandler_Base*)), this, SLOT(open(PortHandler_Base*)));
     connect(tcpPort, SIGNAL(opened(PortHandler_Base*)), parent, SLOT(setPortState(PortHandler_Base*)));
 }
 
 void PortSelection::open(PortHandler_Base *port_in){
     (void)port_in;
-    this->close();
+    window_close();
 }
 
 void PortSelection::cancel(){
+    window_close();
+}
+
+void PortSelection::window_close(){
     this->close();
 }
 

@@ -50,10 +50,9 @@ void PortSelection_TCP::onCancel(){
 }
 
 void PortSelection_TCP::onErrorOccurred(QAbstractSocket::SocketError err){
+    (void)err;
     QMessageBox mbox;
-    QString message("QAbstractSocket::SocketError= ");
-    message += QString::number((int)err);
-    mbox.setText(message);
+    mbox.setText(socket->errorString());
     mbox.exec();
     ok->setEnabled(true);
 }
@@ -64,6 +63,7 @@ void PortSelection_TCP::onOk(){
 }
 
 void PortSelection_TCP::onConnected(){
+    disconnect(socket, nullptr, nullptr, nullptr);
     PortHandler_TCP* port = new PortHandler_TCP();
     if(port->setSocket(socket))
         emit opened(port);

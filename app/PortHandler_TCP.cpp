@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "PortHandler_TCP.h"
 #include "Conf.h"
 
@@ -8,12 +9,13 @@ PortHandler_TCP::PortHandler_TCP(){
     timer->start(PORT_HANDLER_READ_PERIOD);
 }
 
-void PortHandler_TCP::disconnect(){
+void PortHandler_TCP::port_disconnect(){
     if(current_socket){
         current_socket->disconnectFromHost();
         while(current_socket->state() != QAbstractSocket::UnconnectedState){
             ;
         }
+        disconnect(current_socket, nullptr, nullptr, nullptr);
         current_socket = nullptr;
         open = false;
     }
@@ -35,8 +37,10 @@ bool PortHandler_TCP::setSocket(QTcpSocket* socket){
     if(socket->state() != QAbstractSocket::ConnectedState)
         return false;
     if(current_socket)
-        disconnect();
+        port_disconnect();
     current_socket = socket;
+
+    connect(current_socket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(errorOccured(QAbstractSocket::SocketError)));
     open = true;
     return open;
 }
@@ -54,4 +58,11 @@ void PortHandler_TCP::run(){
     qint64 sz= current_socket->read(read_buffer, 1024);
     if(sz > 0)
         emit read(QByteArray(read_buffer, sz), DATA_TYPE::RX);
+}
+
+void PortHandler_TCP::errorOccured(QAbstractSocket::SocketError err){
+    (void)err;
+    if(current_socket){
+        emit closed(current_socket->errorString());
+    }
 }

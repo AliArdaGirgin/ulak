@@ -10,11 +10,13 @@ class PortHandler_Base: public QObject{
 public:
     PortHandler_Base(){open = false;}
     static bool isOpen(){ return open; }
-    virtual void disconnect() = 0;
-    virtual void write(QByteArray data, DATA_TYPE dtype) = 0;
+    virtual void port_disconnect() = 0;
     virtual QString getPortName() = 0;
+public slots:
+    virtual void write(QByteArray data, DATA_TYPE dtype) = 0;
 signals:
-    void closed();
+    virtual void read(QByteArray data, DATA_TYPE dtype) = 0;
+    virtual void closed(QString message) = 0;
 protected:
     static bool open;
     char read_buffer[BUFFER_SIZE];

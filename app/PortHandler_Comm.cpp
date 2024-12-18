@@ -16,7 +16,7 @@ PortHandler_Comm::PortHandler_Comm(){
 }
 
 
-void PortHandler_Comm::disconnect(){
+void PortHandler_Comm::port_disconnect(){
     if(current_port){
         current_port->close();
         while(current_port->openMode() != QIODevice::NotOpen){
@@ -32,7 +32,7 @@ bool PortHandler_Comm::setPort(QSerialPort *port_in){
         return false;
 
     if(current_port)
-        disconnect();
+        port_disconnect();
 
     current_port = port_in;
     open = true;

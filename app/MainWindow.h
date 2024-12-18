@@ -48,6 +48,7 @@ class MainWindow : public QMainWindow{
         void setPortState(PortHandler_Base*);
         void portSelect();
         void portClose();
+        void portClose(QString message);
 
     private slots:
         void onSaveData();
