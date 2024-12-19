@@ -1,5 +1,5 @@
-#ifndef PORTHANDLER_TCP_H
-#define PORTHANDLER_TCP_H
+#ifndef PORTHANDLER_TCP_CLIENT_H
+#define PORTHANDLER_TCP_CLIENT_H
 
 #include <QObject>
 #include <QByteArray>
@@ -8,10 +8,10 @@
 #include "PortHandler_Base.h"
 #include "DataType.h"
 
-class PortHandler_TCP:public PortHandler_Base{
+class PortHandler_TCP_Client:public PortHandler_Base{
     Q_OBJECT
     public:
-        PortHandler_TCP();
+        PortHandler_TCP_Client();
         void port_disconnect() override;
         QString getPortName() override;
         bool setSocket(QTcpSocket* socket);
@@ -27,4 +27,4 @@ class PortHandler_TCP:public PortHandler_Base{
         QTcpSocket* current_socket;
         QTimer* timer;
 };
-#endif // PORTHANDLER_TCP_H
+#endif // PORTHANDLER_TCP_CLIENT_H

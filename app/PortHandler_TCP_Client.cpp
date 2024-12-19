@@ -1,15 +1,15 @@
 #include <QDebug>
-#include "PortHandler_TCP.h"
+#include "PortHandler_TCP_Client.h"
 #include "Conf.h"
 
-PortHandler_TCP::PortHandler_TCP(){
+PortHandler_TCP_Client::PortHandler_TCP_Client(){
     current_socket = nullptr;
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(PORT_HANDLER_READ_PERIOD);
 }
 
-void PortHandler_TCP::port_disconnect(){
+void PortHandler_TCP_Client::port_disconnect(){
     if(current_socket){
         current_socket->disconnectFromHost();
         while(current_socket->state() != QAbstractSocket::UnconnectedState){
@@ -21,7 +21,7 @@ void PortHandler_TCP::port_disconnect(){
     }
 }
 
-QString PortHandler_TCP::getPortName(){
+QString PortHandler_TCP_Client::getPortName(){
     QString name = "";
     if(current_socket){
         name += "TCP-Client: ";
@@ -33,7 +33,7 @@ QString PortHandler_TCP::getPortName(){
     return name;
 }
 
-bool PortHandler_TCP::setSocket(QTcpSocket* socket){
+bool PortHandler_TCP_Client::setSocket(QTcpSocket* socket){
     if(socket->state() != QAbstractSocket::ConnectedState)
         return false;
     if(current_socket)
@@ -45,14 +45,14 @@ bool PortHandler_TCP::setSocket(QTcpSocket* socket){
     return open;
 }
 
-void PortHandler_TCP::write(QByteArray data, DATA_TYPE dtype){
+void PortHandler_TCP_Client::write(QByteArray data, DATA_TYPE dtype){
     (void)dtype;
     if(current_socket){
         current_socket->write(data);
     }
 }
 
-void PortHandler_TCP::run(){
+void PortHandler_TCP_Client::run(){
     if(!current_socket)
         return;
     qint64 sz= current_socket->read(read_buffer, 1024);
@@ -60,7 +60,7 @@ void PortHandler_TCP::run(){
         emit read(QByteArray(read_buffer, sz), DATA_TYPE::RX);
 }
 
-void PortHandler_TCP::errorOccured(QAbstractSocket::SocketError err){
+void PortHandler_TCP_Client::errorOccured(QAbstractSocket::SocketError err){
     (void)err;
     if(current_socket){
         emit closed(current_socket->errorString());

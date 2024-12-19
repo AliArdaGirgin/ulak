@@ -20,7 +20,8 @@ SOURCES +=  \
     ../app/PortSelection_TCP.cpp \
     ../app/PortHandler_Base.cpp \
     ../app/PortHandler_Comm.cpp \
-    ../app/PortHandler_TCP.cpp \
+    ../app/PortHandler_TCP_Client.cpp \
+    ../app/PortHandler_TCP_Server.cpp \
     ../app/ProjectSettings.cpp \
     ../app/RepresentableTextEdit.cpp \
     ../app/TabbedText.cpp \
@@ -42,7 +43,8 @@ HEADERS += \
     ../app/PortSelection_TCP.h \
     ../app/PortHandler_Base.h \
     ../app/PortHandler_Comm.h \
-    ../app/PortHandler_TCP.h \
+    ../app/PortHandler_TCP_Client.h \
+    ../app/PortHandler_TCP_Server.h \
     ../app/PortSelection.h \
     ../app/ProjectSettings.h \
     ../app/RepresentableTextEdit.h \

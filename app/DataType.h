@@ -55,6 +55,21 @@ enum class TIMESTAMP_FORMAT_TYPE {DATE, TIME, DATE_TIME,
 #define PROJ_JSON_CMD_READDATA_STR   "read_data"
 #define PROJ_JSON_CMD_READDATATAB_STR "read_data_tab"
 
+#define PORT_TCP_CLIENT 0
+#define PORT_TCP_SERVER 1
+
+#define PORT_TCP_CLIENT_LOCALHOST 0
+#define PORT_TCP_CLIENT_MANUAL    1
+
+#define PORT_TCP_SERVER_LOCALHOST      0
+#define PORT_TCP_SERVER_LOCALHOST_IPv6 1
+#define PORT_TCP_SERVER_BROADCAST      2
+#define PORT_TCP_SERVER_ANY_IPv4       3
+#define PORT_TCP_SERVER_ANY_IPv6       4
+#define PORT_TCP_SERVER_ANY            5
+#define PORT_TCP_SERVER_MANUAL         6
+
+
 struct Command_t{
     QString name;
     COMMAND_TYPE cmd_type;

@@ -18,7 +18,8 @@ SOURCES += \
     MainWindow.cpp \
     PortHandler_Base.cpp \
     PortHandler_Comm.cpp \
-    PortHandler_TCP.cpp \
+    PortHandler_TCP_Client.cpp \
+    PortHandler_TCP_Server.cpp \
     PortSelection.cpp \
     PortSelection_Comm.cpp \
     PortSelection_TCP.cpp \
@@ -38,7 +39,8 @@ HEADERS += \
     MainWindow.h \
     PortHandler_Base.h \
     PortHandler_Comm.h \
-    PortHandler_TCP.h \
+    PortHandler_TCP_Client.h \
+    PortHandler_TCP_Server.h \
     PortSelection.h \
     PortSelection_Comm.h \
     PortSelection_TCP.h \
