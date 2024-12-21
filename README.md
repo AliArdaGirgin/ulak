@@ -18,7 +18,9 @@ Serial communication testing tool
 ## Linux
   in Debian
   > sudo apt install build-essential qt6-base-dev qt6-serialport-dev qtcreator
+
   > src/ulak.pro
+
   Tested on;
   Ubuntu 24.04
   qt6 creator verison 13.0.0
