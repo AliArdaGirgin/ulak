@@ -16,6 +16,7 @@ class CommandArea:public QWidget{
         QVector<Command*>* getCommands();
         int getCommandCount();
         void clearCommands();
+        void disableAllCommands();
     public slots:
         void addButton(Command_t cmd, QWidget *parent);
         void dataRead(QByteArray data, DATA_TYPE dtype);

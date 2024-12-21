@@ -49,6 +49,7 @@ class MainWindow : public QMainWindow{
         void portSelect();
         void portClose();
         void portClose(QString message);
+        void portUpdateName(QString name);
 
     private slots:
         void onSaveData();

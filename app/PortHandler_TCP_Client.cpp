@@ -4,6 +4,7 @@
 
 PortHandler_TCP_Client::PortHandler_TCP_Client(){
     current_socket = nullptr;
+    open = false;
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
     timer->start(PORT_HANDLER_READ_PERIOD);

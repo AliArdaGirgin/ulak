@@ -102,3 +102,9 @@ void CommandArea::clearCommands(){
     while(!command_pool.isEmpty())
         delete command_pool.takeLast();
 }
+
+void CommandArea::disableAllCommands(){
+    for(auto &command:command_pool){
+        command->stop();
+    }
+}

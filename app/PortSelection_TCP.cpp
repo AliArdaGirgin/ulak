@@ -4,6 +4,7 @@
 
 #include "PortSelection_TCP.h"
 #include "PortHandler_TCP_Client.h"
+#include "PortHandler_TCP_Server.h"
 #include "DataType.h"
 
 PortSelection_TCP::PortSelection_TCP(QWidget* parent_):
@@ -78,15 +79,19 @@ void PortSelection_TCP::onErrorOccurred(QAbstractSocket::SocketError err){
 void PortSelection_TCP::onOk(){
     ok->setEnabled(false);
     if(type->currentIndex() == PORT_TCP_CLIENT){
-        socket->connectToHost(address_line_edit->text(), port->text().toUShort(), QIODeviceBase::ReadWrite, QAbstractSocket::AnyIPProtocol);
-    }else{ // PORT_TCP_SERVER
-        qDebug()<< "Tries to listen";
-        if(server->listen(QHostAddress(address_line_edit->text()), port->text().toUShort())){
+        socket->connectToHost(address_line_edit->text(), port->text().toUShort(),
+                              QIODeviceBase::ReadWrite, QAbstractSocket::AnyIPProtocol);
 
+    }else{ // PORT_TCP_SERVER
+        if(server->listen(QHostAddress(address_line_edit->text()), port->text().toUShort())){
+            PortHandler_TCP_Server* port = new PortHandler_TCP_Server();
+            if(port->setServer(server))
+                emit opened(port);
         }else{
             QMessageBox mbox;
             mbox.setText(server->errorString());
             mbox.exec();
+            ok->setEnabled(true);
         }
     }
 }

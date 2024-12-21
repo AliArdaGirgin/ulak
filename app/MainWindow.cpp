@@ -466,17 +466,22 @@ void MainWindow::setPortState(PortHandler_Base* port){
         connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  data_area,    SLOT(write(QByteArray,DATA_TYPE))    );
         connect(pHandler, SIGNAL(read(QByteArray,DATA_TYPE)),  cmd_area,     SLOT(dataRead(QByteArray,DATA_TYPE)) );
         connect(pHandler, SIGNAL(closed(QString)), this, SLOT(portClose(QString)));
+        connect(pHandler, SIGNAL(updateName(QString)), this, SLOT(portUpdateName(QString)));
 
         corner_widget->setState(true, pHandler->getPortName());
         port_close->setEnabled(true);
     }else{
         // disconnect all signals connected to pHandler
         disconnect(pHandler, nullptr, nullptr, nullptr);
+        cmd_area->disableAllCommands();
         corner_widget->setState(false, "");
         port_close->setEnabled(false);
         delete pHandler;
         pHandler = nullptr;
     }
+}
+void MainWindow::portUpdateName(QString name){
+    corner_widget->setState(true, name);
 }
 
 

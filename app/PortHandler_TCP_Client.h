@@ -23,6 +23,7 @@ class PortHandler_TCP_Client:public PortHandler_Base{
     signals:
         void read(QByteArray data, DATA_TYPE dtype) override;
         void closed(QString message) override;
+        void updateName(QString name) override;
     private:
         QTcpSocket* current_socket;
         QTimer* timer;

@@ -17,6 +17,7 @@ public slots:
 signals:
     virtual void read(QByteArray data, DATA_TYPE dtype) = 0;
     virtual void closed(QString message) = 0;
+    virtual void updateName(QString name){(void)name;}
 protected:
     static bool open;
     char read_buffer[BUFFER_SIZE];
